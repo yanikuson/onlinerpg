@@ -72,7 +72,7 @@ public class Monster extends Actor {
 			
 			this.commonDrop = new Item(Item.ID_SPEED_PILL);
 			this.rareDrop = new Item(Item.ID_WOOD_ARMOR);
-			this.money = 30;
+			this.money = 20;
 
 			break;
 		default:
@@ -212,7 +212,7 @@ public class Monster extends Actor {
 				if (dropRoll < 0.1f){
 					drops.add(this, commonDrop);
 				}
-				if (dropRoll < 0.01f){
+				if (dropRoll < 0.02f){
 					drops.add(this, rareDrop);
 				}
 				
