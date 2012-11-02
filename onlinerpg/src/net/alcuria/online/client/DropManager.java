@@ -46,7 +46,7 @@ public class DropManager {
 
 	}
 
-	public void add(Monster m){
+	public void add(Monster m, Item loot){
 
 		// get the first available drop reference
 		for (index = 0; index < dropList.length; index++){
@@ -54,22 +54,15 @@ public class DropManager {
 				break;
 			}
 		}
-
-		//TODO: this needs to determine what to drop based on the id and manipulate particle data
-		switch (m.type) {
-
-		case Config.MON_SLIME:
+		 
+		if (loot == null) {
+			// define money drop as null item
 			dropList[index].particleID = 0;
-			dropList[index].value = 50;
-			break;
-
-		case Config.MON_EYE:
-			dropList[index].particleID = 1;
-			dropList[index].value = Item.ID_POTION;
-			break;
-
-		default:
-
+			dropList[index].value = (int) (m.money * (1 + (Math.random() - 0.5) / 5));
+		} else {
+			// otherwise drop the enemy's loot
+			dropList[index].particleID = loot.icon;
+			dropList[index].value = loot.id;	
 		}
 
 		// finally set its position and flag it as visible so it gets render/update calls

@@ -11,11 +11,14 @@ public class Monster extends Actor {
 	float commandFrequency = 2;
 	int rndCommand = 0;
 	int expVal;						// value awarded for killing
+	
 	int money;						// money the enemy has
-	Item drop;						// item the enemy drops
+	Item commonDrop;				// item the enemy drops
 	Item rareDrop;					// rare item the enemy drops
+	
 	int type=0;						// type of monster as defined in Config.java (e.g., slime = 1)
-
+	float dropRoll;					// dice roll for enemy lootz
+	
 	public Projectile projectile;			// monster's projectile
 
 	public Monster(String filename, int width, int height, int type, AssetManager assets) {
@@ -43,6 +46,10 @@ public class Monster extends Actor {
 			this.commandFrequency = 1;
 			this.projectile = new Projectile("sprites/projectile.png", -10, -10, 4, 4, assets);
 
+			this.commonDrop = new Item(Item.ID_POTION);
+			this.rareDrop = new Item(Item.ID_LEATHER_BOOTS);
+			this.money = 20;
+			
 			break;
 
 		case Config.MON_SLIME:
@@ -62,6 +69,10 @@ public class Monster extends Actor {
 			this.walkSpeed = 50;
 			this.jumpPower = 80;
 			this.commandFrequency = 1;
+			
+			this.commonDrop = new Item(Item.ID_SPEED_PILL);
+			this.rareDrop = new Item(Item.ID_WOOD_ARMOR);
+			this.money = 30;
 
 			break;
 		default:
@@ -194,7 +205,17 @@ public class Monster extends Actor {
 				visible = false;
 
 				// activate the drop
-				drops.add(this);
+				dropRoll = (float) Math.random();
+				if (dropRoll < 0.5f){
+					drops.add(this, null);
+				}
+				if (dropRoll < 0.1f){
+					drops.add(this, commonDrop);
+				}
+				if (dropRoll < 0.01f){
+					drops.add(this, rareDrop);
+				}
+				
 			}
 		}
 
