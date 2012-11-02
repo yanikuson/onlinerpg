@@ -110,6 +110,8 @@ public class Menu {
 					hideMenu(input);
 				}
 				if (input.typed[InputHandler.LEFT]){
+					input.typed[InputHandler.LEFT] = false;
+					
 					move.play(Config.sfxVol);
 					changeScreen = true;
 					selection[depth]--;
@@ -118,6 +120,8 @@ public class Menu {
 					}
 				}
 				if (input.typed[InputHandler.RIGHT]){
+					input.typed[InputHandler.RIGHT] = false;
+
 					move.play(Config.sfxVol);
 					changeScreen = true;
 					selection[depth]++;
@@ -126,6 +130,8 @@ public class Menu {
 					}
 				}
 				if (input.typed[InputHandler.ATTACK]){
+					input.typed[InputHandler.ATTACK] = false;
+
 					select.play(Config.sfxVol);
 					switch (selection[0]){
 					case 0: // stats
@@ -240,12 +246,17 @@ public class Menu {
 
 		// handle the keypresses
 		if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
+			input.typed[InputHandler.ESCAPE] = false;
+			input.typed[InputHandler.JUMP] = false;
+
 			cancel.play(Config.sfxVol);
 			depth--;
 			refreshText = true;
 		}
 
 		if (input.typed[InputHandler.UP]){
+			input.typed[InputHandler.UP] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]--;
 			if (selection[depth] < 0){
@@ -254,6 +265,8 @@ public class Menu {
 			refreshText = true;
 		}
 		if (input.typed[InputHandler.DOWN]){
+			input.typed[InputHandler.DOWN] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]++;
 			if (selection[depth] > 1){
@@ -298,11 +311,17 @@ public class Menu {
 
 		// process any key presses				
 		if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
+			input.typed[InputHandler.ESCAPE] = false;
+			input.typed[InputHandler.JUMP] = false;
+
+
 			cancel.play(Config.sfxVol);
 			depth--;
 			refreshText = true;
 		}
 		if (input.typed[InputHandler.UP]){
+			input.typed[InputHandler.UP] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]--;
 			if (selection[depth] < 0){
@@ -311,6 +330,8 @@ public class Menu {
 			refreshText = true;
 		}
 		if (input.typed[InputHandler.DOWN]){
+			input.typed[InputHandler.DOWN] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]++;
 			if (selection[depth] > 8){
@@ -319,6 +340,8 @@ public class Menu {
 			refreshText = true;
 		}
 		if (input.typed[InputHandler.ATTACK]){
+			input.typed[InputHandler.ATTACK] = false;
+
 			// swap the gear...
 
 			// first, save a copy of the gear to remove
@@ -374,11 +397,16 @@ public class Menu {
 
 		// process any key presses				
 		if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
+			input.typed[InputHandler.ESCAPE] = false;
+			input.typed[InputHandler.JUMP] = false;
+
 			cancel.play(Config.sfxVol);
 			depth--;
 			refreshText = true;
 		}
 		if (input.typed[InputHandler.UP]){
+			input.typed[InputHandler.UP] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]--;
 			if (selection[depth] < 0){
@@ -387,6 +415,8 @@ public class Menu {
 			refreshText = true;
 		}
 		if (input.typed[InputHandler.DOWN]){
+			input.typed[InputHandler.DOWN] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]++;
 			if (selection[depth] > 3){
@@ -395,6 +425,8 @@ public class Menu {
 			refreshText = true;
 		}
 		if (input.typed[InputHandler.ATTACK]){
+			input.typed[InputHandler.ATTACK] = false;
+
 			// go into the submenu to select a new gear
 			select.play(Config.sfxVol);
 			depth++;
@@ -421,6 +453,8 @@ public class Menu {
 	public void updateItemSubmenu(InputHandler input){
 
 		if (input.typed[InputHandler.ATTACK]){
+			input.typed[InputHandler.ATTACK] = false;
+
 			
 			// go into the submenu to USE/TOSS iff the item actually exists
 			if (inventory.getSize() > selection[depth]){
@@ -438,6 +472,9 @@ public class Menu {
 
 		}
 		if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
+			input.typed[InputHandler.ESCAPE] = false;
+			input.typed[InputHandler.JUMP] = false;
+
 			cancel.play(Config.sfxVol);
 			depth--;
 			selection[1] = -1;
@@ -445,6 +482,8 @@ public class Menu {
 		}
 
 		if (input.typed[InputHandler.UP]){
+			input.typed[InputHandler.UP] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]-=2;
 			if (selection[depth] < 0){
@@ -454,6 +493,8 @@ public class Menu {
 		}
 
 		if (input.typed[InputHandler.DOWN]){
+			input.typed[InputHandler.DOWN] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]+=2;
 			if (selection[depth] >= inventory.getSize()){
@@ -463,6 +504,9 @@ public class Menu {
 		}
 
 		if (input.typed[InputHandler.LEFT] || input.typed[InputHandler.RIGHT]){
+			input.typed[InputHandler.LEFT] = false;
+			input.typed[InputHandler.RIGHT] = false;
+
 			move.play(Config.sfxVol);
 			if (selection[depth] % 2 == 0){
 				selection[depth]++; 
@@ -493,10 +537,15 @@ public class Menu {
 
 		// process any key presses				
 		if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
+			input.typed[InputHandler.ESCAPE] = false;
+			input.typed[InputHandler.JUMP] = false;
+			
 			cancel.play(Config.sfxVol);
 			depth--;
 		}
 		if (input.typed[InputHandler.UP]){
+			input.typed[InputHandler.UP] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]--;
 			if (selection[depth] < 0){
@@ -504,6 +553,8 @@ public class Menu {
 			}
 		}
 		if (input.typed[InputHandler.DOWN]){
+			input.typed[InputHandler.DOWN] = false;
+
 			move.play(Config.sfxVol);
 			selection[depth]++;
 			if (selection[depth] > 2){
@@ -511,6 +562,8 @@ public class Menu {
 			}
 		}
 		if (input.typed[InputHandler.ATTACK]){
+			input.typed[InputHandler.ATTACK] = false;
+
 			// check to see if we can add a stat point to the selected stat
 			if (p.allocateStatPoint(selection[depth])){
 				addstat.play(Config.sfxVol);
