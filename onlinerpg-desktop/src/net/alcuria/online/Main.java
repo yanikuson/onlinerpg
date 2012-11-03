@@ -10,9 +10,9 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "onlinerpg";
 		cfg.useGL20 = true;
-		cfg.resizable = true;
-		cfg.width = 416*3;
-		cfg.height = 240*3;
+		cfg.resizable = false;
+		cfg.width = 416*4;
+		cfg.height = 240*4;
 		new LwjglApplication(new OnlineRPG(), cfg);
 	}
 }
