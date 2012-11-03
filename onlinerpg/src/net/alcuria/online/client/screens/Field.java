@@ -173,6 +173,10 @@ public class Field implements Screen {
 		// create notification handler
 		notifications = new NotificationList();
 		notifications.add("Welcome to Heroes of Umbra!");
+		notifications.add("Z = Jump");
+		notifications.add("X = Attack");
+		notifications.add("Arrow Keys = Move");
+		notifications.add("ESC = Menu");
 
 		damageList = new DamageList();
 		

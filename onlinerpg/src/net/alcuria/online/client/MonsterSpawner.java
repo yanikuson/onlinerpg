@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MonsterSpawner {
 
-	public static final int MAX_MONSTERS = 300;
+	public static final int MAX_MONSTERS = 40;
 	public static final int MAX_SPAWN_PTS = 20;
-	public static final int SPAWN_TIMER = 3;
-	public static final int INITIAL_SPAWN_NUM = 100;
+	public static final int SPAWN_TIMER = 4;
+	public static final int INITIAL_SPAWN_NUM = 10;
 
 	public int initialSpawnCtr=0;		// a counter to spawn INITIAL_SPAWN_NUM monsters on the map immediately
 	public boolean initialSpawn=false;
