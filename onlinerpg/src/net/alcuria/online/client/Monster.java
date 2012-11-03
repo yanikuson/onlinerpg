@@ -30,8 +30,8 @@ public class Monster extends Actor {
 
 			this.maxHP = 15;
 
-			this.atk = 1;
-			this.def = 1;
+			this.atk = 10;
+			this.def = 5;
 			this.matk = 3;
 			this.mdef = 3;
 
@@ -56,7 +56,7 @@ public class Monster extends Actor {
 
 			this.maxHP = 20;
 
-			this.atk = 3;
+			this.atk = 10;
 			this.def = 0;
 			this.matk = 0;
 			this.mdef = 0;
@@ -205,8 +205,8 @@ public class Monster extends Actor {
 				visible = false;
 
 				// activate the drop
-				dropRoll = (float) Math.random();
-				if (dropRoll < 1.6f){
+				dropRoll = (float) Math.random(); 
+				if (dropRoll < 0.7f){
 					drops.add(this, null);
 				}
 				if (dropRoll < 0.1f){

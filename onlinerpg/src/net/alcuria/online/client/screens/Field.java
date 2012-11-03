@@ -204,13 +204,14 @@ public class Field implements Screen {
 
 		// set spawn points
 		spawner = new MonsterSpawner("maps/forest.spawn");
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
 			if (Math.random() > 0.3){
 				spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
 			} else {
 				spawner.addMonster(new Monster("sprites/eye.png", 14, 18, Config.MON_EYE, assets));
 			}
 		}
+		spawner.doInitialSpawn();
 		
 		// create the manager for collisions
 		collisions = new CollisionManager(player, spawner.monsterList, drops);

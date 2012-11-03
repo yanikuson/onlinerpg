@@ -212,7 +212,7 @@ public class Player extends Actor {
 			curEXP += expVal;
 			if (curEXP >= neededEXP){
 				lvl++;
-				if (Config.notifLevel) notifications.add("Congratulations! You've reached level " + lvl);
+				if (Config.notifLevel) notifications.add("Congratulations! You've reached level " + lvl + ".");
 				statPts += 2;
 				
 				// set new max HP

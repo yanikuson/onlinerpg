@@ -6,12 +6,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MonsterSpawner {
 
-	public static final int MAX_MONSTERS = 30;
+	public static final int MAX_MONSTERS = 300;
 	public static final int MAX_SPAWN_PTS = 20;
 	public static final int SPAWN_TIMER = 3;
-	public static final int INITIAL_SPAWN_NUM = 10;
+	public static final int INITIAL_SPAWN_NUM = 100;
 
 	public int initialSpawnCtr=0;		// a counter to spawn INITIAL_SPAWN_NUM monsters on the map immediately
+	public boolean initialSpawn=false;
 
 	public Monster[] monsterList;
 	public int[] spawnPointX;
@@ -47,7 +48,7 @@ public class MonsterSpawner {
 	public void update(){
 
 		spawnCounter += Gdx.graphics.getDeltaTime();
-		if (spawnCounter > SPAWN_TIMER || initialSpawnCtr < INITIAL_SPAWN_NUM){
+		if (spawnCounter > SPAWN_TIMER || initialSpawn){
 
 			// look for the next available (inactive) monster in the monster list	
 			monsterListIndex = 0;
@@ -70,8 +71,16 @@ public class MonsterSpawner {
 				System.out.println("Warning: attempting to add null monster in MonsterSpawner.update()");
 			}
 			spawnCounter = 0;
-			initialSpawnCtr++;
 		}
+	}
+	
+	// spawns a set number of monsters on map load
+	public void doInitialSpawn(){
+		initialSpawn = true;
+		for (int i = 0; i < INITIAL_SPAWN_NUM; i++){
+			update();
+		}
+		initialSpawn = false;		
 	}
 
 	// renders all enabled monsters on the field. (TODO: this could be optimized to only call render if they are on the visible screen!!)

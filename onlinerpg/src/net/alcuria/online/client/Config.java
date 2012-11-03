@@ -41,7 +41,7 @@ public class Config {
 	}
 	
 	public static int getDamageDone(int attackerAtk, int attackerPow, int defenderDef, int defenderStam) {
-		damage = (int) ((((float)attackerAtk/25 * attackerPow*2) - ((float)defenderDef/100 * defenderStam/2)) * (1 + (Math.random() - 0.5) / 5));
+		damage = (int) ((((float)attackerAtk/25 * attackerPow*2) - ((float)defenderDef/50 * defenderStam/2)) * (1 + (Math.random() - 0.5) / 5));
 		if (damage > 0){
 			return damage;
 		}

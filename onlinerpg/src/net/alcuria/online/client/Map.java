@@ -116,7 +116,7 @@ public class Map {
 		if (below){
 			for (int i = (int) (camera.offsetX/Config.TILE_WIDTH); i < camera.offsetX/Config.TILE_WIDTH+26; i++) {
 				for (int j = (int) camera.offsetY/Config.TILE_WIDTH; j < camera.offsetY/Config.TILE_WIDTH+15; j++) { 
-					if (lowerLayer[i][height-1-j] > 0){
+					if (height-1-j > 0 && lowerLayer[i][height-1-j] > 0){
 						batch.draw(tiles[lowerLayer[i][height-1-j]], i*tileWidth, j*tileWidth);
 					}
 				}
@@ -125,7 +125,7 @@ public class Map {
 
 			for (int i = 0; i < width; i++) {
 				for (int j = 0; j < height; j++) { 
-					if (upperLayer[i][height-1-j] > 0){
+					if (height-1-j > 0 && upperLayer[i][height-1-j] > 0){
 						batch.draw(tiles[upperLayer[i][height-1-j]], i*tileWidth, j*tileWidth);
 					}
 				}

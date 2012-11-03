@@ -91,6 +91,7 @@ public class Item {
 			this.name = "Leather Boots";
 			this.description = "JUMP+5";
 			this.jump = 5;
+			this.speed = 0;
 			break;
 			
 		default:
