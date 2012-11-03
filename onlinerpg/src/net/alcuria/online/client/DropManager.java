@@ -13,8 +13,9 @@ public class DropManager {
 
 	public Sound drop;
 	public Sound pickup;
+	public NotificationList notifications;
 
-	public DropManager(AssetManager assets){
+	public DropManager(AssetManager assets, NotificationList notifications){
 
 		dropList = new Drop[MAX_DROPS];
 		for (int i = 0; i < MAX_DROPS; i++){
@@ -23,6 +24,7 @@ public class DropManager {
 
 		pickup = assets.get("sounds/pickup.wav", Sound.class);
 		drop = assets.get("sounds/drop.wav", Sound.class);
+		this.notifications = notifications;
 
 	}
 
@@ -87,7 +89,7 @@ public class DropManager {
 	}
 
 	public void collect(int i, ItemManager inventory) {
-		dropList[i].collect(inventory);
+		dropList[i].collect(inventory, notifications);
 		pickup.play(Config.sfxVol);
 	}
 

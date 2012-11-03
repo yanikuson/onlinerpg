@@ -13,6 +13,7 @@ import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Map;
 import net.alcuria.online.client.Monster;
 import net.alcuria.online.client.MonsterSpawner;
+import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.ui.HUD;
@@ -54,7 +55,7 @@ public class Field implements Screen {
 	public AssetManager assets;
 	public Rectangle viewport;
 	public MonsterSpawner spawner;
-
+	public NotificationList notifications;
 	private Music bgm;
 
 	float w;
@@ -95,6 +96,7 @@ public class Field implements Screen {
 			fg.render(batch, cameraManager);
 			damageList.render(batch);
 			
+			notifications.render(batch, cameraManager);
 			hud.render(batch);
 			msgBox.render(batch);
 			menu.render(batch);
@@ -109,16 +111,18 @@ public class Field implements Screen {
 
 			// call the input handler to poll the keyboard's state
 			inputs.update(player, map, cameraManager);
-
+			
 			// update for our message system
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
 			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.ATTACK]);
 			menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY);
+			notifications.update();
 
 			// we only want to call update on the actors if a messagebox/menu isn't open
 			if (!msgBox.visible && !menu.active){			
 
 				// move all our actors: monsters, npcs, player
+				drops.update(map);
 				collisions.update(map, damageList, explosions, slices, items);
 				//npc.command(map, player);
 				//npc.update(map);
@@ -130,7 +134,7 @@ public class Field implements Screen {
 				slices.update();
 				explosions.update();
 				spawner.update();
-				drops.update(map);
+				
 				
 				
 
@@ -165,10 +169,14 @@ public class Field implements Screen {
 		// TODO: do this properly with a loading screen
 
 		batch = new SpriteBatch();
+		
+		// create notification handler
+		notifications = new NotificationList();
+		notifications.add("Welcome to Heroes of Umbra!");
 
 		damageList = new DamageList();
 		
-		player = new Player("sprites/player.png", 160, 120, 14, 22, assets);
+		player = new Player("sprites/player.png", 160, 120, 14, 22, notifications, assets);
 		player.playJump = true;
 		player.effects.assignDamageList(damageList);
 		//npc = new Monster("sprites/player.png", 14, 22, Config.MON_NPC, assets);
@@ -178,7 +186,7 @@ public class Field implements Screen {
 		bg = new Background("backgrounds/forest.png", assets);
 		fg = new Foreground("backgrounds/fog.png", assets);
 		//packetHandler = new PacketHandler();
-
+		
 		// create our item manager
 		items = new ItemManager();
 		items.add(Item.ID_POTION);
@@ -188,7 +196,7 @@ public class Field implements Screen {
 		items.add(Item.ID_WOOD_HELM);
 		items.add(Item.ID_WOOD_ARMOR);
 		items.add(Item.ID_LEATHER_BOOTS);
-		drops = new DropManager(assets);
+		drops = new DropManager(assets, notifications);
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
@@ -213,7 +221,7 @@ public class Field implements Screen {
 
 		// create our hud
 		hud = new HUD(player);
-
+		
 		// play awesome bgm
 		bgm = assets.get("music/forest.ogg", Music.class);
 		bgm.setLooping(true);

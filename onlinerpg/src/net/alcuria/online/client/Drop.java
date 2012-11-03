@@ -8,6 +8,7 @@ public class Drop extends Actor {
 	public static final int DROP_MONEY = 1;
 
 	private Particle dropParticle;
+	private Item droppedItem;
 	
 	public int particleID = 0;			// which row in the particle should we draw? 
 	public int value = 0;				// value: for gold this is the amount, for items it is the item's ID!
@@ -100,7 +101,7 @@ public class Drop extends Actor {
 		dropParticle.playAnimation = true;
 	}
 
-	public void collect(ItemManager inventory) {
+	public void collect(ItemManager inventory, NotificationList notifications) {
 		visible = false;
 		dropParticle.playAnimation = false;
 		bounds.x = -30;
@@ -108,8 +109,11 @@ public class Drop extends Actor {
 		
 		if (particleID == 0){
 			inventory.money += value;
+			if (Config.notifMoney) notifications.add("Found " + value + " Flips!");
 		} else {
-			inventory.addItem(new Item(value));
+			droppedItem = new Item(value);
+			inventory.addItem(droppedItem);
+			if (Config.notifItem) notifications.add(droppedItem.name + " Acquired!");
 		}
 
 	}

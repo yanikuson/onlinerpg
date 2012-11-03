@@ -16,9 +16,9 @@ public class Player extends Actor {
 	Particle swing;
 	
 	public Sound swingSound;
-	
 	public Sound levelupSound;
 	private Particle levelup;
+	public NotificationList notifications;
 	private boolean levelSoundPlayed = false;
 	
 	public int statPts = 0;
@@ -27,7 +27,7 @@ public class Player extends Actor {
 	
 	public Item weapon, helmet, armor, accessory;
 	
-	public Player(String filename, int x, int y, int width, int height, AssetManager assets) {
+	public Player(String filename, int x, int y, int width, int height, NotificationList notifications, AssetManager assets) {
 		super(filename, x, y, width, height, assets);
 		
 		this.maxHP = Config.getMaxHP(lvl, stamina);
@@ -38,6 +38,7 @@ public class Player extends Actor {
 		this.knockback = 100;
 		
 		swingBounds = new Rectangle(0,0,0,0);
+		this.notifications = notifications;
 		
 		// TODO: really add these to an animations hash or something
 		swing = new Particle("sprites/swing.png", x, y, 84, 84, 7, 3, false, assets);
@@ -207,9 +208,11 @@ public class Player extends Actor {
 
 	public void giveEXP(int expVal) {
 		do {
+			if (Config.notifExp) notifications.add("Earned " + expVal + " EXP.");
 			curEXP += expVal;
 			if (curEXP >= neededEXP){
 				lvl++;
+				if (Config.notifLevel) notifications.add("Congratulations! You've reached level " + lvl);
 				statPts += 2;
 				
 				// set new max HP

@@ -25,6 +25,12 @@ public class Config {
 	// int for damage calculating
 	private static int damage = 0;
 	
+	// show notifications for?
+	public static boolean notifExp = true;
+	public static boolean notifItem = true;
+	public static boolean notifMoney = true;
+	public static boolean notifLevel = true;
+	
 	// all formulae are here so they can be changed with ease without screwing with several references scattered about
 	public static int getNextLvl(int lvl){
 		return (int) (10 * (Math.pow(1.2, lvl)));

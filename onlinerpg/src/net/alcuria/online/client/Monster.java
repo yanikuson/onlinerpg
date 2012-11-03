@@ -206,7 +206,7 @@ public class Monster extends Actor {
 
 				// activate the drop
 				dropRoll = (float) Math.random();
-				if (dropRoll < 0.5f){
+				if (dropRoll < 1.6f){
 					drops.add(this, null);
 				}
 				if (dropRoll < 0.1f){
