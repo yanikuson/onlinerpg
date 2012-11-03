@@ -5,6 +5,7 @@ import net.alcuria.online.client.Config;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -38,7 +39,7 @@ public class Title implements Screen {
 		
 		batch.end();
 
-		if(Gdx.input.justTouched()){
+		if(Gdx.input.justTouched() || Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isKeyPressed(Keys.ENTER)){
 			myGame.setScreen(new Field(myGame, assets));
 			dispose();
 		}

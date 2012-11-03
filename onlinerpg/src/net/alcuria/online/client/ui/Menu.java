@@ -729,7 +729,7 @@ public class Menu {
 
 		// gold held
 		addWindow(233, Config.HEIGHT - 167, 90, 18);
-		windows[curWindow-1].addText(237, Config.HEIGHT - 152, 90, 11, "Gold: " + inventory.money);
+		windows[curWindow-1].addText(237, Config.HEIGHT - 152, 90, 11, "Flips: " + inventory.money);
 
 		// points remaining
 		addWindow(85, Config.HEIGHT - 167, 50, 30);
