@@ -8,8 +8,8 @@ public class MonsterSpawner {
 
 	public static final int MAX_MONSTERS = 40;
 	public static final int MAX_SPAWN_PTS = 20;
-	public static final int SPAWN_TIMER = 1;
-	public static int INITIAL_SPAWN_NUM = 5;
+	public static final int SPAWN_TIMER = 8;
+	public static int INITIAL_SPAWN_NUM = 8;
 
 	public int initialSpawnCtr=0;		// a counter to spawn INITIAL_SPAWN_NUM monsters on the map immediately
 	public boolean initialSpawn=false;
@@ -78,7 +78,6 @@ public class MonsterSpawner {
 	
 	// spawns a set number of monsters on map load
 	public void doInitialSpawn(){
-		System.out.println("doing initial spawn");
 		initialSpawn = true;
 		for (int i = 0; i < INITIAL_SPAWN_NUM; i++){
 			update();
