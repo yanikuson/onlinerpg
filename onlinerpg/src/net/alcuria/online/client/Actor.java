@@ -9,8 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Actor {
 
-	// TODO: tile width (16) is hardcoded in a lot of places. I should probably keep that to the Map class...
-
 	final float GRAVITY = 0.3f;
 	final float GROUND_ACCEL = 30f;
 	final float GROUND_DECEL = 0.60f;
@@ -130,6 +128,7 @@ public class Actor {
 		}
 
 		// ############################ STEP X #################################
+
 		bounds.x = bounds.x + xVel;
 		setAllSensors(bounds.x, bounds.y);
 
@@ -149,9 +148,9 @@ public class Actor {
 				xVel = Math.max(xVel, 0-walkSpeed/50);
 			} else if (animation.stabPose){
 				if (facingLeft){
-					xVel = xVel + -1 * STAB_SPEED;
+					xVel = -1 * STAB_SPEED;
 				} else {
-					xVel = xVel + STAB_SPEED;
+					xVel = STAB_SPEED;
 				}
 			}
 
@@ -330,7 +329,7 @@ public class Actor {
 
 	public float getHigherSensor(Map map) {
 		// set the height to the height value discovered, plus the number of tiles*16
-		return Math.max(((int) ((sensorY[0]-1)/16))*16 + map.getSubTileAtPoint(sensorX[0], sensorY[0], yVel), ((int) ((sensorY[1]-1)/16))*16 + map.getSubTileAtPoint(sensorX[1], sensorY[1], yVel) );
+		return Math.max(((int) ((sensorY[0]-1)/Config.TILE_WIDTH))*Config.TILE_WIDTH + map.getSubTileAtPoint(sensorX[0], sensorY[0], yVel), ((int) ((sensorY[1]-1)/Config.TILE_WIDTH))*Config.TILE_WIDTH + map.getSubTileAtPoint(sensorX[1], sensorY[1], yVel) );
 
 	}
 
