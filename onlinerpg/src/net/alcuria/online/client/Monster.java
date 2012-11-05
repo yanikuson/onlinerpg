@@ -133,13 +133,12 @@ public class Monster extends Actor {
 					// randomly choose a new command
 					rndCommand = (int) (Math.random()*4);
 					moveCommand[rndCommand] = true;			
-
+					commandFrequency *= 1 + Math.random()/4;
 					break;
 				}
 
 				// reset stuff
 				commandTimer = 0;
-				commandFrequency *= 1 + Math.random()/4;
 
 			}
 
