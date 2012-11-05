@@ -41,6 +41,7 @@ public class Map {
 	Texture tileset;
 	TextureRegion[] tiles;
 	public MonsterSpawner spawner;
+	public TeleportManager teleports;
 	AssetManager assets;
 
 	int[][] lowerLayer;
@@ -48,7 +49,7 @@ public class Map {
 	int[][] collisionLayer;
 
 	public Map(String tilesetLocation, String mapfile, AssetManager assets){
-		
+
 		this.assets = assets;
 		teleport(tilesetLocation, mapfile);
 
@@ -64,6 +65,7 @@ public class Map {
 					}
 				}
 			}
+			spawner.render(batch);
 		} else {
 
 			for (int i = (int) (camera.offsetX/Config.TILE_WIDTH); i < camera.offsetX/Config.TILE_WIDTH+26; i++) {
@@ -73,7 +75,7 @@ public class Map {
 					}
 				}
 			}
-			spawner.render(batch);
+			
 		}
 	}
 
@@ -143,7 +145,7 @@ public class Map {
 		tileset = new Texture(Gdx.files.internal(tilesetLocation));
 
 		// read in the map file into an array of strings
-		FileHandle handle = Gdx.files.internal(mapfile);
+		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
 		String fileContent = handle.readString();
 		String[] lines = fileContent.split("\\r?\\n");
 
@@ -204,18 +206,25 @@ public class Map {
 		
 		// CREATE the monster spawner
 		// set spawn points
-		spawner = new MonsterSpawner("maps/forest1.spawn");
+		System.out.println(mapfile);
+		this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn");
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
+			System.out.println("adding m");
 			if (Math.random() > 0.3){
-				spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
+				this.spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
 			} else {
-				spawner.addMonster(new Monster("sprites/eye.png", 14, 18, Config.MON_EYE, assets));
+				this.spawner.addMonster(new Monster("sprites/eye.png", 14, 18, Config.MON_EYE, assets));
 			}
 		}
-		spawner.doInitialSpawn();
+		
+		this.spawner.doInitialSpawn();
+		
+		// CREATE Teleporter!
+		this.teleports = new TeleportManager(mapfile);
 	}
 
-	public void update() {
+	public void update(Player p, InputHandler input) {
+		teleports.update(p, this, input);
 		spawner.update();
 		
 	}

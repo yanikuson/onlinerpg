@@ -4,9 +4,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TextElement {
-	@SuppressWarnings("unused")
+	
 	private int x, y, width, height, iconID;
-	@SuppressWarnings("unused")
 	private int offsetX, offsetY;
 	public String contents;
 	

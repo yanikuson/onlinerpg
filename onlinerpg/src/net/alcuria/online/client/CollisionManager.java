@@ -14,9 +14,15 @@ public class CollisionManager {
 
 	public void update(Map map, DamageList damageList, ParticleList explosions, ParticleList slices, ItemManager inventory){
 
+		// update our refrential list of enemies. WE NEED TO DO THIS WHEN WE SWAP MAPS
+		if (enemies[0] == null){
+			this.enemies = map.spawner.monsterList;
+		}
+		
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
-
+			
 			if (enemies != null && enemies[i] != null) {
+				
 				enemies[i].command(map, player);
 				enemies[i].update(map);
 

@@ -131,7 +131,7 @@ public class Field implements Screen {
 				damageList.update();
 				slices.update();
 				explosions.update();
-				map.update();
+				map.update(player, inputs);
 				
 				
 				
@@ -164,7 +164,6 @@ public class Field implements Screen {
 		aspectRatio = w/h;
 
 		cameraManager = new CameraManager();		
-		// TODO: do this properly with a loading screen
 
 		batch = new SpriteBatch();
 		
@@ -195,14 +194,11 @@ public class Field implements Screen {
 		items.add(Item.ID_POTION);
 		items.add(Item.ID_SPEED_PILL);
 		items.add(Item.ID_WOOD_SWORD);
-		items.add(Item.ID_WOOD_HELM);
-		items.add(Item.ID_WOOD_ARMOR);
-		items.add(Item.ID_LEATHER_BOOTS);
 		drops = new DropManager(assets, notifications);
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
-		map = new Map("tiles/forest.png", "maps/forest1.cmf", assets);
+		map = new Map("tiles/forest.png", "forest1", assets);
 		
 		// create the manager for collisions
 		collisions = new CollisionManager(player, map.spawner.monsterList, drops);

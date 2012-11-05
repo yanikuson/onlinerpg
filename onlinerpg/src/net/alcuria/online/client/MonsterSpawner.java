@@ -8,7 +8,7 @@ public class MonsterSpawner {
 
 	public static final int MAX_MONSTERS = 40;
 	public static final int MAX_SPAWN_PTS = 20;
-	public static final int SPAWN_TIMER = 10;
+	public static final int SPAWN_TIMER = 1;
 	public static int INITIAL_SPAWN_NUM = 5;
 
 	public int initialSpawnCtr=0;		// a counter to spawn INITIAL_SPAWN_NUM monsters on the map immediately
@@ -28,6 +28,7 @@ public class MonsterSpawner {
 
 	public MonsterSpawner(String spawnfile){
 
+		activeMonsters = 0;
 		monsterList = new Monster[MAX_MONSTERS];
 		spawnPointX = new int[MAX_SPAWN_PTS];
 		spawnPointY = new int[MAX_SPAWN_PTS];
@@ -49,7 +50,7 @@ public class MonsterSpawner {
 
 		spawnCounter += Gdx.graphics.getDeltaTime();
 		if (spawnCounter > SPAWN_TIMER || initialSpawn){
-
+			
 			// look for the next available (inactive) monster in the monster list	
 			monsterListIndex = 0;
 			while (monsterList[monsterListIndex].visible){
@@ -57,6 +58,7 @@ public class MonsterSpawner {
 				// if we iterate through the whole array, the map is full
 				if (monsterListIndex >= activeMonsters){
 					spawnCounter = 0;
+					System.out.println("map is full");
 					return;
 				}
 			}
@@ -76,6 +78,7 @@ public class MonsterSpawner {
 	
 	// spawns a set number of monsters on map load
 	public void doInitialSpawn(){
+		System.out.println("doing initial spawn");
 		initialSpawn = true;
 		for (int i = 0; i < INITIAL_SPAWN_NUM; i++){
 			update();
@@ -108,6 +111,7 @@ public class MonsterSpawner {
 
 	public void addMonster(Monster m){
 		monsterList[activeMonsters] = m;
+		m.visible = false;
 		activeMonsters++;
 
 	}
@@ -122,7 +126,7 @@ public class MonsterSpawner {
 	public void removeAllMonsters(){
 
 		for (int i=0; i<MAX_MONSTERS; i++){
-			monsterList[i].dispose();
+			//monsterList[i].dispose();
 			monsterList[i] = null;
 		}
 		activeMonsters = 0;
