@@ -1,0 +1,65 @@
+package net.alcuria.online.client;
+
+public class TeleportNode {
+
+	public static final int EDGE_NORTH = 0;
+	public static final int EDGE_SOUTH = 1;
+	public static final int EDGE_WEST = 2;
+	public static final int EDGE_EAST = 3;
+
+	String destination;					// name of the destination map (without .cmf)
+	int srcX, srcY, destX, destY;		// source and destination teleport tiles
+	int edge;
+
+	// constructor for cardinal teleport nodes
+	public TeleportNode(int edge, String destination, int destX, int destY){
+		this.srcX = -1;
+		this.srcY = -1;
+		this.edge = edge;
+		this.destination = destination;
+		this.destX = destX;
+		this.destY = destY;
+	}
+
+	// constructor for absolute teleport nodes
+	public TeleportNode(int srcX, int srcY, String destination, int destX, int destY){
+		this.edge = -1;
+		this.srcX = srcX;
+		this.srcY = srcY;
+		this.destination = destination;
+		this.destX = destX;
+		this.destY = destY;
+	}
+
+	public void update(Player p, Map m, InputHandler input){
+
+		// check if it's a cardinal-activated or key-activated teleport
+		switch (edge) {
+		case EDGE_NORTH:
+			break;
+			
+		case EDGE_SOUTH:
+			break;
+			
+		case EDGE_WEST:
+			break;
+			
+		case EDGE_EAST:
+			if ((int)p.bounds.x/Config.TILE_WIDTH > m.width){
+				m.teleport("tiles/forest.png", "maps/" + destination + ".cmf");
+			}
+			break;
+			
+		default:
+			// key-activated -- check if player is overlapping it and pressing up
+			if (((int)p.bounds.x + 10)/Config.TILE_WIDTH == srcX && ((int)p.bounds.y + 4)/Config.TILE_WIDTH == srcY && input.typed[InputHandler.UP]){
+				input.typed[InputHandler.UP] = false;
+
+			}
+			break;
+		}
+
+
+	}
+
+}

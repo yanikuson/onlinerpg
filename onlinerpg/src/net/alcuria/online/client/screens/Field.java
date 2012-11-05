@@ -54,7 +54,6 @@ public class Field implements Screen {
 	public ItemManager items;
 	public AssetManager assets;
 	public Rectangle viewport;
-	public MonsterSpawner spawner;
 	public NotificationList notifications;
 	private Music bgm;
 
@@ -84,7 +83,6 @@ public class Field implements Screen {
 					
 			bg.render(batch, cameraManager);
 			map.render(batch, true, cameraManager);
-			spawner.render(batch);
 			//npc.render(batch);
 			player.render(batch);
 			map.render(batch, false, cameraManager);
@@ -133,7 +131,7 @@ public class Field implements Screen {
 				damageList.update();
 				slices.update();
 				explosions.update();
-				spawner.update();
+				map.update();
 				
 				
 				
@@ -204,21 +202,10 @@ public class Field implements Screen {
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
-		map = new Map("tiles/forest.png");
-
-		// set spawn points
-		spawner = new MonsterSpawner("maps/forest.spawn");
-		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
-			if (Math.random() > 0.3){
-				spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
-			} else {
-				spawner.addMonster(new Monster("sprites/eye.png", 14, 18, Config.MON_EYE, assets));
-			}
-		}
-		spawner.doInitialSpawn();
+		map = new Map("tiles/forest.png", "maps/forest1.cmf", assets);
 		
 		// create the manager for collisions
-		collisions = new CollisionManager(player, spawner.monsterList, drops);
+		collisions = new CollisionManager(player, map.spawner.monsterList, drops);
 
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);

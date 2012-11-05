@@ -53,10 +53,12 @@ public class CameraManager {
 		if (camX - camW/2 < 0){
 			camX -= camX - camW/2;
 		} else if (camX + camW/2 > mapWidth){
-			camX -= camX - camW/2;
+			camX = mapWidth - camW/2;
 		}
 		if (camY - camH/2 < 0){
 			camY -= camY - camH/2;
+		} else if (camY + camH/2 > mapHeight){
+			camY = mapHeight - camW/2;
 		}
 		
 		// update our screenX and screenY

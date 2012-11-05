@@ -1,6 +1,7 @@
 package net.alcuria.online.client;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -39,75 +40,17 @@ public class Map {
 
 	Texture tileset;
 	TextureRegion[] tiles;
+	public MonsterSpawner spawner;
+	AssetManager assets;
 
 	int[][] lowerLayer;
 	int[][] upperLayer;
 	int[][] collisionLayer;
 
-	public Map(String location){
-
-		// load the map tileset
-		tileset = new Texture(Gdx.files.internal(location));
-
-		// read in the map file into an array of strings
-		FileHandle handle = Gdx.files.internal("maps/forest.cmf");
-		String fileContent = handle.readString();
-		String[] lines = fileContent.split("\\r?\\n");
-
-		// Line 1: Tile Sheet Width (in tiles)
-		sheetWidth = Integer.parseInt(lines[0]);
-
-		// Line 2: Tile Width (in px)
-		tileWidth = Integer.parseInt(lines[1]);
-
-		// Line 3: Width (in tiles)
-		width = Integer.parseInt(lines[2]);
-
-		// Line 4: Height (in tiles)
-		height = Integer.parseInt(lines[3]);
-
-		// Line 5: Lower Data
-		mapIndex = 0;
-		lowerLayer = new int[width][height];
-		String[] lineData = lines[4].split("\\s");
-		for(int j = 0; j < height; j++){
-			for(int k = 0; k < width; k++){
-				lowerLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
-				mapIndex++;
-			}
-		}
-
-		// Line 6: Upper Data
-		mapIndex = 0;
-		upperLayer = new int[width][height];
-		lineData = lines[5].split("\\s");
-		for(int j = 0; j < height; j++){
-			for(int k = 0; k < width; k++){
-				upperLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
-				mapIndex++;
-			}
-		}
-
-		// Line 7: Collision Data
-		mapIndex = 0;
-		collisionLayer = new int[width][height];
-		lineData = lines[6].split("\\s");
-		for(int j = 0; j < height; j++){
-			for(int k = 0; k < width; k++){
-				collisionLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
-				mapIndex++;
-			}
-		}
-
-		// Now that the map data is created, split up the tileset into TextureRegions
-		// initialize the texture regions of the tileset, first into a 2D spritesheet
-		tiles = new TextureRegion[sheetWidth * sheetWidth];
-		int index = 0;
-		for (int i = 0; i < sheetWidth; i++){
-			for (int j = 0; j < sheetWidth; j++){
-				tiles[index++] = new TextureRegion(tileset, j*tileWidth, i*tileWidth, tileWidth, tileWidth);
-			}
-		}
+	public Map(String tilesetLocation, String mapfile, AssetManager assets){
+		
+		this.assets = assets;
+		teleport(tilesetLocation, mapfile);
 
 	}
 
@@ -116,20 +59,21 @@ public class Map {
 		if (below){
 			for (int i = (int) (camera.offsetX/Config.TILE_WIDTH); i < camera.offsetX/Config.TILE_WIDTH+26; i++) {
 				for (int j = (int) camera.offsetY/Config.TILE_WIDTH; j < camera.offsetY/Config.TILE_WIDTH+15; j++) { 
-					if (height-1-j > 0 && lowerLayer[i][height-1-j] > 0){
+					if (height-1-j > 0 && i < width && lowerLayer[i][height-1-j] > 0){
 						batch.draw(tiles[lowerLayer[i][height-1-j]], i*tileWidth, j*tileWidth);
 					}
 				}
 			}
 		} else {
 
-			for (int i = 0; i < width; i++) {
-				for (int j = 0; j < height; j++) { 
-					if (height-1-j > 0 && upperLayer[i][height-1-j] > 0){
+			for (int i = (int) (camera.offsetX/Config.TILE_WIDTH); i < camera.offsetX/Config.TILE_WIDTH+26; i++) {
+				for (int j = (int) camera.offsetY/Config.TILE_WIDTH; j < camera.offsetY/Config.TILE_WIDTH+15; j++) { 
+					if (height-1-j > 0 && i < width && upperLayer[i][height-1-j] > 0){
 						batch.draw(tiles[upperLayer[i][height-1-j]], i*tileWidth, j*tileWidth);
 					}
 				}
 			}
+			spawner.render(batch);
 		}
 	}
 
@@ -194,6 +138,86 @@ public class Map {
 		return COLL_EMPTY;
 	}
 
+	public void teleport(String tilesetLocation, String mapfile){
+		// load the map tileset
+		tileset = new Texture(Gdx.files.internal(tilesetLocation));
 
+		// read in the map file into an array of strings
+		FileHandle handle = Gdx.files.internal(mapfile);
+		String fileContent = handle.readString();
+		String[] lines = fileContent.split("\\r?\\n");
+
+		// Line 1: Tile Sheet Width (in tiles)
+		sheetWidth = Integer.parseInt(lines[0]);
+
+		// Line 2: Tile Width (in px)
+		tileWidth = Integer.parseInt(lines[1]);
+
+		// Line 3: Width (in tiles)
+		width = Integer.parseInt(lines[2]);
+
+		// Line 4: Height (in tiles)
+		height = Integer.parseInt(lines[3]);
+
+		// Line 5: Lower Data
+		mapIndex = 0;
+		lowerLayer = new int[width][height];
+		String[] lineData = lines[4].split("\\s");
+		for(int j = 0; j < height; j++){
+			for(int k = 0; k < width; k++){
+				lowerLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
+				mapIndex++;
+			}
+		}
+
+		// Line 6: Upper Data
+		mapIndex = 0;
+		upperLayer = new int[width][height];
+		lineData = lines[5].split("\\s");
+		for(int j = 0; j < height; j++){
+			for(int k = 0; k < width; k++){
+				upperLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
+				mapIndex++;
+			}
+		}
+
+		// Line 7: Collision Data
+		mapIndex = 0;
+		collisionLayer = new int[width][height];
+		lineData = lines[6].split("\\s");
+		for(int j = 0; j < height; j++){
+			for(int k = 0; k < width; k++){
+				collisionLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
+				mapIndex++;
+			}
+		}
+
+		// Now that the map data is created, split up the tileset into TextureRegions
+		// initialize the texture regions of the tileset, first into a 2D spritesheet
+		tiles = new TextureRegion[sheetWidth * sheetWidth];
+		int index = 0;
+		for (int i = 0; i < sheetWidth; i++){
+			for (int j = 0; j < sheetWidth; j++){
+				tiles[index++] = new TextureRegion(tileset, j*tileWidth, i*tileWidth, tileWidth, tileWidth);
+			}
+		}
+		
+		// CREATE the monster spawner
+		// set spawn points
+		spawner = new MonsterSpawner("maps/forest1.spawn");
+		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
+			if (Math.random() > 0.3){
+				spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
+			} else {
+				spawner.addMonster(new Monster("sprites/eye.png", 14, 18, Config.MON_EYE, assets));
+			}
+		}
+		spawner.doInitialSpawn();
+	}
+
+	public void update() {
+		spawner.update();
+		
+	}
 
 }
