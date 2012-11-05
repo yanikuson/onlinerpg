@@ -17,6 +17,7 @@ public class Actor {
 	final float AIR_ACCEL = 5f;
 	final float AIR_DECEL = 0.97f;
 	final float TERMINAL_YVEL = -10f;
+	final float STAB_SPEED = 0.6f;
 
 	final static int MOVE_LEFT = 1;
 	final static int MOVE_RIGHT = 2;
@@ -43,7 +44,7 @@ public class Actor {
 	public float xVel;								// xVelocity of player
 	public float yVel;								// yVelocity of player
 	public boolean onGround = false;				// is our player touching the ground?
-	public boolean renderSensorPoints = false;		// do we render our pink sensor pixels?
+	public boolean renderSensorPoints = true;		// do we render our pink sensor pixels?
 	public boolean facingLeft = false;				// is our player facing left?
 	public boolean moving = false;					// is the player moving left or right?
 	public int celWidth = 14;						// width and 
@@ -52,7 +53,7 @@ public class Actor {
 	// character stats
 	public float jumpPower = 80f;					// player's jump strength
 	public float walkSpeed = 50f;					// players max walking speed
-	public float attackSpeed = 8f;					// player's attack speed (more is faster)
+	public float attackSpeed = 9f;					// player's attack speed (more is faster)
 	public int lvl = 1;
 	public int maxHP;
 	public int HP = 300;
@@ -136,7 +137,7 @@ public class Actor {
 		// Do LEFT movement handler
 		if (!sensorTouchesLeftSide(map)){
 
-			if(moveCommand[MOVE_LEFT] && !animation.attackPose){
+			if(moveCommand[MOVE_LEFT] && !animation.swingPose && !animation.stabPose){
 				moving = true;
 
 				if (onGround){
@@ -146,6 +147,12 @@ public class Actor {
 					xVel -= AIR_ACCEL * Gdx.graphics.getDeltaTime();
 				}
 				xVel = Math.max(xVel, 0-walkSpeed/50);
+			} else if (animation.stabPose){
+				if (facingLeft){
+					xVel = xVel + -1 * STAB_SPEED;
+				} else {
+					xVel = xVel + STAB_SPEED;
+				}
 			}
 
 		} else {
@@ -164,7 +171,7 @@ public class Actor {
 		// Do RIGHT movement handler
 		if (!sensorTouchesRightSide(map)){
 
-			if(moveCommand[MOVE_RIGHT] && !animation.attackPose){
+			if(moveCommand[MOVE_RIGHT] && !animation.swingPose && !animation.stabPose){
 				moving = true;
 
 				if (onGround) {
@@ -175,6 +182,12 @@ public class Actor {
 
 				}
 				xVel = Math.min(xVel, walkSpeed/50);
+			} else if (animation.stabPose){
+				if (facingLeft){
+					xVel = -1 * STAB_SPEED;
+				} else {
+					xVel = STAB_SPEED;
+				}
 			}
 
 		} else {
@@ -191,11 +204,11 @@ public class Actor {
 		}
 
 		// update x velocity due to friction
-		if (animation.attackPose || (!moveCommand[MOVE_LEFT] && !moveCommand[MOVE_RIGHT])){
+		if (animation.swingPose || (!moveCommand[MOVE_LEFT] && !moveCommand[MOVE_RIGHT])){
 			moving = false;
 			if (onGround){
 				xVel *= GROUND_DECEL;
-			} else if (!animation.attackPose){
+			} else if (!animation.swingPose){
 				xVel *= AIR_DECEL;
 			}
 		}
@@ -247,7 +260,7 @@ public class Actor {
 		}
 
 		// check for a JUMP
-		if (onGround && moveCommand[MOVE_JUMP] && !animation.attackPose){
+		if (onGround && moveCommand[MOVE_JUMP] && !animation.swingPose && !animation.stabPose){
 			moveCommand[MOVE_JUMP] = false;
 			onGround = false;
 			yVel = jumpPower/17;
@@ -260,9 +273,10 @@ public class Actor {
 		}
 
 		// check for an ATTACK
-		if (moveCommand[MOVE_ATTACK] && !animation.attackPose){
+		if (moveCommand[MOVE_ATTACK] && !animation.swingPose && !animation.stabPose){
 			moveCommand[MOVE_ATTACK] = false;
-			animation.startAttack(facingLeft);
+			//animation.startAttack(facingLeft);
+			
 			moving = false;
 		}
 

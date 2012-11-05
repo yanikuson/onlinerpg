@@ -79,7 +79,7 @@ public class Monster extends Actor {
 
 		}
 
-		this.invincibilityPeriod = 0.5f;
+		this.invincibilityPeriod = 0.35f;
 		this.type = type;
 		this.HP = maxHP;
 	}
@@ -183,17 +183,29 @@ public class Monster extends Actor {
 	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList slices, DropManager drops){
 		if (hurtTimer >= invincibilityPeriod && timeSinceSpawn > 0.5){
 
-			flash(1, 0, 0, 1, 5);
-			slices.start(bounds.x - bounds.width/2, bounds.y - bounds.height, !player.facingLeft);
-			damageList.start(damage, bounds.x, bounds.y, player.facingLeft, Damage.TYPE_DAMAGE);
-			hurtTimer = 0;
-			hurtEnemy.play();
+			// calculate KB
 			if (player.bounds.x > bounds.x){
 				xVel = player.knockback/50 * -1;
 			} else {
 				xVel = player.knockback/50;
 			}
+			// boost kb for stab
+			if (player.animation.stabPose){
+				xVel *= 2;
+				damage *= 1.3;
+			} 			
 			yVel = player.knockback/50;
+			
+			// do all animations
+			flash(1, 0, 0, 1, 5);
+			slices.start(bounds.x - bounds.width/2, bounds.y - bounds.height, !player.facingLeft);
+			damageList.start(damage, bounds.x, bounds.y, player.facingLeft, Damage.TYPE_DAMAGE);
+			hurtTimer = 0;
+			hurtEnemy.play();
+			
+			
+
+			
 
 			HP -= damage;
 			if (HP <= 0){

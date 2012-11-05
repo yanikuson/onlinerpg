@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Player extends Actor {
 	// a counter to calculate how long the player is invincible
 	public float swingTimer = 0;						// time since last swing
-	public float swingPeriod = 0.6f;						// how long the player must wait to swing again
+	public float swingPeriod = 0.35f;						// how long the player must wait to swing again
 
 	public boolean renderToggler = false;				// a toggler, to render the player invisible every other frame when damaged
 	public Rectangle swingBounds;
@@ -84,15 +84,21 @@ public class Player extends Actor {
 		}
 
 		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod){
-			swingTimer = 0;
+
 			moveCommand[MOVE_ATTACK] = true;
 			inputs.typed[InputHandler.ATTACK] = false;
 			startSwing();
+			if (this.animation.stabPose){
+				swingTimer = -0.5f;
+			} else {
+				swingTimer = 0;
+			}
+			
+			
 		} else {
 			moveCommand[MOVE_ATTACK] = false;
 			swingTimer += Gdx.graphics.getDeltaTime();
 		}
-
 
 		// update the swing bounds (collision rectangle) while the animation is being played.
 		if (swing.playAnimation){
@@ -107,7 +113,12 @@ public class Player extends Actor {
 			swingBounds.y = bounds.y;
 		}
 		// check to stop pushing out the collision swing rectangle thing
-		if (swingTimer > 0.2f) {
+		if (this.animation.stabPose && swingTimer > -0.3f){
+			swing.row = 1;
+			swingBounds.x = - 100;
+			swingBounds.y = - 100;
+		} else if (swingTimer > 0.2f) {
+			swing.row = 0;
 			swingBounds.x = - 100;
 			swingBounds.y = - 100;
 		}
@@ -117,7 +128,8 @@ public class Player extends Actor {
 	}
 
 	public void startSwing(){
-		swing.start(bounds.x, bounds.y, facingLeft);
+		animation.startAttack(facingLeft);
+		
 		swingSound.play(Config.sfxVol);
 		if (facingLeft){
 			swingBounds.x = bounds.x + 20;
@@ -125,10 +137,17 @@ public class Player extends Actor {
 			swingBounds.x = bounds.x - 20;
 		}
 
-
 		swingBounds.y = bounds.y;
 		swingBounds.width = bounds.width;
-		swingBounds.height = bounds.height*2;
+		if (animation.stabPose) {
+			swingBounds.height = (float) (bounds.height*1.2);
+			swing.row = 1;
+		} else {
+			swingBounds.height = bounds.height*2;
+			swing.row = 0;
+		}
+		
+		swing.start(bounds.x, bounds.y, facingLeft);
 	}
 
 	public void render(SpriteBatch batch){

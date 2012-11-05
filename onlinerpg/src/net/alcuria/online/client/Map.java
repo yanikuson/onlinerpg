@@ -206,10 +206,8 @@ public class Map {
 		
 		// CREATE the monster spawner
 		// set spawn points
-		System.out.println(mapfile);
 		this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn");
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
-			System.out.println("adding m");
 			if (Math.random() > 0.3){
 				this.spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
 			} else {
