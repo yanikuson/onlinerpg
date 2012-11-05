@@ -22,6 +22,10 @@ public class Config {
 	public static final int MON_SLIME = 1;
 	public static final int MON_EYE = 2;
 	
+	// NPC identifiers -- see NPC.java
+	public static final int NPC_WELCOME = 0;
+	public static final int NPC_SHOP = 1;
+	
 	// int for damage calculating
 	private static int damage = 0;
 	
