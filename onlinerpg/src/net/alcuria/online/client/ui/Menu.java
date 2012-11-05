@@ -279,7 +279,18 @@ public class Menu {
 			if (selection[depth] == 0){
 				// if selection type = consumable, do the effect -- close menu
 				if (inventory.getItem(selection[1]).type == Item.TYPE_CONSUMABLE){
-					p.effects.add(StatusEffects.HEAL, 50);
+					switch (inventory.getItem(selection[1]).id) {
+					
+					// do the effect
+					case Item.ID_POTION:
+						p.effects.add(StatusEffects.HEAL, 50, 1);
+						break;
+					case Item.ID_SPEED_PILL:
+						p.effects.add(StatusEffects.SPEED, 20, 60);
+						break;
+					}
+					
+					// remove from inventory and close the menu
 					inventory.removeIndex(selection[1]);
 					hideMenu(input);
 				} else {
