@@ -197,13 +197,10 @@ public class Monster extends Actor {
 			
 			// do all animations
 			flash(1, 0, 0, 1, 5);
-			slices.start(bounds.x - bounds.width/2, bounds.y - bounds.height, !player.facingLeft);
+			slices.start(bounds.x - bounds.width + 4, bounds.y - bounds.height, !player.facingLeft);
 			damageList.start(damage, bounds.x, bounds.y, player.facingLeft, Damage.TYPE_DAMAGE);
 			hurtTimer = 0;
 			hurtEnemy.play();
-			
-			
-
 			
 
 			HP -= damage;

@@ -14,48 +14,54 @@ public class Player extends Actor {
 	public boolean renderToggler = false;				// a toggler, to render the player invisible every other frame when damaged
 	public Rectangle swingBounds;
 	Particle swing;
-	
+
 	public Sound swingSound;
 	public Sound levelupSound;
+	public Sound castSound;
 	private Particle levelup;
 	public NotificationList notifications;
+	public SkillManager skills;
 	private boolean levelSoundPlayed = false;
-	
+
 	public int statPts = 0;
-	
+
 	public float knockback;
-	
+
 	public Item weapon, helmet, armor, accessory;
-	
+
 	public Player(String filename, int x, int y, int width, int height, NotificationList notifications, AssetManager assets) {
 		super(filename, x, y, width, height, assets);
-		
+
 		this.maxHP = Config.getMaxHP(lvl, stamina);
 		this.HP = this.maxHP;
-		
+
 		this.walkSpeed = 100;
 		this.jumpPower = 100;
 		this.knockback = 100;
-		
+
 		swingBounds = new Rectangle(0,0,0,0);
 		this.notifications = notifications;
-		
+
 		// TODO: really add these to an animations hash or something
 		swing = new Particle("sprites/swing.png", x, y, 84, 84, 7, 3, false, assets);
 		swingSound = assets.get("sounds/swing.wav", Sound.class);
-		
+		castSound = assets.get("sounds/cast.wav", Sound.class);
+		animation.assignPlayer(this);
+
 		levelupSound = assets.get("sounds/levelup.wav", Sound.class);
 		levelup = new Particle("sprites/levelup.png", 32, 32, 32, 32, 27, 3, false, assets);
-		
+
 		// give our player some equipment
 		weapon = new Item(Item.ID_BLANK);
 		helmet = new Item(Item.ID_BLANK);
 		armor = new Item(Item.ID_BLANK);
 		accessory = new Item(Item.ID_BLANK);
-		
+
 		this.power = 5;
 		this.stamina = 5;
 		this.wisdom = 5;
+
+		skills = new SkillManager(assets, this);
 		
 		visible = true;
 
@@ -63,27 +69,34 @@ public class Player extends Actor {
 
 	// the player's command must override the default command method, because it needs to poll the inputhandler to do proper (read: not random) input
 	public void command(InputHandler inputs){
-		if (inputs.pressing[InputHandler.LEFT]){
-			moveCommand[MOVE_LEFT] = true;
+
+		if (!animation.castPose && !animation.stabPose && !animation.swingPose){
+			if (inputs.pressing[InputHandler.LEFT]){
+				moveCommand[MOVE_LEFT] = true;
+			} else {
+				moveCommand[MOVE_LEFT] = false;
+
+			}
+
+			if (inputs.pressing[InputHandler.RIGHT]){
+				moveCommand[MOVE_RIGHT] = true;
+			} else {
+				moveCommand[MOVE_RIGHT] = false;
+			}
+
+			if (inputs.typed[InputHandler.JUMP]){
+				moveCommand[MOVE_JUMP] = true;
+				inputs.typed[InputHandler.JUMP] = false;
+			} else {
+				moveCommand[MOVE_JUMP] = false;
+			}
 		} else {
 			moveCommand[MOVE_LEFT] = false;
-
-		}
-
-		if (inputs.pressing[InputHandler.RIGHT]){
-			moveCommand[MOVE_RIGHT] = true;
-		} else {
 			moveCommand[MOVE_RIGHT] = false;
-		}
-
-		if (inputs.typed[InputHandler.JUMP]){
-			moveCommand[MOVE_JUMP] = true;
-			inputs.typed[InputHandler.JUMP] = false;
-		} else {
 			moveCommand[MOVE_JUMP] = false;
 		}
 
-		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod){
+		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod && !animation.castPose){
 
 			moveCommand[MOVE_ATTACK] = true;
 			inputs.typed[InputHandler.ATTACK] = false;
@@ -92,12 +105,15 @@ public class Player extends Actor {
 				swingTimer = -0.5f;
 			} else {
 				swingTimer = 0;
-			}
-			
-			
+			}			
 		} else {
 			moveCommand[MOVE_ATTACK] = false;
 			swingTimer += Gdx.graphics.getDeltaTime();
+		}
+
+		if (inputs.typed[InputHandler.SKILL_1] && !animation.swingPose && !animation.stabPose && !animation.castPose && !skills.visible){
+			animation.castPose = true;
+			castSound.play(Config.sfxVol);
 		}
 
 		// update the swing bounds (collision rectangle) while the animation is being played.
@@ -125,11 +141,12 @@ public class Player extends Actor {
 
 		// update our level up animation guy
 		levelup.update(bounds.x - 8, bounds.y, true);
+		skills.update();
 	}
 
 	public void startSwing(){
 		animation.startAttack(facingLeft);
-		
+
 		swingSound.play(Config.sfxVol);
 		if (facingLeft){
 			swingBounds.x = bounds.x + 20;
@@ -146,7 +163,7 @@ public class Player extends Actor {
 			swingBounds.height = bounds.height*2;
 			swing.row = 0;
 		}
-		
+
 		swing.start(bounds.x, bounds.y, facingLeft);
 	}
 
@@ -170,25 +187,26 @@ public class Player extends Actor {
 				batch.draw(debugPoint, swingBounds.x + swingBounds.width, swingBounds.y + swingBounds.height);
 
 			}
-			
+
 			if (flash) flashPostcheck(batch);
 		}
 		swing.render(batch);
 
 		// do player-specific flash effect
 		if (renderToggler){
-			
+
 			if (hurtTimer >= invincibilityPeriod){
 				renderToggler = false;
-				
+
 			} 
-			
+
 			batch.flush();
 			batch.setColor(1, 1, 1, 1);
 		}
+		skills.render(batch);
 		effects.render(batch);
 		levelup.render(batch);
-		
+
 
 	}
 
@@ -206,10 +224,10 @@ public class Player extends Actor {
 				xVel = 2;
 			}
 			yVel = 2;
-			
+
 			HP -= damage;
 			if (HP <= 0){
-				
+
 				// TODO: game over handler?
 				kill.play(Config.sfxVol);
 				HP = maxHP;
@@ -233,15 +251,15 @@ public class Player extends Actor {
 				lvl++;
 				if (Config.notifLevel) notifications.add("Congratulations! You've reached level " + lvl + ".");
 				statPts += 2;
-				
+
 				// set new max HP
 				maxHP = Config.getMaxHP(lvl, stamina);
 				HP = maxHP;
-				
+
 				// update XP
 				curEXP -= neededEXP;
 				neededEXP = Config.getNextLvl(lvl);
-				
+
 				// to ensure we don't play the level up sound later twice
 				if (!levelSoundPlayed){
 					flash(1, 1, 0, 1, 4);
@@ -252,11 +270,11 @@ public class Player extends Actor {
 			}
 		} while (curEXP > neededEXP);
 		levelSoundPlayed = false;
-		
+
 	}
-	
+
 	public boolean allocateStatPoint(int selection){
-		
+
 		if (statPts > 0){
 			if (selection == 0){
 				power++;					

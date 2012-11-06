@@ -103,7 +103,7 @@ public class Loading implements Screen
 		assets.load("sounds/swing.wav", Sound.class);
 		assets.load("sounds/levelup.wav", Sound.class);
 		assets.load("sounds/shoot.wav", Sound.class);
-		
+		assets.load("sounds/cast.wav", Sound.class);
 		assets.load("sounds/cursor_move.wav", Sound.class);
 		assets.load("sounds/cursor_open.wav", Sound.class);
 		assets.load("sounds/cursor_cancel.wav", Sound.class);
@@ -117,7 +117,9 @@ public class Loading implements Screen
 		assets.load("music/forest.ogg", Music.class);
 		
 		// SPRITES
+		assets.load("sprites/burn.png", Texture.class);
 		assets.load("sprites/drops.png", Texture.class);
+		assets.load("sprites/fireball.png", Texture.class);
 		assets.load("sprites/eye.png", Texture.class);
 		assets.load("sprites/kill.png", Texture.class);
 		assets.load("sprites/levelup.png", Texture.class);

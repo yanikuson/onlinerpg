@@ -12,14 +12,17 @@ public class Animator {
 	int attackIndex = 0;
 	public int framesSinceAttack = 0;
 	boolean flipX;
-	boolean swingPose = false;
-	boolean stabPose = false;
+	public boolean swingPose = false;
+	public boolean stabPose = false;
 	boolean readyPose = false;
+	public boolean castPose = false;
 
+	float castTimer = 0;
 	float animationTimer = 0f;
 	float attackTimer = 0f;
 	float readyTimer = 0f;
 	float idleTimer = 0f;
+	float CAST_TIME = 0.5f;
 
 	Texture sheet;									// entire graphical sprite sheet
 	TextureRegion frame;							// cell within the sprite sheet (this gets drawn)
@@ -29,7 +32,11 @@ public class Animator {
 	TextureRegion falling;
 	TextureRegion[] attacking;
 	TextureRegion[] stabbing;
+	TextureRegion casting;
 	TextureRegion[] ready;
+	
+	Particle castParticle;
+	Player p;
 
 	public Animator(String filename, int celWidth, int celHeight, AssetManager assets){
 
@@ -60,6 +67,8 @@ public class Animator {
 		this.stabbing[1] = new TextureRegion(sheet, celWidth*2, celHeight*2, celWidth*2, celHeight);
 		this.stabbing[2] = new TextureRegion(sheet, celWidth*4, celHeight*2, celWidth*2, celHeight);
 
+		this.casting = new TextureRegion(sheet, 0, celHeight*3, celWidth*2, celHeight);
+
 		this.ready = new TextureRegion[2];
 		this.ready[0] = new TextureRegion(sheet, celWidth*5, 0, celWidth, celHeight);
 		this.ready[1] = new TextureRegion(sheet, celWidth*6, 0, celWidth, celHeight);
@@ -68,6 +77,10 @@ public class Animator {
 		width = frame.getRegionWidth();
 		height = frame.getRegionHeight();
 
+	}
+	
+	public void assignPlayer(Player p){
+		this.p = p;
 	}
 
 	public void render(SpriteBatch batch, float x, float y){
@@ -78,7 +91,7 @@ public class Animator {
 		} else {
 
 			// draw the frame flipped
-			if (swingPose || stabPose){
+			if (swingPose || stabPose || castPose){
 				batch.draw(frame, x+width, y, 0-width*2, height);
 			} else {
 				batch.draw(frame, x+width, y, 0-width, height);
@@ -92,27 +105,43 @@ public class Animator {
 		flipX = isFacingLeft;
 
 		if (!swingPose && !stabPose){
-			if (onGround){
-				if (moving){
-					framesSinceAttack = 100;
-					animationTimer += timestep;
-					frame = walking[(int) ((animationTimer*10 + 1) % walking.length)];
-				} else {
-					animationTimer = 0;
-					if (!readyPose){
-						idleTimer += timestep;
-						frame = idle[(int) ((idleTimer*3) % idle.length)];
-
-					} else {
-						readyTimer += timestep;
-						frame = ready[(int) ((readyTimer*4) % ready.length)];
-					}
+			if (castPose){
+				frame = casting;
+				// start cast particle
+				castTimer+= timestep;
+				if (castTimer > CAST_TIME){
+					castTimer = 0;
+					castPose = false;
+					
+					// do cast
+					p.skills.start(SkillManager.hotkey1);
+					
 				}
+				
 			} else {
-				idleTimer = 0;
-				animationTimer = 0;
-				frame = falling;
+				if (onGround){
+					if (moving){
+						framesSinceAttack = 100;
+						animationTimer += timestep;
+						frame = walking[(int) ((animationTimer*10 + 1) % walking.length)];
+					} else {
+						animationTimer = 0;
+						if (!readyPose){
+							idleTimer += timestep;
+							frame = idle[(int) ((idleTimer*3) % idle.length)];
 
+						} else {
+							readyTimer += timestep;
+							frame = ready[(int) ((readyTimer*4) % ready.length)];
+						}
+					}
+				} else {
+					castTimer = 0;
+					idleTimer = 0;
+					animationTimer = 0;
+					frame = falling;
+
+				}
 			}
 		} else {
 			// process an attack animation
@@ -124,7 +153,7 @@ public class Animator {
 					swingPose = false;
 					readyPose = true;
 					frame = attacking[attacking.length-1];
-					
+
 				} else {
 					attackTimer += timestep;
 					frame = attacking[attackIndex];

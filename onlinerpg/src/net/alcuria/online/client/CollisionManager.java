@@ -5,14 +5,19 @@ public class CollisionManager {
 	Player player;
 	Monster[] enemies;
 	DropManager drops;
+	ParticleList slices;
+	ParticleList burns;
 
-	public CollisionManager(Player player, Monster[] enemies, DropManager drops){
+	public CollisionManager(Player player, Monster[] enemies, DropManager drops, ParticleList slices, ParticleList burns){
 		this.player = player;
 		this.enemies = enemies;
 		this.drops = drops;
+		
+		this.slices = slices;
+		this.burns = burns;
 	}
 
-	public void update(Map map, DamageList damageList, ParticleList explosions, ParticleList slices, ItemManager inventory){
+	public void update(Map map, DamageList damageList, ParticleList explosions, ItemManager inventory){
 
 		// update our refrential list of enemies. WE NEED TO DO THIS WHEN WE SWAP MAPS
 		if (enemies[0] == null){
@@ -38,6 +43,11 @@ public class CollisionManager {
 				// hurt an enemy
 				if (enemies[i].bounds.overlaps(player.swingBounds) && enemies[i].HP > 0){
 					enemies[i].damage(player, Config.getDamageDone(player.atk, player.power, enemies[i].def, enemies[i].stamina), damageList, explosions, slices, drops);
+				}
+				if (player.skills.visible && player.skills.harmful && player.skills.area.overlaps(enemies[i].bounds)){
+					
+					// TODO: switch to handle all different types of damage
+					enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
 				}
 
 			}

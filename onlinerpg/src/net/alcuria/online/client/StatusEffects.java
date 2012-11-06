@@ -138,6 +138,7 @@ public class StatusEffects {
 			break;
 			
 		case SPEED:
+			remove(SPEED);
 			actor.walkSpeed += this.severity[effect];
 			break;
 		}

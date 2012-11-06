@@ -394,7 +394,6 @@ public class Actor {
 		batch.setColor(currentRGBA[0], currentRGBA[1], currentRGBA[2], currentRGBA[3]);
 		//batch.setBlendFunction(GL11.GL_DST_COLOR, GL10.GL_SRC_ALPHA);
 
-
 	}
 
 	public void flashPostcheck(SpriteBatch batch){

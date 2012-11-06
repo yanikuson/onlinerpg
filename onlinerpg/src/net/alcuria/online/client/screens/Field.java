@@ -41,6 +41,7 @@ public class Field implements Screen {
 	private DamageList damageList;
 	private ParticleList explosions;
 	private ParticleList slices;
+	private ParticleList burns;
 	private Message msgBox;
 	private Map map;
 	private Background bg;
@@ -84,6 +85,7 @@ public class Field implements Screen {
 			player.render(batch);
 			map.render(batch, false, cameraManager);
 			
+			burns.render(batch);
 			slices.render(batch);
 			drops.render(batch);
 			explosions.render(batch);
@@ -118,7 +120,7 @@ public class Field implements Screen {
 
 				// move all our actors: monsters, npcs, player
 				drops.update(map);
-				collisions.update(map, damageList, explosions, slices, items);
+				collisions.update(map, damageList, explosions, items);
 				//npc.command(map, player);
 				//npc.update(map);
 				player.command(inputs);
@@ -127,6 +129,7 @@ public class Field implements Screen {
 				fg.update(Gdx.graphics.getDeltaTime());
 				damageList.update();
 				slices.update();
+				burns.update();
 				explosions.update();
 				map.update(player, inputs);
 				
@@ -196,14 +199,15 @@ public class Field implements Screen {
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
 		map = new Map("tiles/forest.png", "forest1", assets);
-		
-		// create the manager for collisions
-		collisions = new CollisionManager(player, map.spawner.monsterList, drops);
 
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
 		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);
+		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
 
+		// create the manager for collisions
+		collisions = new CollisionManager(player, map.spawner.monsterList, drops, slices, burns);
+		
 		// create our hud
 		hud = new HUD(player);
 		

@@ -43,6 +43,9 @@ public class InputHandler {
 	public final static int ESCAPE = 6;
 	public final static int UP = 7;
 	public final static int DOWN = 8;
+	public final static int SKILL_1 = 9;
+	public final static int SKILL_2 = 10;
+	public final static int SKILL_3 = 11;
 
 	public boolean[] pressing;			// true while a key is held down, false otherwise
 	public boolean[] typed;				// true ONLY the frame the key is pressed
@@ -151,6 +154,7 @@ public class InputHandler {
 		setInput(JUMP, Keys.Z);
 		setInput(ATTACK, Keys.X);
 		setInput(ESCAPE, Keys.ESCAPE);
+		setInput(SKILL_1, Keys.SHIFT_LEFT);
 
 		offsetX = cameraManager.offsetX;
 		offsetY = cameraManager.offsetY;
