@@ -54,7 +54,7 @@ public class Field implements Screen {
 	public Rectangle viewport;
 	public NotificationList notifications;
 	private Music bgm;
-
+	
 	float w;
 	float h;
 	float aspectRatio;
@@ -81,7 +81,6 @@ public class Field implements Screen {
 					
 			bg.render(batch, cameraManager);
 			map.render(batch, true, cameraManager);
-			//npc.render(batch);
 			player.render(batch);
 			map.render(batch, false, cameraManager);
 			
@@ -121,8 +120,6 @@ public class Field implements Screen {
 				// move all our actors: monsters, npcs, player
 				drops.update(map);
 				collisions.update(map, damageList, explosions, items);
-				//npc.command(map, player);
-				//npc.update(map);
 				player.command(inputs);
 				player.update(map);
 
@@ -180,8 +177,6 @@ public class Field implements Screen {
 		player = new Player("sprites/player.png", 160, 120, 14, 22, notifications, assets);
 		player.playJump = true;
 		player.effects.assignDamageList(damageList);
-		//npc = new Monster("sprites/player.png", 14, 22, Config.MON_NPC, assets);
-		//npc.spawn(300/16, 100/16);
 
 		inputs = new InputHandler(assets);
 		bg = new Background("backgrounds/forest.png", assets);

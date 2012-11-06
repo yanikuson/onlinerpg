@@ -2,6 +2,7 @@ package net.alcuria.online.client;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class NPC extends Actor {
@@ -10,32 +11,26 @@ public class NPC extends Actor {
 	float commandTimer = 0;
 	float commandFrequency = 2;
 	int rndCommand = 0;
+	NPCCommand[] commands;
 
-	int type=0;						// type of monster as defined in Config.java (e.g., slime = 1)
-
-	public NPC(String filename, int x, int y, int width, int height, int type, AssetManager assets) {
+	public NPC(String filename, int x, int y, int width, int height, String npcname, AssetManager assets) {
 		super(filename, x, y, width, height, assets);
-		
+
 		this.maxHP = 1;
 		this.visible = true;
 		this.bounds.x = x;
 		this.bounds.y = y;
+
+		// load NPC dialogue
+		FileHandle handle = Gdx.files.internal("npcs/" + npcname + ".npc");
+		String fileContent = handle.readString();
+		String[] lines = fileContent.split("|");
 		
-		// monster-specific updates
-		switch (type){
-		case Config.NPC_WELCOME:
-			
-			// TODO: assign an array of NPCCommand objects
-			// and add to these command objects certain values, such as talk, shop, heal, whatever.
-			break;
-
-		case Config.NPC_SHOP:
-
-			break;
-		default:
-
+		for (int i = 0; i < lines.length; i++){
+			System.out.println("Line " + i + " " + lines[i]);
 		}
-		this.type = type;
+
+
 	}
 
 	public void render(SpriteBatch batch){
@@ -59,16 +54,9 @@ public class NPC extends Actor {
 					moveCommand[i] = false;
 				}
 
-				// determine WHICH TYPE OF ENEMY
-				switch (type) {
-				default:
-
-					// randomly choose a new command
-					rndCommand = (int) (Math.random()*4);
-					moveCommand[rndCommand] = true;			
-
-					break;
-				}
+				// randomly choose a new command
+				rndCommand = (int) (Math.random()*4);
+				moveCommand[rndCommand] = true;			
 
 				// reset stuff
 				commandTimer = 0;
@@ -77,8 +65,6 @@ public class NPC extends Actor {
 			}
 
 		}
-
-
 
 		// also check if anything can change the command (for instance, enemy walks to a cliff or bumps a wall)
 
