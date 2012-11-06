@@ -1,0 +1,112 @@
+package net.alcuria.online.client;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+
+public class SkillManager {
+	
+	public static final int WOUND = 0;
+	public static final int SLAM = 1;
+	public static final int THROW = 2;
+	public static final int CHARGE = 3;
+	
+	public static final int FIREBALL = 4;
+	public static final int FREEZE = 5;
+	public static final int POISON = 6;
+	public static final int BOLT = 7;
+	
+	public static final int HEAL = 8;
+	public static final int BARRIER = 9;
+	public static final int HASTE = 10;
+	public static final int REGEN = 11;
+	
+	public static int hotkey1 = FIREBALL;
+	public static int hotkey2 = FIREBALL;
+	public static int hotkey3 = FIREBALL;
+	
+	public int id;
+	public int[] levels;
+	public Rectangle area;
+	public float duration;					// length the skill boundaries are displayed
+	
+	public float xVel, yVel;				// skill bounds' x and y velocity
+	public int activeSkill = 0;				// id of the active skill
+	public boolean visible = false;			// is the skill active?
+	public boolean harmful = false;			// does it harm the enemies?
+	public boolean loop = false;			// does the skill animation loop?
+	
+	public Particle fireball;
+	public Particle activeParticle;			// pointer to the active particle
+	
+	public Player p;
+	
+	public SkillManager(AssetManager assets, Player p){
+		
+		this.area = new Rectangle(0, 0, 0, 0);
+		this.p = p;
+		
+		levels = new int[12];
+		for (int i=0; i < levels.length; i++){
+			levels[i] = 0;
+		}
+		
+		fireball = new Particle("sprites/fireball.png", 0, 0, 16, 16, 2, 3, false, assets);
+		
+	}
+	
+	public void start(int skillID){
+		
+		// determine which skill to play
+		switch (skillID){
+		case FIREBALL:
+			
+			activeParticle = fireball;
+			xVel = 4;
+			yVel = 0;
+			area.width = 16;
+			area.height = 16;
+			area.x = p.bounds.x;
+			area.y = p.bounds.y;
+			visible = true;
+			duration = 1;
+			harmful = true;
+			loop = true;
+			
+			break;
+		}
+		
+		if (p.facingLeft) xVel *= -1;
+		
+		// start the particle
+		activeParticle.loop = loop;
+		activeParticle.start(area.x, area.y, p.facingLeft);
+		
+	}
+	
+	public void update() {
+		
+		if (visible){
+			
+			// update particle and bounds pos
+			area.x += xVel;
+			area.y += yVel;
+			activeParticle.update(area.x, area.y, true);
+			
+			// see if particle is done playing 
+			duration -= Gdx.graphics.getDeltaTime();
+			if (duration <= 0){
+				visible = false;
+			}
+		}
+	}
+	
+	public void render(SpriteBatch batch) {
+		
+		if (visible){
+			activeParticle.render(batch);
+		}
+	}
+	
+}
