@@ -24,7 +24,7 @@ public class NPC extends Actor {
 		// load NPC dialogue
 		FileHandle handle = Gdx.files.internal("npcs/" + npcname + ".npc");
 		String fileContent = handle.readString();
-		String[] lines = fileContent.split("|");
+		String[] lines = fileContent.split(";");
 		
 		for (int i = 0; i < lines.length; i++){
 			System.out.println("Line " + i + " " + lines[i]);
