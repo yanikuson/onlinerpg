@@ -13,12 +13,12 @@ public class NPC extends Actor {
 	float commandTimer = 0;
 	float commandFrequency = 2;
 	int rndCommand = 0;
-	boolean startCommands = false;
+	public boolean startCommands = false;
 	int commandIndex = 0;
 	NPCCommand[] commands;
 	public Message msgBox;
 	public CameraManager cameraManager;
-	
+
 	public NPC(String filename, int x, int y, int width, int height, String npcname, AssetManager assets) {
 		super(filename, x, y, width, height, assets);
 
@@ -31,11 +31,10 @@ public class NPC extends Actor {
 		FileHandle handle = Gdx.files.internal("npcs/" + npcname + ".npc");
 		String fileContent = handle.readString();
 		String[] lines = fileContent.split(";");
-		
+
 		commands = new NPCCommand[lines.length];
 		for (int i = 0; i < lines.length; i++){
 			lines[i] = lines[i].replaceAll("\\r?\\n", "");
-			System.out.println("Line " + i + " " + lines[i]);
 			if (lines[i].equalsIgnoreCase("<heal>")){
 				commands[i] = new NPCCommand(NPCCommand.TYPE_HEAL);
 			} else {
@@ -50,18 +49,19 @@ public class NPC extends Actor {
 		startCommands = true;
 		commandIndex = 0;
 	}
-	
-	public void update(Map m, Message msgBox, CameraManager cameraManager){
-		
+
+	public void update(Map m, Message msgBox, CameraManager cameraManager, Player p){
+
 		if (startCommands && commandIndex < commands.length){
-			commandIndex = commands[commandIndex].update(msgBox, cameraManager, commandIndex);
-			
-		} else if (commandIndex == commands.length){
+			commandIndex = commands[commandIndex].update(msgBox, cameraManager, commandIndex, p);
+
+		} else {
 			startCommands = false;
 			commandIndex = 0;
 		}
+		super.update(m);
 	}
-	
+
 	public void render(SpriteBatch batch){
 		super.render(batch);
 	}
@@ -69,29 +69,29 @@ public class NPC extends Actor {
 	// NPC AI, since it will probably be big, is going here
 	public void command(Map map, Player player){
 
-		if (HP > 0){
 
-			// UPDATE AI or something here
-			commandTimer += Gdx.graphics.getDeltaTime();
-			timeSinceSpawn += Gdx.graphics.getDeltaTime();
 
-			// check if we can issue a new command
-			if (commandTimer > commandFrequency){
+		// UPDATE AI or something here
+		commandTimer += Gdx.graphics.getDeltaTime();
+		timeSinceSpawn += Gdx.graphics.getDeltaTime();
 
-				// clear all previous commands
-				for (int i = 0; i < moveCommand.length; i++) {
-					moveCommand[i] = false;
-				}
+		// check if we can issue a new command
+		if (commandTimer > commandFrequency){
 
-				// randomly choose a new command
-				rndCommand = (int) (Math.random()*4);
-				moveCommand[rndCommand] = true;			
-
-				// reset stuff
-				commandTimer = 0;
-				commandFrequency *= 1 + Math.random()/4;
-
+			// clear all previous commands
+			for (int i = 0; i < moveCommand.length; i++) {
+				moveCommand[i] = false;
 			}
+
+			// randomly choose a new command
+			rndCommand = (int) (Math.random()*4);
+			moveCommand[rndCommand] = true;			
+
+			// reset stuff
+			commandTimer = 0;
+			commandFrequency *= 1 + Math.random()/4;
+
+
 
 		}
 
