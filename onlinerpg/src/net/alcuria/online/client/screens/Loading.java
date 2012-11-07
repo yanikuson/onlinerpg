@@ -112,6 +112,7 @@ public class Loading implements Screen
 		assets.load("sounds/pickup.wav", Sound.class);
 		assets.load("sounds/drop.wav", Sound.class);
 		assets.load("sounds/heal.wav", Sound.class);
+		assets.load("sounds/shoot_flame.wav", Sound.class);
 		
 		// BGM
 		assets.load("music/forest.ogg", Music.class);
@@ -131,6 +132,8 @@ public class Loading implements Screen
 		assets.load("sprites/slime.png", Texture.class);
 		assets.load("sprites/swing.png", Texture.class);
 		assets.load("sprites/sparkle.png", Texture.class);
+		assets.load("sprites/cast.png", Texture.class);
+
 		
 		// BACKGROUNDS
 		assets.load("backgrounds/fog.png", Texture.class);

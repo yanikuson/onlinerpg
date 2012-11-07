@@ -14,6 +14,7 @@ public class Player extends Actor {
 	public boolean renderToggler = false;				// a toggler, to render the player invisible every other frame when damaged
 	public Rectangle swingBounds;
 	Particle swing;
+	Particle cast;
 
 	public Sound swingSound;
 	public Sound levelupSound;
@@ -43,6 +44,7 @@ public class Player extends Actor {
 		this.notifications = notifications;
 
 		// TODO: really add these to an animations hash or something
+		cast = new Particle("sprites/cast.png", x, y, 22, 16, 6, 3, false, assets);
 		swing = new Particle("sprites/swing.png", x, y, 84, 84, 7, 3, false, assets);
 		swingSound = assets.get("sounds/swing.wav", Sound.class);
 		castSound = assets.get("sounds/cast.wav", Sound.class);
@@ -62,7 +64,7 @@ public class Player extends Actor {
 		this.wisdom = 5;
 
 		skills = new SkillManager(assets, this);
-		
+
 		visible = true;
 
 	}
@@ -112,7 +114,9 @@ public class Player extends Actor {
 		}
 
 		if (inputs.typed[InputHandler.SKILL_1] && !animation.swingPose && !animation.stabPose && !animation.castPose && !skills.visible){
+			inputs.typed[InputHandler.SKILL_1] = false;
 			animation.castPose = true;
+			cast.playAnimation = true;
 			castSound.play(Config.sfxVol);
 		}
 
@@ -139,8 +143,14 @@ public class Player extends Actor {
 			swingBounds.y = - 100;
 		}
 
-		// update our level up animation guy
+		// update our player-specific particle effects
 		levelup.update(bounds.x - 8, bounds.y, true);
+		if (facingLeft) {
+			cast.update(bounds.x - 8, bounds.y, true);
+		} else {
+			cast.update(bounds.x - 1, bounds.y, true);
+		}
+
 		skills.update();
 	}
 
@@ -204,6 +214,7 @@ public class Player extends Actor {
 			batch.setColor(1, 1, 1, 1);
 		}
 		skills.render(batch);
+		cast.render(batch);
 		effects.render(batch);
 		levelup.render(batch);
 

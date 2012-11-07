@@ -42,7 +42,7 @@ public class Actor {
 	public float xVel;								// xVelocity of player
 	public float yVel;								// yVelocity of player
 	public boolean onGround = false;				// is our player touching the ground?
-	public boolean renderSensorPoints = true;		// do we render our pink sensor pixels?
+	public boolean renderSensorPoints = false;		// do we render our pink sensor pixels?
 	public boolean facingLeft = false;				// is our player facing left?
 	public boolean moving = false;					// is the player moving left or right?
 	public int celWidth = 14;						// width and 

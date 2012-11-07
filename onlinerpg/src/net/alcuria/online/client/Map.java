@@ -2,7 +2,6 @@ package net.alcuria.online.client;
 
 import net.alcuria.online.client.ui.Message;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
@@ -53,9 +52,10 @@ public class Map {
 	int[][] lowerLayer;
 	int[][] upperLayer;
 	int[][] collisionLayer;
-
-	public Map(String tilesetLocation, String mapfile, AssetManager assets){
-
+	DamageList damageList;
+	
+	public Map(String tilesetLocation, String mapfile, AssetManager assets, DamageList damageList){
+		this.damageList = damageList;
 		this.assets = assets;
 		create(tilesetLocation, mapfile);
 
@@ -217,7 +217,7 @@ public class Map {
 
 		// CREATE the monster spawner
 		// set spawn points
-		this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn");
+		this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn", damageList);
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
 			if (Math.random() > 0.3){
 				this.spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
@@ -248,8 +248,11 @@ public class Map {
 
 	public void update(Player p, InputHandler input, Message msgBox, CameraManager cameraManager){
 		for (int i = 0; i < npcs.length; i++){
-			npcs[i].command();
-			npcs[i].update(this, msgBox, cameraManager);
+			npcs[i].command(this, p);
+			npcs[i].update(this, msgBox, cameraManager, p);
+			if (npcs[i].startCommands) {
+				input.typed[InputHandler.ATTACK] = false;
+			}
 		}
 		teleports.update(p, this, input);
 		spawner.update();

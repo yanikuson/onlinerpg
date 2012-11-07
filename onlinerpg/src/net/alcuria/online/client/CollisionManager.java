@@ -8,13 +8,13 @@ public class CollisionManager {
 	ParticleList slices;
 	ParticleList burns;
 	InputHandler inputs;
-	
+
 	public CollisionManager(Player player, Monster[] enemies, DropManager drops, ParticleList slices, ParticleList burns, InputHandler inputs){
 		this.player = player;
 		this.enemies = enemies;
 		this.drops = drops;
 		this.inputs = inputs;
-		
+
 		this.slices = slices;
 		this.burns = burns;
 	}
@@ -25,17 +25,17 @@ public class CollisionManager {
 		if (enemies[0] == null){
 			this.enemies = map.spawner.monsterList;
 		}
-		
+
 		for (int i = 0; i < map.npcs.length; i++){
-			if (inputs.typed[InputHandler.ATTACK] && player.bounds.overlaps(map.npcs[i].bounds)){
+			if (inputs.typed[InputHandler.ATTACK] && player.bounds.overlaps(map.npcs[i].bounds) && !map.npcs[i].startCommands){
 				inputs.typed[InputHandler.ATTACK] = false;
 				map.npcs[i].start();
 			}
 		}
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
-			
+
 			if (enemies != null && enemies[i] != null) {
-				
+
 				enemies[i].command(map, player);
 				enemies[i].update(map);
 
@@ -53,9 +53,18 @@ public class CollisionManager {
 					enemies[i].damage(player, Config.getDamageDone(player.atk, player.power, enemies[i].def, enemies[i].stamina), damageList, explosions, slices, drops);
 				}
 				if (player.skills.visible && player.skills.harmful && player.skills.area.overlaps(enemies[i].bounds)){
-					
-					// TODO: switch to handle all different types of damage
-					enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
+
+					// switch to handle all different types of damage
+					switch (player.skills.id) {
+					case SkillManager.FIREBALL:
+						enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
+						break;
+					case SkillManager.FREEZE:
+						enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
+						enemies[i].effects.add(StatusEffects.POISON, 3, 30);
+						break;
+					}
+
 				}
 
 			}

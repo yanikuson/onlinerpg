@@ -16,6 +16,7 @@ public class Animator {
 	public boolean stabPose = false;
 	boolean readyPose = false;
 	public boolean castPose = false;
+	public boolean castComplete = false;
 
 	float castTimer = 0;
 	float animationTimer = 0f;
@@ -91,7 +92,7 @@ public class Animator {
 		} else {
 
 			// draw the frame flipped
-			if (swingPose || stabPose || castPose){
+			if (swingPose || stabPose || castPose || castComplete){
 				batch.draw(frame, x+width, y, 0-width*2, height);
 			} else {
 				batch.draw(frame, x+width, y, 0-width, height);
@@ -105,7 +106,17 @@ public class Animator {
 		flipX = isFacingLeft;
 
 		if (!swingPose && !stabPose){
-			if (castPose){
+			if (castComplete) {
+				castTimer+= timestep;
+				
+				if (castTimer*40 > stabbing.length){
+					castComplete = false;
+					castTimer = 0;
+				} else {
+					frame = stabbing[(int) castTimer*40];
+				}
+			}
+			else if (castPose){
 				frame = casting;
 				// start cast particle
 				castTimer+= timestep;
@@ -115,6 +126,7 @@ public class Animator {
 					
 					// do cast
 					p.skills.start(SkillManager.hotkey1);
+					castComplete = true;
 					
 				}
 				

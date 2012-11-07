@@ -61,7 +61,7 @@ public class StatusEffects {
 				timer[i] -= Gdx.graphics.getDeltaTime();
 				subTimer[i]+= Gdx.graphics.getDeltaTime();
 				if (subTimer[i] > frequency[i]) {
-					doEffect(i, actor, damageList);
+					doEffect(i, actor, this.damageList);
 					subTimer[i] = 0;
 				}
 
@@ -82,7 +82,14 @@ public class StatusEffects {
 		case POISON:
 			actor.flash(0, 0.7f, 0, 1, 1f);
 			actor.HP -= severity[effectType];
-			damageList.start(severity[effectType], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HURT);
+			if (actor.HP < 1) {
+				actor.HP = 1;
+				timer[effectType] = 0;
+				subTimer[effectType] = 0;
+			}
+			
+			damageList.start(this.severity[effectType], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_DAMAGE);
+			
 			break;
 
 		case REGEN:
@@ -138,7 +145,6 @@ public class StatusEffects {
 			break;
 			
 		case SPEED:
-			remove(SPEED);
 			actor.walkSpeed += this.severity[effect];
 			break;
 		}

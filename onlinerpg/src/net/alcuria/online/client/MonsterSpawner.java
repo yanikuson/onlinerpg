@@ -25,8 +25,10 @@ public class MonsterSpawner {
 	public int activeMonsters = 0;
 
 	public float spawnCounter = 0;
+	
+	public DamageList damageList;
 
-	public MonsterSpawner(String spawnfile){
+	public MonsterSpawner(String spawnfile, DamageList damageList){
 
 		activeMonsters = 0;
 		monsterList = new Monster[MAX_MONSTERS];
@@ -43,6 +45,8 @@ public class MonsterSpawner {
 		for (int i = 0; i < lines.length; i++){
 			addSpawnPoint(Integer.parseInt(lines[i].split("\\s")[0]), Integer.parseInt(lines[i].split("\\s")[1]));
 		}
+		
+		this.damageList = damageList;
 
 	}
 
@@ -111,6 +115,7 @@ public class MonsterSpawner {
 	public void addMonster(Monster m){
 		monsterList[activeMonsters] = m;
 		m.visible = false;
+		m.effects.assignDamageList(damageList);
 		activeMonsters++;
 
 	}

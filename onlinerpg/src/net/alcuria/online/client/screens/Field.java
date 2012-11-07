@@ -120,8 +120,6 @@ public class Field implements Screen {
 				// move all our actors: monsters, npcs, player
 				drops.update(map);
 				collisions.update(map, damageList, explosions, items);
-				player.command(inputs);
-				player.update(map);
 
 				fg.update(Gdx.graphics.getDeltaTime());
 				damageList.update();
@@ -130,7 +128,8 @@ public class Field implements Screen {
 				explosions.update();
 				map.update(player, inputs, msgBox, cameraManager);
 				
-				
+				player.command(inputs);
+				player.update(map);
 				
 
 			}
@@ -193,7 +192,7 @@ public class Field implements Screen {
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
-		map = new Map("tiles/forest.png", "forest1", assets);
+		map = new Map("tiles/forest.png", "forest1", assets, damageList);
 
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
