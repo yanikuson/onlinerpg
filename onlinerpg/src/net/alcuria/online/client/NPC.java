@@ -1,5 +1,7 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.ui.Message;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
@@ -11,8 +13,12 @@ public class NPC extends Actor {
 	float commandTimer = 0;
 	float commandFrequency = 2;
 	int rndCommand = 0;
+	boolean startCommands = false;
+	int commandIndex = 0;
 	NPCCommand[] commands;
-
+	public Message msgBox;
+	public CameraManager cameraManager;
+	
 	public NPC(String filename, int x, int y, int width, int height, String npcname, AssetManager assets) {
 		super(filename, x, y, width, height, assets);
 
@@ -26,13 +32,36 @@ public class NPC extends Actor {
 		String fileContent = handle.readString();
 		String[] lines = fileContent.split(";");
 		
+		commands = new NPCCommand[lines.length];
 		for (int i = 0; i < lines.length; i++){
+			lines[i] = lines[i].replaceAll("\\r?\\n", "");
 			System.out.println("Line " + i + " " + lines[i]);
+			if (lines[i].equalsIgnoreCase("<heal>")){
+				commands[i] = new NPCCommand(NPCCommand.TYPE_HEAL);
+			} else {
+				commands[i] = new NPCCommand(NPCCommand.TYPE_MSG, lines[i]);
+			}
 		}
 
 
 	}
 
+	public void start(){
+		startCommands = true;
+		commandIndex = 0;
+	}
+	
+	public void update(Map m, Message msgBox, CameraManager cameraManager){
+		
+		if (startCommands && commandIndex < commands.length){
+			commandIndex = commands[commandIndex].update(msgBox, cameraManager, commandIndex);
+			
+		} else if (commandIndex == commands.length){
+			startCommands = false;
+			commandIndex = 0;
+		}
+	}
+	
 	public void render(SpriteBatch batch){
 		super.render(batch);
 	}

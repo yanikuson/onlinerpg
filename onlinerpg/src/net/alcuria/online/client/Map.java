@@ -1,5 +1,8 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.ui.Message;
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
@@ -21,6 +24,7 @@ public class Map {
 	final int COLL_HALF			= 8;
 	final int COLL_DOWNBLOCKING = 10;
 
+	static int NUM_NPCS = 0;
 
 	final int[] heightmapSlopeP30A	= { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
 	final int[] heightmapSlopeP30B	= { 8, 8, 9, 9,10,10,11,11,12,12,13,13,14,14,15,15};
@@ -35,12 +39,14 @@ public class Map {
 	public int width;						// width of map (in tiles)
 	public int height; 						// height of map (in tiles)
 	int mapIndex;			
+	String[] line;
 
 	int tileCoordX, tileCoordY = 0;			// coord x and y for getTileAtPoint() method
 
 	Texture tileset;
 	TextureRegion[] tiles;
 	public MonsterSpawner spawner;
+	public NPC[] npcs;
 	public TeleportManager teleports;
 	AssetManager assets;
 
@@ -51,7 +57,7 @@ public class Map {
 	public Map(String tilesetLocation, String mapfile, AssetManager assets){
 
 		this.assets = assets;
-		teleport(tilesetLocation, mapfile);
+		create(tilesetLocation, mapfile);
 
 	}
 
@@ -66,6 +72,10 @@ public class Map {
 				}
 			}
 			spawner.render(batch);
+			for (int i = 0; i < npcs.length; i++){
+				npcs[i].render(batch);
+			}
+
 		} else {
 
 			for (int i = (int) (camera.offsetX/Config.TILE_WIDTH); i < camera.offsetX/Config.TILE_WIDTH+26; i++) {
@@ -75,7 +85,7 @@ public class Map {
 					}
 				}
 			}
-			
+
 		}
 	}
 
@@ -140,7 +150,8 @@ public class Map {
 		return COLL_EMPTY;
 	}
 
-	public void teleport(String tilesetLocation, String mapfile){
+	// creates a new map
+	public void create(String tilesetLocation, String mapfile){
 		// load the map tileset
 		tileset = new Texture(Gdx.files.internal(tilesetLocation));
 
@@ -203,7 +214,7 @@ public class Map {
 				tiles[index++] = new TextureRegion(tileset, j*tileWidth, i*tileWidth, tileWidth, tileWidth);
 			}
 		}
-		
+
 		// CREATE the monster spawner
 		// set spawn points
 		this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn");
@@ -214,17 +225,35 @@ public class Map {
 				this.spawner.addMonster(new Monster("sprites/eye.png", 14, 18, Config.MON_EYE, assets));
 			}
 		}
-		
 		this.spawner.doInitialSpawn();
-		
+
 		// CREATE Teleporter!
 		this.teleports = new TeleportManager(mapfile);
+
+		// create NPCS
+		handle = Gdx.files.internal("maps/" + mapfile + ".npc");
+		fileContent = handle.readString();
+		String[] npclist = fileContent.split("\\r?\\n");
+
+		npcs = new NPC[npclist.length];
+		
+		// for each line, split and parse the x and y vals and add a spawn pt at that location
+		for (int i = 0; i < npclist.length; i++){
+			line = npclist[i].split("\\s");
+			npcs[i] = new NPC(line[0], Integer.parseInt(line[2])*Config.TILE_WIDTH, Integer.parseInt(line[3])*Config.TILE_WIDTH, 14, 22, line[1], assets);
+		}
+
+
 	}
 
-	public void update(Player p, InputHandler input) {
+	public void update(Player p, InputHandler input, Message msgBox, CameraManager cameraManager){
+		for (int i = 0; i < npcs.length; i++){
+			npcs[i].command();
+			npcs[i].update(this, msgBox, cameraManager);
+		}
 		teleports.update(p, this, input);
 		spawner.update();
-		
+
 	}
 
 }

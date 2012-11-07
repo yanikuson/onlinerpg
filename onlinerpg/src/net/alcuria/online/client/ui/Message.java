@@ -136,8 +136,8 @@ public class Message {
 			// TODO: assert we have no more than 5 lines
 
 			// split the input string and calculate the widest line
-			this.messages = message.split("\n");
-			this.numLines = message.split("\n").length;
+			this.messages = message.split("\\n");
+			this.numLines = message.split("\\n").length;
 
 			maxWidth = 0;
 			for (int i=0; i<numLines; i++){

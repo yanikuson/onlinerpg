@@ -44,7 +44,7 @@ public class TeleportNode {
 		case EDGE_WEST:
 			if (((int)p.bounds.x + p.bounds.width)/Config.TILE_WIDTH < 0){
 				m.spawner.removeAllMonsters();
-				m.teleport("tiles/forest.png", destination);
+				m.create("tiles/forest.png", destination);
 				p.bounds.x = destX * 16;
 				p.bounds.y = destY * 16;
 			}
@@ -53,7 +53,7 @@ public class TeleportNode {
 		case EDGE_EAST:
 			if ((int)p.bounds.x/Config.TILE_WIDTH > m.width){
 				m.spawner.removeAllMonsters();
-				m.teleport("tiles/forest.png", destination);
+				m.create("tiles/forest.png", destination);
 				p.bounds.x = destX * 16;
 				p.bounds.y = destY * 16;
 			}

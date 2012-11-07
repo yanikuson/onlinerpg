@@ -128,7 +128,7 @@ public class Field implements Screen {
 				slices.update();
 				burns.update();
 				explosions.update();
-				map.update(player, inputs);
+				map.update(player, inputs, msgBox, cameraManager);
 				
 				
 				
@@ -201,7 +201,7 @@ public class Field implements Screen {
 		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
 
 		// create the manager for collisions
-		collisions = new CollisionManager(player, map.spawner.monsterList, drops, slices, burns);
+		collisions = new CollisionManager(player, map.spawner.monsterList, drops, slices, burns, inputs);
 		
 		// create our hud
 		hud = new HUD(player);

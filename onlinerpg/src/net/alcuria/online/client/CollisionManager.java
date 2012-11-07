@@ -7,11 +7,13 @@ public class CollisionManager {
 	DropManager drops;
 	ParticleList slices;
 	ParticleList burns;
-
-	public CollisionManager(Player player, Monster[] enemies, DropManager drops, ParticleList slices, ParticleList burns){
+	InputHandler inputs;
+	
+	public CollisionManager(Player player, Monster[] enemies, DropManager drops, ParticleList slices, ParticleList burns, InputHandler inputs){
 		this.player = player;
 		this.enemies = enemies;
 		this.drops = drops;
+		this.inputs = inputs;
 		
 		this.slices = slices;
 		this.burns = burns;
@@ -24,6 +26,12 @@ public class CollisionManager {
 			this.enemies = map.spawner.monsterList;
 		}
 		
+		for (int i = 0; i < map.npcs.length; i++){
+			if (inputs.typed[InputHandler.ATTACK] && player.bounds.overlaps(map.npcs[i].bounds)){
+				inputs.typed[InputHandler.ATTACK] = false;
+				map.npcs[i].start();
+			}
+		}
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
 			
 			if (enemies != null && enemies[i] != null) {
