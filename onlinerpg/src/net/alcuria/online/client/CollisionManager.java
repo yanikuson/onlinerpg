@@ -56,8 +56,11 @@ public class CollisionManager {
 
 					// switch to handle all different types of damage
 					switch (player.skills.id) {
+					case SkillManager.WOUND:
+						enemies[i].damage(player, Config.getDamageDone((int)(player.atk*1.2), player.power, enemies[i].def, enemies[i].stamina), damageList, explosions, slices, drops);
+						break;
 					case SkillManager.FIREBALL:
-						enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
+						enemies[i].damage(player, Config.getDamageDone(player.matk + 10, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
 						break;
 					case SkillManager.FREEZE:
 						enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);

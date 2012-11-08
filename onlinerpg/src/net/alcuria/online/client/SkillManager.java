@@ -24,7 +24,7 @@ public class SkillManager {
 	public static final int HASTE = 10;
 	public static final int REGEN = 11;
 	
-	public static int hotkey1 = FIREBALL;
+	public static int hotkey1 = WOUND;
 	public static int hotkey2 = FIREBALL;
 	public static int hotkey3 = FIREBALL;
 	
@@ -34,12 +34,14 @@ public class SkillManager {
 	public float duration;					// length the skill boundaries are displayed
 	
 	public float xVel, yVel;				// skill bounds' x and y velocity
+	public int xOffset, yOffset;			// animation's x/y offsets from bounds
 	public int activeSkill = 0;				// id of the active skill
 	public boolean visible = false;			// is the skill active?
 	public boolean harmful = false;			// does it harm the enemies?
 	public boolean loop = false;			// does the skill animation loop?
 	
 	public Particle fireball;
+	public Particle swing;
 	public Particle activeParticle;			// pointer to the active particle
 	
 	public Player p;
@@ -58,17 +60,46 @@ public class SkillManager {
 		for (int i=0; i < levels.length; i++){
 			levels[i] = 0;
 		}
-		
+	
+		swing = new Particle("sprites/swing.png", 0, 0, 84, 84, 7, 3, false, assets);
 		fireball = new Particle("sprites/fireball.png", 0, 0, 16, 16, 2, 3, false, assets);
+
 	}
 	
 	public void start(int skillID){
 		this.id = skillID;
-		
+	
 		// determine which skill to play
 		switch (skillID){
-		case FIREBALL:
+		
+		case WOUND:
 			
+			if (p.facingLeft) {
+				xOffset = -45;
+			} else {
+				xOffset = -25;
+			}
+			yOffset = -20;
+			xVel = 5;
+			yVel = 0;
+			area.x = p.bounds.x;
+			area.y = p.bounds.y;
+			area.width = p.bounds.width;
+			area.height = (float) (1.2 * p.bounds.height);
+			visible = true;
+			duration = 0.20f;
+			harmful = true;
+			loop = false;
+			cast = assets.get("sounds/shoot_flame.wav", Sound.class);
+			
+			activeParticle = swing;
+			activeParticle.loop = false;
+			activeParticle.start(area.x, area.y, p.facingLeft);
+			break;
+			
+		case FIREBALL:
+			xOffset = 0;
+			yOffset = 0;
 			xVel = 4;
 			yVel = 0;
 			area.width = 16;
@@ -119,7 +150,7 @@ public class SkillManager {
 			area.x += xVel;
 			area.y += yVel;
 			
-			if (activeParticle != null)	activeParticle.update(area.x, area.y, true);
+			if (activeParticle != null)	activeParticle.update(area.x+xOffset, area.y+yOffset, true);
 			
 			// see if particle is done playing 
 			duration -= Gdx.graphics.getDeltaTime();
@@ -135,12 +166,12 @@ public class SkillManager {
 	
 	public void render(SpriteBatch batch) {
 		
-		/*
+		
 		batch.draw(debugPoint, area.x, area.y);
 		batch.draw(debugPoint, area.x+area.width, area.y);
 		batch.draw(debugPoint, area.x, area.y+area.height);
 		batch.draw(debugPoint, area.x+area.width, area.y+area.height);
-		*/
+		
 		
 		if (activeParticle != null && visible){
 			activeParticle.render(batch);
