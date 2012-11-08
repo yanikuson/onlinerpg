@@ -24,13 +24,13 @@ public class StatusEffects {
 	public DamageList damageList;
 	public Particle healSparkle;
 	public Sound heal;
-	
+
 	public Actor actor;
-	
+
 	public StatusEffects(Actor actor, AssetManager assets) {
 
 		this.actor = actor;
-		
+
 		timer = new float[MAX_EFFECTS];
 		subTimer = new float[MAX_EFFECTS];
 		severity = new int[MAX_EFFECTS];
@@ -87,9 +87,9 @@ public class StatusEffects {
 				timer[effectType] = 0;
 				subTimer[effectType] = 0;
 			}
-			
+
 			damageList.start(this.severity[effectType], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_DAMAGE);
-			
+
 			break;
 
 		case REGEN:
@@ -97,11 +97,11 @@ public class StatusEffects {
 
 		case HEAL:
 			break;
-			
+
 		case SPEED:
 			actor.flash(0.5f, 1, 1, 1, 1f);
 			break;
-			
+
 		}
 
 	}
@@ -115,24 +115,25 @@ public class StatusEffects {
 		switch (effectType) {
 		case POISON:
 			break;
-			
+
 		case SPEED:
 			actor.walkSpeed -= severity[effectType];
-			
+
 		}
 
 	}
 
 	// called ONCE to add an effect (at the start)
 	public void add(int effect, int severity, int duration){
-		this.timer[effect] = duration;
-		this.severity[effect] = severity;
-		
+
+
 		switch (effect) {
 		case POISON:
 			break;
-			
+
 		case HEAL:
+			this.timer[effect] = duration;
+			this.severity[effect] = severity;
 			heal.play(Config.sfxVol);
 			healSparkle.start(actor.bounds.x, actor.bounds.y, false);
 			actor.flash(1, 1, 0, 1, 1);
@@ -143,9 +144,18 @@ public class StatusEffects {
 			damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
 			this.timer[effect] = 0;
 			break;
-			
+
 		case SPEED:
-			actor.walkSpeed += this.severity[effect];
+			// if speed is already applied we reset the duration
+			if (timer[SPEED] > 0) {
+				timer[SPEED] = duration;
+			} else {
+				// else apply walking speed increase
+				this.timer[effect] = duration;
+				this.severity[effect] = severity;
+				actor.walkSpeed += this.severity[effect];
+				
+			}
 			break;
 		}
 	}

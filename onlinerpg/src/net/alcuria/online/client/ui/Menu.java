@@ -47,6 +47,7 @@ public class Menu {
 	public boolean changeScreen = false;											// if true, the appropriate sub-windows will be re-drawn on our update() function
 	float offsetX, offsetY;															// offset from the camera
 
+	public boolean drawDimmer = false;
 	public int oldHP = 0;
 	public String itemList;
 	public boolean refreshText = false;
@@ -111,7 +112,7 @@ public class Menu {
 				}
 				if (input.typed[InputHandler.LEFT]){
 					input.typed[InputHandler.LEFT] = false;
-					
+
 					move.play(Config.sfxVol);
 					changeScreen = true;
 					selection[depth]--;
@@ -280,7 +281,7 @@ public class Menu {
 				// if selection type = consumable, do the effect -- close menu
 				if (inventory.getItem(selection[1]).type == Item.TYPE_CONSUMABLE){
 					switch (inventory.getItem(selection[1]).id) {
-					
+
 					// do the effect
 					case Item.ID_POTION:
 						p.effects.add(StatusEffects.HEAL, 50, 1);
@@ -289,7 +290,7 @@ public class Menu {
 						p.effects.add(StatusEffects.SPEED, 20, 60);
 						break;
 					}
-					
+
 					// remove from inventory and close the menu
 					inventory.removeIndex(selection[1]);
 					hideMenu(input);
@@ -466,7 +467,7 @@ public class Menu {
 		if (input.typed[InputHandler.ATTACK]){
 			input.typed[InputHandler.ATTACK] = false;
 
-			
+
 			// go into the submenu to USE/TOSS iff the item actually exists
 			if (inventory.getSize() > selection[depth]){
 				select.play(Config.sfxVol);
@@ -550,7 +551,7 @@ public class Menu {
 		if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
 			input.typed[InputHandler.ESCAPE] = false;
 			input.typed[InputHandler.JUMP] = false;
-			
+
 			cancel.play(Config.sfxVol);
 			depth--;
 		}
@@ -598,11 +599,13 @@ public class Menu {
 		if (active){
 
 			// draw the semi-transparent dimmer
-			batch.flush();
-			batch.setColor(1, 1, 1, 0.5f);
-			batch.draw(dimmer, offsetX, offsetY, Config.WIDTH, Config.HEIGHT);
-			batch.flush();
-			batch.setColor(1, 1, 1, 1);
+			if (drawDimmer){
+				batch.flush();
+				batch.setColor(1, 1, 1, 0.5f);
+				batch.draw(dimmer, offsetX, offsetY, Config.WIDTH, Config.HEIGHT);
+				batch.flush();
+				batch.setColor(1, 1, 1, 1);
+			}
 
 			// draw menu elements
 			for (int i=0; i < curWindow; i++){

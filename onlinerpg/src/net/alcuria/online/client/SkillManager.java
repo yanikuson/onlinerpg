@@ -24,7 +24,7 @@ public class SkillManager {
 	public static final int HASTE = 10;
 	public static final int REGEN = 11;
 	
-	public static int hotkey1 = FREEZE;
+	public static int hotkey1 = FIREBALL;
 	public static int hotkey2 = FIREBALL;
 	public static int hotkey3 = FIREBALL;
 	
@@ -135,10 +135,12 @@ public class SkillManager {
 	
 	public void render(SpriteBatch batch) {
 		
+		/*
 		batch.draw(debugPoint, area.x, area.y);
 		batch.draw(debugPoint, area.x+area.width, area.y);
 		batch.draw(debugPoint, area.x, area.y+area.height);
 		batch.draw(debugPoint, area.x+area.width, area.y+area.height);
+		*/
 		
 		if (activeParticle != null && visible){
 			activeParticle.render(batch);

@@ -110,7 +110,7 @@ public class Field implements Screen {
 			
 			// update for our message system
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
-			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.ATTACK]);
+			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.SPACE]);
 			menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY);
 			notifications.update();
 
@@ -168,8 +168,10 @@ public class Field implements Screen {
 		notifications.add("Welcome to Heroes of Umbra!");
 		notifications.add("Z = Jump");
 		notifications.add("X = Attack");
+		notifications.add("SPACE = Talk");
 		notifications.add("Arrow Keys = Move");
 		notifications.add("ESC = Menu");
+		notifications.add("SHIFT = Fireball (New! :D)");
 
 		damageList = new DamageList();
 		
@@ -186,8 +188,11 @@ public class Field implements Screen {
 		items = new ItemManager();
 		items.add(Item.ID_POTION);
 		items.add(Item.ID_POTION);
+		items.add(Item.ID_POTION);
+		items.add(Item.ID_SPEED_PILL);
 		items.add(Item.ID_SPEED_PILL);
 		items.add(Item.ID_WOOD_SWORD);
+		items.add(Item.ID_WIZARD_HAT);
 		drops = new DropManager(assets, notifications);
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);

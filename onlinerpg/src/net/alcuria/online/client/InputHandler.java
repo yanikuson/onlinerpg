@@ -29,12 +29,13 @@ public class InputHandler {
 	float offsetY;
 	int touchPointX;
 	int touchPointY;
-	
+
 	boolean touchedThisFrame = false;
 
 	OrthographicCamera camera;
-	
+
 	// keycodes referencing boolean input indices
+	public final static int SPACE = 0;
 	public final static int JUMP = 1;
 	public final static int LEFT = 2;
 	public final static int RIGHT = 3;
@@ -47,6 +48,7 @@ public class InputHandler {
 	public final static int SKILL_2 = 10;
 	public final static int SKILL_3 = 11;
 
+
 	public boolean[] pressing;			// true while a key is held down, false otherwise
 	public boolean[] typed;				// true ONLY the frame the key is pressed
 	public Rectangle[] virtualButtons;	// 1-to-1 mapping of pressed keys to on-screen 
@@ -54,9 +56,9 @@ public class InputHandler {
 	public InputHandler(AssetManager assets) {
 
 		// create boolean input arrays
-		pressing = new boolean[10];
-		typed = new boolean[10];
-		virtualButtons = new Rectangle[10];
+		pressing = new boolean[12];
+		typed = new boolean[12];
+		virtualButtons = new Rectangle[12];
 		for (int i=0; i<typed.length; i++){
 			pressing[i] = false;
 			typed[i] = false;
@@ -64,7 +66,7 @@ public class InputHandler {
 
 		// load texture/create region for joypad if on Android
 		if (Gdx.app.getType() == ApplicationType.Android) {
-			
+
 			buttons = assets.get("ui/buttons.png", Texture.class);
 			up = 		new TextureRegion(buttons, 30, 0, 22, 27);
 			down = 		new TextureRegion(buttons, 30, 55, 22, 27);
@@ -72,7 +74,7 @@ public class InputHandler {
 			right = 	new TextureRegion(buttons, 55, 30, 27, 22);
 			cancel = 	new TextureRegion(buttons, 84, 0, 38, 35);
 			confirm = 	new TextureRegion(buttons, 84, 47, 38, 35);
-			
+
 			// create the rectangles
 			virtualButtons[UP] = new Rectangle(-100, -100, 22, 27);
 			virtualButtons[DOWN] = new Rectangle(-100, -100, 22, 27);
@@ -81,19 +83,19 @@ public class InputHandler {
 			virtualButtons[JUMP] = new Rectangle(-100, -100, 38, 35);
 			virtualButtons[ATTACK] = new Rectangle(-100, -100, 38, 35);
 			virtualButtons[ESCAPE] = new Rectangle(-100, -100, 50, 30);
-			
+
 			camera = new OrthographicCamera();
 		}
 
 	}
 
 	public float convertTouchPoint(float touchPoint, boolean yAxis) {
-		
+
 		if (yAxis) {
 			return Config.HEIGHT - ((float)Config.WIDTH/(float)Gdx.graphics.getWidth() * touchPoint) + offsetY ;
 		}
 		return (float)Config.WIDTH/(float)Gdx.graphics.getWidth() * touchPoint + offsetX;
-		
+
 	}
 
 	public void setInput(int keyPos, int keyPress){
@@ -103,22 +105,22 @@ public class InputHandler {
 			// android
 
 			pressing[keyPos] = false;
-			
-			
+
+
 			for (int i=0; i<3; i++) {
 				if (Gdx.input.isTouched(i)){
-					
+
 					touchedThisFrame = true;
-					
+
 					touchPointX = (int) convertTouchPoint(Gdx.input.getX(i), false);
 					touchPointY = (int) convertTouchPoint(Gdx.input.getY(i), true);
-					
+
 					// iterate through each of the button rectangles and see if the touch point is within bounds 
 					if (virtualButtons[keyPos] != null && virtualButtons[keyPos].contains(touchPointX, touchPointY)) {
 						typed[keyPos] = true;
 						pressing[keyPos] = true;
 					} 
-					
+
 				}
 
 			}
@@ -153,41 +155,43 @@ public class InputHandler {
 		setInput(DOWN, Keys.DOWN);
 		setInput(JUMP, Keys.Z);
 		setInput(ATTACK, Keys.X);
+		setInput(SPACE, Keys.SPACE);
 		setInput(ESCAPE, Keys.ESCAPE);
 		setInput(SKILL_1, Keys.SHIFT_LEFT);
 
-		offsetX = cameraManager.offsetX;
-		offsetY = cameraManager.offsetY;
-		joypadX = (int) (cameraManager.offsetX + 45);
-		joypadY = (int) (cameraManager.offsetY + Config.HEIGHT - 169);
-		keysX = (int) cameraManager.offsetX + Config.WIDTH - 48;
-		keysY = (int) cameraManager.offsetY + Config.HEIGHT - 195;
-		
+		if(cameraManager != null){
+			offsetX = cameraManager.offsetX;
+			offsetY = cameraManager.offsetY;
+			joypadX = (int) (cameraManager.offsetX + 45);
+			joypadY = (int) (cameraManager.offsetY + Config.HEIGHT - 169);
+			keysX = (int) cameraManager.offsetX + Config.WIDTH - 48;
+			keysY = (int) cameraManager.offsetY + Config.HEIGHT - 195;
+		}
 		if (Gdx.app.getType() == ApplicationType.Android) {
 
 			virtualButtons[ESCAPE].x = offsetX;
 			virtualButtons[ESCAPE].y = offsetY + Config.HEIGHT - 20;
-			
+
 			virtualButtons[UP].x = joypadX;
 			virtualButtons[UP].y = joypadY;
-			
+
 			virtualButtons[DOWN].x = joypadX;
 			virtualButtons[DOWN].y = joypadY - 56;
-			
+
 			virtualButtons[LEFT].x = joypadX - 31;
 			virtualButtons[LEFT].y = joypadY - 26;
-			
+
 			virtualButtons[RIGHT].x = joypadX + 31;
 			virtualButtons[RIGHT].y = joypadY - 26;
-			
+
 			virtualButtons[ATTACK].x = keysX;
 			virtualButtons[ATTACK].y = keysY;
-			
+
 			virtualButtons[JUMP].x = keysX - 61;
 			virtualButtons[JUMP].y = keysY - 37;	
 
 		}
-		
+
 	}
 
 	public void render(SpriteBatch batch){

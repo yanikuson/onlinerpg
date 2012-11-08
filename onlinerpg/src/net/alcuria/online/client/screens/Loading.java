@@ -116,6 +116,7 @@ public class Loading implements Screen
 		
 		// BGM
 		assets.load("music/forest.ogg", Music.class);
+		assets.load("music/title.ogg", Music.class);
 		
 		// SPRITES
 		assets.load("sprites/burn.png", Texture.class);

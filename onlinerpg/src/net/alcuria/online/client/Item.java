@@ -18,6 +18,7 @@ public class Item {
 	public static final int ID_STARLESS_UMBRA = 39;
 	public static final int ID_WOOD_ARMOR = 40;
 	public static final int ID_WOOD_HELM = 60;
+	public static final int ID_WIZARD_HAT = 61;
 	public static final int ID_LEATHER_BOOTS = 80;
 	
 	public static final int TYPE_CONSUMABLE = 1;
@@ -83,6 +84,14 @@ public class Item {
 			this.name = "Wooden Helm";
 			this.description = "DEF+2";
 			this.def = 2;
+			break;
+			
+		case ID_WIZARD_HAT:
+			this.icon = 4;
+			this.type = TYPE_HELM;
+			this.name = "Wizard Hat";
+			this.description = "How magical! MATK+10";
+			this.matk = 10;
 			break;
 			
 		case ID_LEATHER_BOOTS:

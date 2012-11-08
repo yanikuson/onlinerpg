@@ -8,8 +8,8 @@ public class MonsterSpawner {
 
 	public static final int MAX_MONSTERS = 40;
 	public static final int MAX_SPAWN_PTS = 20;
-	public static final int SPAWN_TIMER = 8;
-	public static int INITIAL_SPAWN_NUM = 8;
+	public static final int SPAWN_TIMER = 10;
+	public static int INITIAL_SPAWN_NUM = 6;
 
 	public int initialSpawnCtr=0;		// a counter to spawn INITIAL_SPAWN_NUM monsters on the map immediately
 	public boolean initialSpawn=false;
@@ -53,7 +53,7 @@ public class MonsterSpawner {
 	public void update(){
 
 		spawnCounter += Gdx.graphics.getDeltaTime();
-		if (spawnCounter > SPAWN_TIMER || initialSpawn){
+		if ((spawnCounter > SPAWN_TIMER || initialSpawn)){
 			
 			// look for the next available (inactive) monster in the monster list	
 			monsterListIndex = 0;
