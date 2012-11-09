@@ -13,6 +13,7 @@ import net.alcuria.online.client.Map;
 import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
+import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
 import net.alcuria.online.client.ui.Menu;
@@ -175,7 +176,8 @@ public class Field implements Screen {
 
 		damageList = new DamageList();
 		
-		player = new Player("sprites/player.png", 160, 120, 14, 22, notifications, assets);
+		//player = new Player("sprites/player.png", 160, 120, 14, 22, notifications, assets);
+		player = SaveHandler.load(1, notifications, assets);
 		player.playJump = true;
 		player.effects.assignDamageList(damageList);
 
