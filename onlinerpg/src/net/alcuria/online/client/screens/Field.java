@@ -31,7 +31,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class Field implements Screen {
 
 	// uncomment if I ever need this?
-	//private Game myGame;
+	public Game g;
 
 	private SpriteBatch batch;
 	private InputHandler inputs;
@@ -64,13 +64,11 @@ public class Field implements Screen {
 	public Field(Game g, AssetManager assets)
 	{
 		this.assets = assets;
-		//myGame = g;
-
+		this.g = g;
 	}
 
 	@Override
 	public void render(float delta) {
-
 		if (assets.update()){
 			
 			//Gdx.gl.glViewport((int) viewport.x, (int) viewport.y, (int) viewport.width, (int) viewport.height);
@@ -112,7 +110,7 @@ public class Field implements Screen {
 			// update for our message system
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
 			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.SPACE]);
-			menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY);
+			menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
 			notifications.update();
 
 			// we only want to call update on the actors if a messagebox/menu isn't open
@@ -177,7 +175,7 @@ public class Field implements Screen {
 		damageList = new DamageList();
 		
 		//player = new Player("sprites/player.png", 160, 120, 14, 22, notifications, assets);
-		player = SaveHandler.load(1, notifications, assets);
+		player = SaveHandler.loadPlayer(1, notifications, assets);
 		player.playJump = true;
 		player.effects.assignDamageList(damageList);
 
@@ -187,14 +185,7 @@ public class Field implements Screen {
 		//packetHandler = new PacketHandler();
 		
 		// create our item manager
-		items = new ItemManager();
-		items.add(Item.ID_POTION);
-		items.add(Item.ID_POTION);
-		items.add(Item.ID_POTION);
-		items.add(Item.ID_SPEED_PILL);
-		items.add(Item.ID_SPEED_PILL);
-		items.add(Item.ID_WOOD_SWORD);
-		items.add(Item.ID_WIZARD_HAT);
+		items = SaveHandler.loadItems(1);
 		drops = new DropManager(assets, notifications);
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);

@@ -6,9 +6,12 @@ import net.alcuria.online.client.InputHandler;
 import net.alcuria.online.client.Item;
 import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Player;
+import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.StatusEffects;
+import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -86,7 +89,8 @@ public class Menu {
 
 	}
 
-	public void update(InputHandler input, float offsetX, float offsetY){
+	public void update(InputHandler input, float offsetX, float offsetY, Screen g){
+		
 
 		// update the offset due to camera shifts
 		this.offsetX = offsetX;
@@ -226,6 +230,8 @@ public class Menu {
 
 				// render our stat screen
 				createStatScreen();
+				SaveHandler.savePlayer(p, 1);
+				SaveHandler.saveItems(1, inventory);
 			}
 
 		}
@@ -233,7 +239,8 @@ public class Menu {
 	}
 
 	private void hideMenu(InputHandler input) {
-
+		SaveHandler.savePlayer(p, 1);
+		SaveHandler.saveItems(1, inventory);
 		cancel.play(Config.sfxVol);
 		input.typed[InputHandler.JUMP] = false;
 		input.typed[InputHandler.ESCAPE] = false;
