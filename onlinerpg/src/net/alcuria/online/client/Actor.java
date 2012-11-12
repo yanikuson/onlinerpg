@@ -11,7 +11,7 @@ public class Actor {
 
 	final float GRAVITY = 0.3f;
 	final float GROUND_ACCEL = 30f;
-	final float GROUND_DECEL = 0.60f;
+	final float GROUND_DECEL = 0.40f;
 	final float AIR_ACCEL = 10f;
 	final float AIR_DECEL = 0.97f;
 	final float TERMINAL_YVEL = -10f;
@@ -262,7 +262,7 @@ public class Actor {
 		if (onGround && moveCommand[MOVE_JUMP] && !animation.swingPose && !animation.stabPose){
 			moveCommand[MOVE_JUMP] = false;
 			onGround = false;
-			yVel = jumpPower/17;
+			yVel = jumpPower/18;
 			if (playJump){
 				jump.play(Config.sfxVol);
 			}
