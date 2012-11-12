@@ -11,8 +11,8 @@ public class Main {
 		cfg.title = "onlinerpg";
 		cfg.useGL20 = true;
 		cfg.resizable = false;
-		cfg.width = 416*3;
-		cfg.height = 240*3;
+		cfg.width = 416*2;
+		cfg.height = 240*2;
 		new LwjglApplication(new OnlineRPG(), cfg);
 	}
 }

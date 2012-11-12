@@ -2,7 +2,6 @@ package net.alcuria.online.client.screens;
 
 import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
-import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.TypeHandler;

@@ -86,17 +86,6 @@ public class TypeHandler extends InputHandler {
 		}
 		return false;
 	}
-	
-//		if(Gdx.input.isKeyPressed(keyPress)) {
-//			typed[keyPos] = false;
-//			if (!typed[keyPos] && !pressing[keyPos]){
-//				typed[keyPos] = true;
-//			}
-//			pressing[keyPos] = true;
-//		} else {
-//			pressing[keyPos] = false;
-//		}
-//	}
 
 
 }

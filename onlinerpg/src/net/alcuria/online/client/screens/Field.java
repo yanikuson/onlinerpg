@@ -29,7 +29,8 @@ import com.badlogic.gdx.math.Rectangle;
 public class Field implements Screen {
 
 	public Game g;
-
+	public int slot;					// which slot the player has loaded
+	
 	private SpriteBatch batch;
 	private InputHandler inputs;
 	private Player player;
@@ -58,8 +59,9 @@ public class Field implements Screen {
 	float aspectRatio;
 	long before, after;
 
-	public Field(Game g, AssetManager assets, Player player, ItemManager items)
+	public Field(Game g, AssetManager assets, Player player, ItemManager items, int loadedSlot)
 	{
+		this.slot = loadedSlot;
 		this.player = player;
 		this.items = items;
 		this.assets = assets;
@@ -178,6 +180,7 @@ public class Field implements Screen {
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
+		menu.saveSlot = slot;
 		map = new Map("tiles/forest.png", "forest1", assets, damageList);
 
 		// create all the particles

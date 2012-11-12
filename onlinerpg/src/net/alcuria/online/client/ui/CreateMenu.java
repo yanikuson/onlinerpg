@@ -2,7 +2,6 @@ package net.alcuria.online.client.ui;
 
 import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
-import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.TypeHandler;
 
 import com.badlogic.gdx.assets.AssetManager;
@@ -54,7 +53,11 @@ public class CreateMenu extends Menu {
 
 		addWindow(117, 79, 100, 92);
 		windows[curWindow-1].addText(123, 170, 160, 50, "Name:\n\nGender:\n\nSkin:\n\nHair:\n\n");
-		values = name + "\n\nMale\n\nPale\n\nStyle 1\n\n";
+		if (mode == MODE_CHANGE_COMPONENT && selection[0] == 0 && name.length() < 8){
+			values = name + "_\n\nMale\n\nPale\n\nStyle 1\n\n";
+		} else {
+			values = name + "\n\nMale\n\nPale\n\nStyle 1\n\n";
+		}
 		windows[curWindow-1].addText(145, 159, 160, 50, values);
 
 		// character preview
@@ -69,7 +72,7 @@ public class CreateMenu extends Menu {
 
 	public void render(SpriteBatch batch) {
 		super.render(batch);
-		if (depth == 1){
+		if (depth == 1 	&& selection[0] != 0) {
 			batch.draw(rightTriangle, triangleX, triangleY);
 			batch.draw(leftTriangle, triangleX + 80, triangleY);
 
@@ -127,7 +130,8 @@ public class CreateMenu extends Menu {
 					input.typed[InputHandler.ATTACK] = false;
 					input.typed[InputHandler.SPACE] = false;
 					input.typed[InputHandler.ENTER] = false;
-
+					refreshText = true;
+					
 					if (selection[depth] != 4){
 						triangleX = cursorX[depth] + 20;
 						triangleY = cursorY[depth] - 11;
@@ -188,6 +192,7 @@ public class CreateMenu extends Menu {
 
 						depth--;
 						mode = MODE_CHOOSE_COMPONENT;
+						refreshText = true;
 					}
 				}
 				break;

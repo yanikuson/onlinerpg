@@ -71,7 +71,7 @@ public class Select implements Screen {
 			if (SaveHandler.fileExists(menu.slot)){
 				Player p = SaveHandler.loadPlayer(menu.slot, new NotificationList(), assets);
 				ItemManager items = SaveHandler.loadItems(menu.slot);
-				myGame.setScreen(new Field(myGame, assets, p, items));
+				myGame.setScreen(new Field(myGame, assets, p, items, menu.slot));
 			} else {
 				myGame.setScreen(new Create(myGame, assets, menu.slot));
 			}

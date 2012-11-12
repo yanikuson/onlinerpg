@@ -58,6 +58,8 @@ public class Menu {
 	public int[] selectionStats = {0, 0, 0, 0, 0, 0, 0};
 	public int[] calculatedStats = {0, 0, 0, 0, 0, 0, 0};
 
+	public int saveSlot;					// the slot to which we are saving
+
 	public Menu(Texture background, Texture border, AssetManager assets, Player p, ItemManager inventory, DropManager dropManager){
 		this.background = background;
 		this.border = border;
@@ -233,8 +235,8 @@ public class Menu {
 
 				// render our stat screen
 				createStatScreen();
-				SaveHandler.savePlayer(p, 1);
-				SaveHandler.saveItems(1, inventory);
+				SaveHandler.savePlayer(p, saveSlot);
+				SaveHandler.saveItems(saveSlot, inventory);
 			}
 
 		}
@@ -242,8 +244,8 @@ public class Menu {
 	}
 
 	private void hideMenu(InputHandler input) {
-		SaveHandler.savePlayer(p, 1);
-		SaveHandler.saveItems(1, inventory);
+		SaveHandler.savePlayer(p, saveSlot);
+		SaveHandler.saveItems(saveSlot, inventory);
 		cancel.play(Config.sfxVol);
 		input.typed[InputHandler.JUMP] = false;
 		input.typed[InputHandler.ESCAPE] = false;
