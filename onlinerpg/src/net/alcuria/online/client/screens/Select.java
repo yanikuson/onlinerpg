@@ -4,25 +4,23 @@ import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
 import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.NotificationList;
-import net.alcuria.online.client.SaveHandler;
-import net.alcuria.online.client.TypeHandler;
-import net.alcuria.online.client.ui.CreateMenu;
 import net.alcuria.online.client.Player;
-
+import net.alcuria.online.client.SaveHandler;
+import net.alcuria.online.client.ui.SelectMenu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class Create implements Screen {
+public class Select implements Screen {
 
-	public int id;
 	public AssetManager assets;
 	private SpriteBatch batch;
 	private Game myGame;
@@ -30,16 +28,22 @@ public class Create implements Screen {
 	
 	private Texture title;
 	private TextureRegion titleRegion;
+	private Music bgm;
 	
-	CreateMenu menu;
+	String[] names;
+	int[] dungeons;
+	int[] levels;
+	String[] times;
+	
+	SelectMenu menu;
 	InputHandler inputs;
-	TypeHandler type;
 
-	public Create(Game g, AssetManager assets, int id)
+	public Select(Game g, AssetManager assets)
 	{
-		this.id = id;
 		this.assets = assets;
 		myGame = g;
+		
+
 		
 	}
 	
@@ -56,17 +60,23 @@ public class Create implements Screen {
 		
 		// ------------------------- 
 		inputs.update(null, null, null);
-		if (menu.depth == 1 && menu.selection[0] == 0){
-			type.update();
-		}
-		menu.update(inputs, type, 0, 0);
+
+		menu.update(inputs, 0, 0);
 		
-		if(menu.leaveMenu){
-			myGame.setScreen(new Select(myGame, assets));
-		} else if (menu.createFile){
-			SaveHandler.savePlayer(new Player("sprites/player.png", menu.name, 160, 120, 14, 22, new NotificationList(), assets), id);
-			myGame.setScreen(new Select(myGame, assets));
+		if (menu.slot == 0){
+			bgm.stop();
+			myGame.setScreen(new Title(myGame, assets));
+
+		} else if (menu.slot > 0){
+			if (SaveHandler.fileExists(menu.slot)){
+				Player p = SaveHandler.loadPlayer(menu.slot, new NotificationList(), assets);
+				ItemManager items = SaveHandler.loadItems(menu.slot);
+				myGame.setScreen(new Field(myGame, assets, p, items));
+			} else {
+				myGame.setScreen(new Create(myGame, assets, menu.slot));
+			}
 		}
+		
 	}
 
 	@Override
@@ -85,12 +95,31 @@ public class Create implements Screen {
 		title = new Texture(Gdx.files.internal("backgrounds/title.png"));
 		titleRegion = new TextureRegion(title, 0, 0, Config.WIDTH, Config.HEIGHT);
 		
-		menu = new CreateMenu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
+		// get the data to display on the screens
+		names = new String[3];
+		dungeons = new int[3];
+		times = new String[3];
+		levels = new int[3];
+		for (int i = 0; i < 3; i++){
+			names[i] = SaveHandler.getPlayerName(i+1);
+			dungeons[i] = 0;
+			levels[i] = SaveHandler.getPlayerLevel(i+1);
+			times[i] = "00:00";
+		}
+		
+		menu = new SelectMenu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, names, levels, dungeons, times);
 		menu.active = true;
 		menu.drawDimmer = false;
+		menu.slot = -1;
 		inputs = new InputHandler(assets);
-		type = new TypeHandler(assets);
 		
+		
+		bgm = assets.get("music/title.ogg", Music.class);
+		bgm.setLooping(true);
+		bgm.setVolume(Config.bgmVol);
+		bgm.play();
+		
+
 	}
 
 	@Override

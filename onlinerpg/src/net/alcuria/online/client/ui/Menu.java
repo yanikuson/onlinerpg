@@ -8,7 +8,6 @@ import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.StatusEffects;
-import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -27,6 +26,8 @@ public class Menu {
 	public Texture border;
 	public TextureRegion downArrow;
 	public TextureRegion rightArrow;
+	public TextureRegion leftTriangle;
+	public TextureRegion rightTriangle;
 	public TextureRegion dimmer;
 	public AssetManager assets;
 
@@ -68,6 +69,8 @@ public class Menu {
 		font = new BitmapFont(Gdx.files.internal("fonts/message.fnt"), false);
 		rightArrow = new TextureRegion(border, 16, 0, 13, 10);
 		downArrow = new TextureRegion(border, 32, 0, 10, 13);
+		leftTriangle = new TextureRegion(border, 43, 0, 5, 7);
+		rightTriangle = new TextureRegion(border, 59, 0, 5, 7);
 		dimmer = new TextureRegion(background, 0, 0, 1, 1);
 		windows = new Window[MAX_WINDOWS];
 

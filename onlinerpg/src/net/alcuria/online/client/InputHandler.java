@@ -30,6 +30,7 @@ public class InputHandler {
 	int touchPointX;
 	int touchPointY;
 
+	boolean readyForInput = false;
 	boolean touchedThisFrame = false;
 
 	OrthographicCamera camera;
@@ -47,6 +48,7 @@ public class InputHandler {
 	public final static int SKILL_1 = 9;
 	public final static int SKILL_2 = 10;
 	public final static int SKILL_3 = 11;
+	public final static int ENTER = 12;
 
 
 	public boolean[] pressing;			// true while a key is held down, false otherwise
@@ -56,13 +58,11 @@ public class InputHandler {
 	public InputHandler(AssetManager assets) {
 
 		// create boolean input arrays
-		pressing = new boolean[12];
-		typed = new boolean[12];
-		virtualButtons = new Rectangle[12];
-		for (int i=0; i<typed.length; i++){
-			pressing[i] = false;
-			typed[i] = false;
-		}
+		readyForInput = false;
+		pressing = new boolean[13];
+		typed = new boolean[13];
+		virtualButtons = new Rectangle[13];
+		clearInput();
 
 		// load texture/create region for joypad if on Android
 		if (Gdx.app.getType() == ApplicationType.Android) {
@@ -149,15 +149,25 @@ public class InputHandler {
 	public void update(Player player, Map map, CameraManager cameraManager){
 
 		// get fresh inputs
-		setInput(LEFT, Keys.LEFT);
-		setInput(RIGHT, Keys.RIGHT);
-		setInput(UP, Keys.UP);
-		setInput(DOWN, Keys.DOWN);
-		setInput(JUMP, Keys.Z);
-		setInput(ATTACK, Keys.X);
-		setInput(SPACE, Keys.SPACE);
-		setInput(ESCAPE, Keys.ESCAPE);
-		setInput(SKILL_1, Keys.SHIFT_LEFT);
+		
+			setInput(LEFT, Keys.LEFT);
+			setInput(RIGHT, Keys.RIGHT);
+			setInput(UP, Keys.UP);
+			setInput(DOWN, Keys.DOWN);
+			setInput(JUMP, Keys.Z);
+			setInput(ATTACK, Keys.X);
+			setInput(SPACE, Keys.SPACE);
+			setInput(ESCAPE, Keys.ESCAPE);
+			setInput(ENTER, Keys.ENTER);
+			setInput(SKILL_1, Keys.SHIFT_LEFT);
+			
+		if (!readyForInput) {
+			if (!pressingAKey()){
+				readyForInput = true;
+			} else {
+				clearInput();
+			}
+		}
 
 		if(cameraManager != null){
 			offsetX = cameraManager.offsetX;
@@ -192,6 +202,25 @@ public class InputHandler {
 
 		}
 
+	}
+
+	protected void clearInput() {
+		
+		for (int i=0; i<typed.length; i++){
+			pressing[i] = false;
+			typed[i] = false;
+		}
+		
+	}
+
+	protected boolean pressingAKey() {
+
+		for (int i = 0; i < pressing.length; i++) {
+			if (pressing[i] == true || typed[i] == true){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void render(SpriteBatch batch){

@@ -25,17 +25,18 @@ public class Player extends Actor {
 	private boolean levelSoundPlayed = false;
 
 	public int statPts = 0;
-
+	public String name;
 	public float knockback;
 
 	public Item weapon, helmet, armor, accessory;
 
-	public Player(String filename, int x, int y, int width, int height, NotificationList notifications, AssetManager assets) {
+	public Player(String filename, String name, int x, int y, int width, int height, NotificationList notifications, AssetManager assets) {
 		super(filename, x, y, width, height, assets);
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);
 		this.HP = this.maxHP;
-
+		this.name = name;
+		
 		this.walkSpeed = 100;
 		this.jumpPower = 100;
 		this.knockback = 100;

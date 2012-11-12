@@ -7,9 +7,8 @@ import com.badlogic.gdx.files.FileHandle;
 public class SaveHandler {
 
 	public static FileHandle file;
+	public static int slotSelected = 0;
 	public static final int MAX_SAVES = 3;
-	
-	
 	
 	public static void savePlayer(Player p, int slot){
 		
@@ -36,13 +35,15 @@ public class SaveHandler {
 		playerData = playerData + p.armor.id + ",";
 		playerData = playerData + p.accessory.id + ",";
 		
+		playerData = playerData + p.name + ",";
+		
 		file.writeString(playerData, false);
 	}
 	
 	
 	public static Player loadPlayer(int slot, NotificationList notifications, AssetManager assets){
 		
-		Player p = new Player("sprites/player.png", 160, 120, 14, 22, notifications, assets);
+		Player p = new Player("sprites/player.png", "", 160, 120, 14, 22, notifications, assets);
 	
 		//return if a file doesnt exist
 		if(!Gdx.files.local("player" + slot + ".dat").exists()){
@@ -52,7 +53,7 @@ public class SaveHandler {
 		// get the length of the save data. if it's too short we also return
 		String savedata = Gdx.files.local("player" + slot + ".dat").readString();
 		String[] subdata = savedata.split(",");
-		if (subdata.length < 17){
+		if (subdata.length < 18){
 			return p;
 		}
 		
@@ -76,6 +77,8 @@ public class SaveHandler {
 		p.helmet = new Item(Integer.parseInt(subdata[15]));
 		p.armor = new Item(Integer.parseInt(subdata[16]));
 		p.accessory = new Item(Integer.parseInt(subdata[17]));
+		
+		p.name = subdata[18];
 		
 		p.neededEXP = Config.getNextLvl(p.lvl);
 		p.HP = p.maxHP;
@@ -118,6 +121,47 @@ public class SaveHandler {
 		
 		return items;
 		
+	}
+	
+	
+	public static boolean fileExists(int slot){
+		
+		return Gdx.files.local("player" + slot + ".dat").exists();
+
+	}
+
+
+	public static String getPlayerName(int slot) {
+		
+		if (fileExists(slot)){
+			
+			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			if (subdata.length < 19){
+				return "";
+			}
+			
+			// assign our player object the values loaded from the file
+			return subdata[18];
+		}
+		return "";
+		
+	}
+
+
+	public static int getPlayerLevel(int slot) {
+		if (fileExists(slot)){
+			
+			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			if (subdata.length < 19){
+				return 0;
+			}
+			
+			// assign our player object the values loaded from the file
+			return Integer.parseInt(subdata[0]);
+		}
+		return 0;
 	}
 	
 	

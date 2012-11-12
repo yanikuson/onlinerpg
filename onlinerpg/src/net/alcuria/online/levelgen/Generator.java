@@ -5,8 +5,8 @@ import java.util.Stack;
 
 public class Generator {
 
-	public static final int WIDTH = 10;
-	public static final int HEIGHT = 10;
+	public static final int WIDTH = 20;
+	public static final int HEIGHT = 20;
 
 	Cell[][] m;
 	Cell currentCell;

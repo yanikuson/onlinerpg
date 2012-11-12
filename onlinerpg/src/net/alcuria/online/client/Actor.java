@@ -12,7 +12,7 @@ public class Actor {
 	final float GRAVITY = 0.3f;
 	final float GROUND_ACCEL = 30f;
 	final float GROUND_DECEL = 0.60f;
-	final float AIR_ACCEL = 5f;
+	final float AIR_ACCEL = 10f;
 	final float AIR_DECEL = 0.97f;
 	final float TERMINAL_YVEL = -10f;
 	final float STAB_SPEED = 0.6f;

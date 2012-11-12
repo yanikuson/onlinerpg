@@ -2,13 +2,11 @@ package net.alcuria.online.client.screens;
 
 import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
-import net.alcuria.online.client.ui.Menu;
 import net.alcuria.online.client.ui.TitleMenu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -55,17 +53,11 @@ public class Title implements Screen {
 		menu.update(inputs, 0, 0);
 
 		
-		if (menu.single){
+		if (menu.choseStart){
 			bgm.stop();
-			myGame.setScreen(new Field(myGame, assets));
+			myGame.setScreen(new Select(myGame, assets));
 			
 		}
-		/*if(Gdx.input.justTouched() || Gdx.input.isKeyPressed(Keys.SPACE) || Gdx.input.isKeyPressed(Keys.ENTER)){
-			bgm.stop();
-			myGame.setScreen(new Field(myGame, assets));
-			dispose();
-		}
-		*/
 
 	}
 

@@ -7,13 +7,11 @@ import net.alcuria.online.client.DamageList;
 import net.alcuria.online.client.DropManager;
 import net.alcuria.online.client.Foreground;
 import net.alcuria.online.client.InputHandler;
-import net.alcuria.online.client.Item;
 import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Map;
 import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
-import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
 import net.alcuria.online.client.ui.Menu;
@@ -30,7 +28,6 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Field implements Screen {
 
-	// uncomment if I ever need this?
 	public Game g;
 
 	private SpriteBatch batch;
@@ -61,8 +58,10 @@ public class Field implements Screen {
 	float aspectRatio;
 	long before, after;
 
-	public Field(Game g, AssetManager assets)
+	public Field(Game g, AssetManager assets, Player player, ItemManager items)
 	{
+		this.player = player;
+		this.items = items;
 		this.assets = assets;
 		this.g = g;
 	}
@@ -133,14 +132,6 @@ public class Field implements Screen {
 
 			}
 
-			// call our network handler
-			// packetHandler.update(Gdx.graphics.getDeltaTime());
-			
-//			// TODO: put this in the collision manager
-//			if (inputs.typed[InputHandler.ATTACK] && player.bounds.overlaps(npc.bounds)){
-//				inputs.typed[InputHandler.ATTACK] = false;
-//				msgBox.startMessage("Hello! You must be lost. Don't be afraid of the slimes.\nThey don't do much damage!", (int)cameraManager.offsetX + Message.h_center, (int)cameraManager.offsetY + 200);
-//			}
 		}
 
 	}
@@ -174,8 +165,6 @@ public class Field implements Screen {
 
 		damageList = new DamageList();
 		
-		//player = new Player("sprites/player.png", 160, 120, 14, 22, notifications, assets);
-		player = SaveHandler.loadPlayer(1, notifications, assets);
 		player.playJump = true;
 		player.effects.assignDamageList(damageList);
 
@@ -185,7 +174,6 @@ public class Field implements Screen {
 		//packetHandler = new PacketHandler();
 		
 		// create our item manager
-		items = SaveHandler.loadItems(1);
 		drops = new DropManager(assets, notifications);
 		
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);

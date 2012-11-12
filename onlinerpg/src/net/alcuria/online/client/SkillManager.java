@@ -24,7 +24,7 @@ public class SkillManager {
 	public static final int HASTE = 10;
 	public static final int REGEN = 11;
 	
-	public static int hotkey1 = WOUND;
+	public static int hotkey1 = FIREBALL;
 	public static int hotkey2 = FIREBALL;
 	public static int hotkey3 = FIREBALL;
 	

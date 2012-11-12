@@ -5,17 +5,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TextElement {
 	
-	private int x, y, width, height, iconID;
-	private int offsetX, offsetY;
+	private int x, y;
 	public String contents;
 	
 	public TextElement(int x, int y, int width, int height, String textContents, int iconID){
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
 		this.contents = textContents;
-		this.iconID = iconID;
 		
 	}
 	
@@ -29,8 +25,7 @@ public class TextElement {
 	}
 	
 	public void update(int offsetX, int offsetY){
-		this.offsetX = offsetX;
-		this.offsetY = offsetY;
+
 	}
 	
 	public void render(SpriteBatch batch, BitmapFont font){
