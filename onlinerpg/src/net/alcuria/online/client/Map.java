@@ -37,6 +37,7 @@ public class Map {
 	public int tileWidth;					// width of an individual tile (in px)
 	public int width;						// width of map (in tiles)
 	public int height; 						// height of map (in tiles)
+	public boolean pause = false;			// do we pause the map updates (for NPC commands)?
 	int mapIndex;			
 	String[] line;
 
@@ -54,10 +55,10 @@ public class Map {
 	int[][] collisionLayer;
 	DamageList damageList;
 	
-	public Map(String tilesetLocation, String mapfile, AssetManager assets, DamageList damageList){
+	public Map(String mapfile, AssetManager assets, DamageList damageList){
 		this.damageList = damageList;
 		this.assets = assets;
-		create(tilesetLocation, mapfile);
+		create(mapfile);
 
 	}
 
@@ -151,9 +152,7 @@ public class Map {
 	}
 
 	// creates a new map
-	public void create(String tilesetLocation, String mapfile){
-		// load the map tileset
-		tileset = new Texture(Gdx.files.internal(tilesetLocation));
+	public void create(String mapfile){
 
 		// read in the map file into an array of strings
 		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
@@ -204,6 +203,10 @@ public class Map {
 				mapIndex++;
 			}
 		}
+		
+		// Line 8: tileset name
+		// load the map tileset
+		tileset = new Texture(Gdx.files.internal("tiles/" + lines[7]));
 
 		// Now that the map data is created, split up the tileset into TextureRegions
 		// initialize the texture regions of the tileset, first into a 2D spritesheet
@@ -247,11 +250,13 @@ public class Map {
 	}
 
 	public void update(Player p, InputHandler input, Message msgBox, CameraManager cameraManager){
+		pause = false;
 		for (int i = 0; i < npcs.length; i++){
 			npcs[i].command(this, p);
 			npcs[i].update(this, msgBox, cameraManager, p);
 			if (npcs[i].startCommands) {
 				input.typed[InputHandler.ATTACK] = false;
+				pause = true;
 			}
 		}
 		teleports.update(p, this, input);

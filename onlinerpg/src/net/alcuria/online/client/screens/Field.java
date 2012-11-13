@@ -30,12 +30,11 @@ public class Field implements Screen {
 
 	public Game g;
 	public int slot;					// which slot the player has loaded
-	
+
 	private SpriteBatch batch;
 	private InputHandler inputs;
 	private Player player;
 	private DropManager drops;
-	//private PacketHandler packetHandler;
 	private CollisionManager collisions;
 	private DamageList damageList;
 	private ParticleList explosions;
@@ -53,7 +52,7 @@ public class Field implements Screen {
 	public Rectangle viewport;
 	public NotificationList notifications;
 	private Music bgm;
-	
+
 	float w;
 	float h;
 	float aspectRatio;
@@ -71,19 +70,19 @@ public class Field implements Screen {
 	@Override
 	public void render(float delta) {
 		if (assets.update()){
-			
+
 			//Gdx.gl.glViewport((int) viewport.x, (int) viewport.y, (int) viewport.width, (int) viewport.height);
 			Gdx.gl.glClearColor(0, 0, 0, 1);
 			Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-			
+
 			batch.setProjectionMatrix(cameraManager.camera.combined);
 			batch.begin();
-					
+
 			bg.render(batch, cameraManager);
 			map.render(batch, true, cameraManager);
 			player.render(batch);
 			map.render(batch, false, cameraManager);
-			
+
 			burns.render(batch);
 			slices.render(batch);
 			drops.render(batch);
@@ -91,23 +90,23 @@ public class Field implements Screen {
 
 			fg.render(batch, cameraManager);
 			damageList.render(batch);
-			
+
 			notifications.render(batch, cameraManager);
 			hud.render(batch);
 			msgBox.render(batch);
 			menu.render(batch);
 			inputs.render(batch);
-			
+
 			batch.end();
 
 			//-------------------------------------------------------------
-			
+
 			// update the camera state FIRST
 			cameraManager.update(player.bounds.x, player.bounds.y, map.width*map.tileWidth, map.height*map.tileWidth);
 
 			// call the input handler to poll the keyboard's state
 			inputs.update(player, map, cameraManager);
-			
+
 			// update for our message system
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
 			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.SPACE]);
@@ -127,10 +126,12 @@ public class Field implements Screen {
 				burns.update();
 				explosions.update();
 				map.update(player, inputs, msgBox, cameraManager);
-				
-				player.command(inputs);
-				player.update(map);
-				
+
+				if (!map.pause){ 
+					player.command(inputs);
+					player.update(map);
+				}
+
 
 			}
 
@@ -154,7 +155,7 @@ public class Field implements Screen {
 		cameraManager = new CameraManager();		
 
 		batch = new SpriteBatch();
-		
+
 		// create notification handler
 		notifications = new NotificationList();
 		notifications.add("Welcome to Heroes of Umbra!");
@@ -166,7 +167,7 @@ public class Field implements Screen {
 		notifications.add("SHIFT = Fireball (New! :D)");
 
 		damageList = new DamageList();
-		
+
 		player.playJump = true;
 		player.effects.assignDamageList(damageList);
 
@@ -174,14 +175,14 @@ public class Field implements Screen {
 		bg = new Background("backgrounds/forest.png", assets);
 		fg = new Foreground("backgrounds/fog.png", assets);
 		//packetHandler = new PacketHandler();
-		
+
 		// create our item manager
 		drops = new DropManager(assets, notifications);
-		
+
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
 		menu.saveSlot = slot;
-		map = new Map("tiles/forest.png", "forest1", assets, damageList);
+		map = new Map("forest1", assets, damageList);
 
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
@@ -190,10 +191,10 @@ public class Field implements Screen {
 
 		// create the manager for collisions
 		collisions = new CollisionManager(player, map.spawner.monsterList, drops, slices, burns, inputs);
-		
+
 		// create our hud
 		hud = new HUD(player);
-		
+
 		// play awesome bgm
 		bgm = assets.get("music/forest.ogg", Music.class);
 		bgm.setLooping(true);
