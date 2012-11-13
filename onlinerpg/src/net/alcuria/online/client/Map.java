@@ -22,6 +22,18 @@ public class Map {
 	final int COLL_SLOPE_P45 	= 7;
 	final int COLL_HALF			= 8;
 	final int COLL_DOWNBLOCKING = 10;
+	
+	// for beach
+	final int COLL_SLOPE_N15A	= 11;
+	final int COLL_SLOPE_N15B	= 12;
+	final int COLL_SLOPE_N15C	= 13;
+	final int COLL_SLOPE_P15A	= 14;
+	final int COLL_SLOPE_P15B	= 15;
+	final int COLL_SLOPE_P15C	= 16;
+	final int COLL_HALFP		= 17;
+	final int COLL_HALFN		= 18;
+
+	
 
 	static int NUM_NPCS = 0;
 
@@ -32,7 +44,14 @@ public class Map {
 	final int[] heightmapSlopeN45	= {16,15,14,13,12,11,10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 	final int[] heightmapSlopeP45	= { 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16};
 	final int[] heightmapHalf		= { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8};
-
+	
+	final int[] heightmapSlopeP15A 	= { 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 6};
+	final int[] heightmapSlopeP15B 	= { 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9,10,10,10,11,11};
+	final int[] heightmapSlopeP15C 	= {11,12,12,12,12,13,13,13,14,14,14,15,15,15,16,16};
+	final int[] heightmapSlopeN15A 	= {16,16,15,15,15,14,14,14,13,13,13,12,12,12,12,11};
+	final int[] heightmapSlopeN15B 	= { 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9,10,10,10,11,11};
+	final int[] heightmapSlopeN15C 	= {11,12,12,12,12,13,13,13,14,14,14,15,15,15,16,16};
+	
 	int sheetWidth;							// width of the tileset (in tiles) (NOTE: must also be equal to the height)
 	public int tileWidth;					// width of an individual tile (in px)
 	public int width;						// width of map (in tiles)
