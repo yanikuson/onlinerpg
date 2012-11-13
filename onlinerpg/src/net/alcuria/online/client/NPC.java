@@ -36,9 +36,18 @@ public class NPC extends Actor {
 		for (int i = 0; i < lines.length; i++){
 			lines[i] = lines[i].replaceAll("\\r?\\n", "");
 			if (lines[i].equalsIgnoreCase("<heal>")){
+				// heal command
 				commands[i] = new NPCCommand(NPCCommand.TYPE_HEAL);
+				
+			} else if (lines[i].substring(0, 6).equalsIgnoreCase("<wait>")){
+				// wait command
+				commands[i] = new NPCCommand(NPCCommand.TYPE_WAIT);
+				commands[i].waitDuration = Float.parseFloat(lines[i].substring(7));
+
 			} else {
+				// add message command
 				commands[i] = new NPCCommand(NPCCommand.TYPE_MSG, lines[i]);
+				
 			}
 		}
 
@@ -69,8 +78,11 @@ public class NPC extends Actor {
 	// NPC AI, since it will probably be big, is going here
 	public void command(Map map, Player player){
 
-
-
+		// return if NPC is commanding -- we don't let it move
+		if (startCommands) {
+			return;
+		}
+		
 		// UPDATE AI or something here
 		commandTimer += Gdx.graphics.getDeltaTime();
 		timeSinceSpawn += Gdx.graphics.getDeltaTime();
