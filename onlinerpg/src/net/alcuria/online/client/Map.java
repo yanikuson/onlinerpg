@@ -33,8 +33,6 @@ public class Map {
 	final int COLL_HALFP		= 17;
 	final int COLL_HALFN		= 18;
 
-	
-
 	static int NUM_NPCS = 0;
 
 	final int[] heightmapSlopeP30A	= { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
@@ -51,6 +49,10 @@ public class Map {
 	final int[] heightmapSlopeN15A 	= {16,16,15,15,15,14,14,14,13,13,13,12,12,12,12,11};
 	final int[] heightmapSlopeN15B 	= { 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9,10,10,10,11,11};
 	final int[] heightmapSlopeN15C 	= {11,12,12,12,12,13,13,13,14,14,14,15,15,15,16,16};
+	final int[] heightmapSlopeP45H 	= { 1, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8};
+	final int[] heightmapSlopeN45H 	= { 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 6, 5, 4, 3, 2, 1};
+	
+
 	
 	int sheetWidth;							// width of the tileset (in tiles) (NOTE: must also be equal to the height)
 	public int tileWidth;					// width of an individual tile (in px)
@@ -77,8 +79,7 @@ public class Map {
 	public Map(String mapfile, AssetManager assets, DamageList damageList){
 		this.damageList = damageList;
 		this.assets = assets;
-		create(mapfile);
-
+		create(mapfile);		
 	}
 
 	public void render(SpriteBatch batch, boolean below, CameraManager camera) {
@@ -137,6 +138,7 @@ public class Map {
 		if (tileCoordX >= 0 && tileCoordX < width){
 			if (tileCoordY >= 0 && tileCoordY < height){
 
+				//TODO: use a 2d array				
 				if (collisionLayer[tileCoordX][tileCoordY] == COLL_BLOCKING){
 					return (Config.TILE_WIDTH + getSubTileAtPoint(x, y+Config.TILE_WIDTH, yVel));						// oh ffffuuuuu--
 				}
@@ -158,6 +160,34 @@ public class Map {
 				if (collisionLayer[tileCoordX][tileCoordY] == COLL_SLOPE_P45){
 					return heightmapSlopeP45[(int) (x % 16)];
 				}
+				
+				// beach
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_SLOPE_N15A){
+					return heightmapSlopeN15A[(int) (x % 16)];
+				}
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_SLOPE_N15B){
+					return heightmapSlopeN15B[(int) (x % 16)];
+				}
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_SLOPE_N15C){
+					return heightmapSlopeN15C[(int) (x % 16)];
+				}
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_SLOPE_P15A){
+					return heightmapSlopeP15A[(int) (x % 16)];
+				}
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_SLOPE_P15B){
+					return heightmapSlopeP15B[(int) (x % 16)];
+				}
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_SLOPE_P15C){
+					return heightmapSlopeP15C[(int) (x % 16)];
+				}
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_HALFP){
+					return heightmapSlopeP45H[(int) (x % 16)];
+				}
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_HALFN){
+					return heightmapSlopeN45H[(int) (x % 16)];
+				}				
+				
+				
 				if (collisionLayer[tileCoordX][tileCoordY] == COLL_HALF){
 					return 8;
 				}
