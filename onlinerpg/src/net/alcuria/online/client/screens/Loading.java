@@ -117,6 +117,8 @@ public class Loading implements Screen
 		// BGM
 		assets.load("music/forest.ogg", Music.class);
 		assets.load("music/title.ogg", Music.class);
+		assets.load("music/select.ogg", Music.class);
+
 		
 		// SPRITES
 		assets.load("sprites/burn.png", Texture.class);
@@ -137,6 +139,7 @@ public class Loading implements Screen
 
 		
 		// BACKGROUNDS
+		assets.load("backgrounds/sky.png", Texture.class);
 		assets.load("backgrounds/fog.png", Texture.class);
 		assets.load("backgrounds/forest.png", Texture.class);
 		assets.load("backgrounds/title.png", Texture.class);

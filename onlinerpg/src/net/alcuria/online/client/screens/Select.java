@@ -71,6 +71,7 @@ public class Select implements Screen {
 			if (SaveHandler.fileExists(menu.slot)){
 				Player p = SaveHandler.loadPlayer(menu.slot, new NotificationList(), assets);
 				ItemManager items = SaveHandler.loadItems(menu.slot);
+				bgm.stop();
 				myGame.setScreen(new Field(myGame, assets, p, items, menu.slot));
 			} else {
 				myGame.setScreen(new Create(myGame, assets, menu.slot));
@@ -114,7 +115,7 @@ public class Select implements Screen {
 		inputs = new InputHandler(assets);
 		
 		
-		bgm = assets.get("music/title.ogg", Music.class);
+		bgm = assets.get("music/select.ogg", Music.class);
 		bgm.setLooping(true);
 		bgm.setVolume(Config.bgmVol);
 		bgm.play();

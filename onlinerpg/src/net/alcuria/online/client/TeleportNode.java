@@ -43,19 +43,14 @@ public class TeleportNode {
 			
 		case EDGE_WEST:
 			if (((int)p.bounds.x + p.bounds.width)/Config.TILE_WIDTH < 0){
-				m.spawner.removeAllMonsters();
-				m.create(destination);
-				p.bounds.x = destX * 16;
-				p.bounds.y = destY * 16;
+				changeMap(m, p);
 			}
 			break;
 			
 		case EDGE_EAST:
 			if ((int)p.bounds.x/Config.TILE_WIDTH > m.width){
-				m.spawner.removeAllMonsters();
-				m.create(destination);
-				p.bounds.x = destX * 16;
-				p.bounds.y = destY * 16;
+				changeMap(m, p);
+
 			}
 			break;
 			
@@ -63,12 +58,22 @@ public class TeleportNode {
 			// key-activated -- check if player is overlapping it and pressing up
 			if (((int)p.bounds.x + 10)/Config.TILE_WIDTH == srcX && ((int)p.bounds.y + 4)/Config.TILE_WIDTH == srcY && input.typed[InputHandler.UP]){
 				input.typed[InputHandler.UP] = false;
+				changeMap(m, p);
 
 			}
 			break;
 		}
 
 
+	}
+	
+	public void changeMap(Map m, Player p){
+		
+		if (m.spawner != null) m.spawner.removeAllMonsters();
+		m.create(destination);
+		p.bounds.x = destX * 16;
+		p.bounds.y = destY * 16;
+		
 	}
 
 }

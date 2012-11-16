@@ -25,7 +25,7 @@ public class MonsterSpawner {
 	public int activeMonsters = 0;
 
 	public float spawnCounter = 0;
-	
+
 	public DamageList damageList;
 
 	public MonsterSpawner(String spawnfile, DamageList damageList){
@@ -36,50 +36,55 @@ public class MonsterSpawner {
 		spawnPointY = new int[MAX_SPAWN_PTS];
 		removeAllSpawnPoints();
 
-		// read in the spawn file into an array of strings
-		FileHandle handle = Gdx.files.internal(spawnfile);
-		String fileContent = handle.readString();
-		String[] lines = fileContent.split("\\r?\\n");
-		
-		// for each line, split and parse the x and y vals and add a spawn pt at that location
-		for (int i = 0; i < lines.length; i++){
-			addSpawnPoint(Integer.parseInt(lines[i].split("\\s")[0]), Integer.parseInt(lines[i].split("\\s")[1]));
-		}
-		
 		this.damageList = damageList;
+
+		// read in the spawn file into an array of strings
+		if (Gdx.files.internal(spawnfile).exists()){
+			FileHandle handle = Gdx.files.internal(spawnfile);
+			String fileContent = handle.readString();
+			String[] lines = fileContent.split("\\r?\\n");
+
+			// for each line, split and parse the x and y vals and add a spawn pt at that location
+			for (int i = 0; i < lines.length; i++){
+				addSpawnPoint(Integer.parseInt(lines[i].split("\\s")[0]), Integer.parseInt(lines[i].split("\\s")[1]));
+			}
+		}
+
 
 	}
 
 	public void update(){
 
-		spawnCounter += Gdx.graphics.getDeltaTime();
-		if ((spawnCounter > SPAWN_TIMER || initialSpawn)){
-			
-			// look for the next available (inactive) monster in the monster list	
-			monsterListIndex = 0;
-			while (monsterList[monsterListIndex].visible){
-				monsterListIndex++;
-				// if we iterate through the whole array, the map is full
-				if (monsterListIndex >= activeMonsters){
-					spawnCounter = 0;
-					System.out.println("map is full");
-					return;
+		if (activeSpawnPoints > 0){
+			spawnCounter += Gdx.graphics.getDeltaTime();
+			if ((spawnCounter > SPAWN_TIMER || initialSpawn)){
+
+				// look for the next available (inactive) monster in the monster list	
+				monsterListIndex = 0;
+				while (monsterList[monsterListIndex].visible){
+					monsterListIndex++;
+					// if we iterate through the whole array, the map is full
+					if (monsterListIndex >= activeMonsters){
+						spawnCounter = 0;
+						System.out.println("map is full");
+						return;
+					}
 				}
-			}
 
-			// look for a random spawn point
-			spawnPointIndex = (int) (Math.random() * activeSpawnPoints);
+				// look for a random spawn point
+				spawnPointIndex = (int) (Math.random() * activeSpawnPoints);
 
-			// spawn a monster on a map there
-			if (monsterList[monsterListIndex] != null){
-				monsterList[monsterListIndex].spawn(spawnPointX[spawnPointIndex], spawnPointY[spawnPointIndex]);
-			} else {
-				System.out.println("Warning: attempting to add null monster in MonsterSpawner.update()");
+				// spawn a monster on a map there
+				if (monsterList[monsterListIndex] != null){
+					monsterList[monsterListIndex].spawn(spawnPointX[spawnPointIndex], spawnPointY[spawnPointIndex]);
+				} else {
+					System.out.println("Warning: attempting to add null monster in MonsterSpawner.update()");
+				}
+				spawnCounter = 0;
 			}
-			spawnCounter = 0;
 		}
 	}
-	
+
 	// spawns a set number of monsters on map load
 	public void doInitialSpawn(){
 		initialSpawn = true;

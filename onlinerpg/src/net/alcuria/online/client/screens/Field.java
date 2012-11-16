@@ -1,11 +1,8 @@
 package net.alcuria.online.client.screens;
 
-import net.alcuria.online.client.Background;
 import net.alcuria.online.client.CameraManager;
-import net.alcuria.online.client.CollisionManager;
 import net.alcuria.online.client.DamageList;
 import net.alcuria.online.client.DropManager;
-import net.alcuria.online.client.Foreground;
 import net.alcuria.online.client.InputHandler;
 import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Map;
@@ -20,7 +17,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -32,18 +28,16 @@ public class Field implements Screen {
 	public int slot;					// which slot the player has loaded
 
 	private SpriteBatch batch;
-	private InputHandler inputs;
+	public InputHandler inputs;
 	private Player player;
-	private DropManager drops;
-	private CollisionManager collisions;
+	public DropManager drops;
 	private DamageList damageList;
-	private ParticleList explosions;
-	private ParticleList slices;
-	private ParticleList burns;
+	public ParticleList explosions;
+	public ParticleList slices;
+	public ParticleList burns;
 	private Message msgBox;
 	private Map map;
-	private Background bg;
-	private Foreground fg;
+
 	private CameraManager cameraManager;
 	private HUD hud;
 	private Menu menu;
@@ -51,7 +45,6 @@ public class Field implements Screen {
 	public AssetManager assets;
 	public Rectangle viewport;
 	public NotificationList notifications;
-	private Music bgm;
 
 	float w;
 	float h;
@@ -78,7 +71,7 @@ public class Field implements Screen {
 			batch.setProjectionMatrix(cameraManager.camera.combined);
 			batch.begin();
 
-			bg.render(batch, cameraManager);
+			map.renderBG(batch, cameraManager);
 			map.render(batch, true, cameraManager);
 			player.render(batch);
 			map.render(batch, false, cameraManager);
@@ -88,7 +81,7 @@ public class Field implements Screen {
 			drops.render(batch);
 			explosions.render(batch);
 
-			fg.render(batch, cameraManager);
+			map.renderFG(batch, cameraManager);
 			damageList.render(batch);
 
 			notifications.render(batch, cameraManager);
@@ -118,9 +111,7 @@ public class Field implements Screen {
 
 				// move all our actors: monsters, npcs, player
 				drops.update(map);
-				collisions.update(map, damageList, explosions, items);
 
-				fg.update(Gdx.graphics.getDeltaTime());
 				damageList.update();
 				slices.update();
 				burns.update();
@@ -172,9 +163,7 @@ public class Field implements Screen {
 		player.effects.assignDamageList(damageList);
 
 		inputs = new InputHandler(assets);
-		bg = new Background("backgrounds/forest.png", assets);
-		fg = new Foreground("backgrounds/fog.png", assets);
-		//packetHandler = new PacketHandler();
+
 
 		// create our item manager
 		drops = new DropManager(assets, notifications);
@@ -182,24 +171,17 @@ public class Field implements Screen {
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
 		menu.saveSlot = slot;
-		map = new Map("forest1", assets, damageList);
+		map = new Map("beach", assets, damageList, this);
 
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
 		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);
 		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
 
-		// create the manager for collisions
-		collisions = new CollisionManager(player, map.spawner.monsterList, drops, slices, burns, inputs);
+
 
 		// create our hud
 		hud = new HUD(player);
-
-		// play awesome bgm
-		bgm = assets.get("music/forest.ogg", Music.class);
-		bgm.setLooping(true);
-		bgm.setVolume(0.8f);
-		bgm.play();
 	}
 
 	@Override
