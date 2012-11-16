@@ -7,6 +7,7 @@ import net.alcuria.online.client.InputHandler;
 import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Map;
 import net.alcuria.online.client.NotificationList;
+import net.alcuria.online.client.Particle;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.ui.HUD;
@@ -34,6 +35,7 @@ public class Field implements Screen {
 	private DamageList damageList;
 	public ParticleList explosions;
 	public ParticleList slices;
+	public ParticleList freezes;
 	public ParticleList burns;
 	private Message msgBox;
 	private Map map;
@@ -76,6 +78,7 @@ public class Field implements Screen {
 			player.render(batch);
 			map.render(batch, false, cameraManager);
 
+			freezes.render(batch);
 			burns.render(batch);
 			slices.render(batch);
 			drops.render(batch);
@@ -115,6 +118,7 @@ public class Field implements Screen {
 				damageList.update();
 				slices.update();
 				burns.update();
+				freezes.update();
 				explosions.update();
 				map.update(player, inputs, msgBox, cameraManager);
 
@@ -177,8 +181,7 @@ public class Field implements Screen {
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
 		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);
 		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
-
-
+		freezes = new ParticleList("sprites/ice.png", 24, 24, 21, 2, false, assets);
 
 		// create our hud
 		hud = new HUD(player);

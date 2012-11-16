@@ -79,7 +79,7 @@ public class Monster extends Actor {
 
 		}
 
-		this.invincibilityPeriod = 0.35f;
+		this.invincibilityPeriod = 0.3f;
 		this.type = type;
 		this.HP = maxHP;
 	}
@@ -91,7 +91,7 @@ public class Monster extends Actor {
 	// monster AI, since it will probably be big, is going here
 	public void command(Map map, Player player){
 
-		if (HP > 0){
+		if (HP > 0 && effects.timer[StatusEffects.FREEZE] <= 0){
 
 			// UPDATE AI or something here
 			commandTimer += Gdx.graphics.getDeltaTime();
@@ -100,11 +100,8 @@ public class Monster extends Actor {
 			// check if we can issue a new command
 			if (commandTimer > commandFrequency){
 
-				// clear all previous commands
-				for (int i = 0; i < moveCommand.length; i++) {
-					moveCommand[i] = false;
-				}
-
+				clearCommands();
+				
 				// determine WHICH TYPE OF ENEMY
 				switch (type) {
 				case Config.MON_EYE:
@@ -142,6 +139,8 @@ public class Monster extends Actor {
 
 			}
 
+		} else {
+			clearCommands();
 		}
 
 
@@ -175,6 +174,14 @@ public class Monster extends Actor {
 		// update projectiles
 		if (projectile != null){
 			projectile.update(map);
+		}
+
+	}
+
+	private void clearCommands() {
+		// clear all previous commands
+		for (int i = 0; i < moveCommand.length; i++) {
+			moveCommand[i] = false;
 		}
 
 	}

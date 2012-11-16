@@ -24,7 +24,7 @@ public class SkillManager {
 	public static final int HASTE = 10;
 	public static final int REGEN = 11;
 	
-	public static int hotkey1 = FIREBALL;
+	public static int hotkey1 = FREEZE;
 	public static int hotkey2 = FIREBALL;
 	public static int hotkey3 = FIREBALL;
 	
@@ -41,6 +41,7 @@ public class SkillManager {
 	public boolean loop = false;			// does the skill animation loop?
 	
 	public Particle fireball;
+	public Particle ice;
 	public Particle swing;
 	public Particle activeParticle;			// pointer to the active particle
 	
@@ -63,7 +64,6 @@ public class SkillManager {
 	
 		swing = new Particle("sprites/swing.png", 0, 0, 84, 84, 7, 3, false, assets);
 		fireball = new Particle("sprites/fireball.png", 0, 0, 16, 16, 2, 3, false, assets);
-
 	}
 	
 	public void start(int skillID){

@@ -187,7 +187,7 @@ public class Animator {
 		framesSinceAttack++;
 
 		// reset ready timer if 5 seconds pass
-		if (readyTimer > 5){
+		if (readyTimer > 4){
 			readyPose = false;
 			readyTimer = 0;
 		}

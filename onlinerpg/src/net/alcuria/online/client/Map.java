@@ -346,9 +346,9 @@ public class Map {
 		
 		// create the collision manager
 		if (containsEnemies){
-			collisions = new CollisionManager(p, this.spawner.monsterList, game.drops, game.slices, game.burns, game.inputs);
+			collisions = new CollisionManager(p, this.spawner.monsterList, game.drops, game.slices, game.burns, game.freezes, game.inputs);
 		} else {
-			collisions = new CollisionManager(p, null, game.drops, game.slices, game.burns, game.inputs);
+			collisions = new CollisionManager(p, null, game.drops, game.slices, game.burns, game.freezes, game.inputs);
 
 		}
 

@@ -7,9 +7,11 @@ public class CollisionManager {
 	DropManager drops;
 	ParticleList slices;
 	ParticleList burns;
+	ParticleList freezes;
+	
 	InputHandler inputs;
 
-	public CollisionManager(Player player, Monster[] enemies, DropManager drops, ParticleList slices, ParticleList burns, InputHandler inputs){
+	public CollisionManager(Player player, Monster[] enemies, DropManager drops, ParticleList slices, ParticleList burns, ParticleList freezes, InputHandler inputs){
 		this.player = player;
 		this.enemies = enemies;
 		this.drops = drops;
@@ -17,6 +19,7 @@ public class CollisionManager {
 
 		this.slices = slices;
 		this.burns = burns;
+		this.freezes = freezes;
 	}
 
 	public void update(Map map, DamageList damageList, ParticleList explosions, ItemManager inventory){
@@ -45,7 +48,7 @@ public class CollisionManager {
 
 					// hurt a player
 					if (enemies[i].timeSinceSpawn > 0.5){
-						if ((enemies[i].bounds.overlaps(player.bounds) || (enemies[i].projectile != null && enemies[i].projectile.bounds.overlaps(player.bounds))) && enemies[i].HP > 0){
+						if ((enemies[i].bounds.overlaps(player.bounds) || (enemies[i].projectile != null && enemies[i].projectile.bounds.overlaps(player.bounds))) && enemies[i].HP > 0 && enemies[i].effects.timer[StatusEffects.FREEZE] <= 0){
 							player.damage(enemies[i].bounds.x, Config.getDamageDone(enemies[i].atk, enemies[i].power, player.def, player.stamina), damageList);
 							player.animation.setReady();
 						}
@@ -67,8 +70,8 @@ public class CollisionManager {
 							enemies[i].damage(player, Config.getDamageDone(player.matk + 10, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
 							break;
 						case SkillManager.FREEZE:
-							enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
-							enemies[i].effects.add(StatusEffects.POISON, 3, 30);
+							enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, freezes, drops);
+							enemies[i].effects.add(StatusEffects.FREEZE, 10, 5);
 							break;
 						}
 
@@ -84,7 +87,7 @@ public class CollisionManager {
 				if (drops.dropList[i].bounds.overlaps(player.bounds) && drops.dropList[i].visible){
 					drops.collect(i, inventory);
 				}
-			}
+			} 
 		}
 
 

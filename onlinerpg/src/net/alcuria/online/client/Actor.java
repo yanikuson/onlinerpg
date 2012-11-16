@@ -15,7 +15,7 @@ public class Actor {
 	final float AIR_ACCEL = 10f;
 	final float AIR_DECEL = 0.97f;
 	final float TERMINAL_YVEL = -10f;
-	final float STAB_SPEED = 0.6f;
+	final float STAB_SPEED = 0.5f;
 
 	final static int MOVE_LEFT = 1;
 	final static int MOVE_RIGHT = 2;
@@ -273,15 +273,15 @@ public class Actor {
 
 		// check for an ATTACK
 		if (moveCommand[MOVE_ATTACK] && !animation.swingPose && !animation.stabPose){
-			moveCommand[MOVE_ATTACK] = false;
-			//animation.startAttack(facingLeft);
-			
+			moveCommand[MOVE_ATTACK] = false;			
 			moving = false;
 		}
 
 		// ALL OTHER PROCESSING 
-		animation.update(facingLeft, onGround, moving, Gdx.graphics.getDeltaTime(), attackSpeed);
-
+		if (effects.timer[StatusEffects.FREEZE] <= 0) {
+			animation.update(facingLeft, onGround, moving, Gdx.graphics.getDeltaTime(), attackSpeed);
+		}
+		
 		if (hurtTimer < invincibilityPeriod){
 			hurtTimer += Gdx.graphics.getDeltaTime();
 		} 
@@ -289,7 +289,7 @@ public class Actor {
 		// if we are below 25% health, flash sprite...
 		if (HP*100/maxHP <= 25){
 			criticalHealthTimer+= Gdx.graphics.getDeltaTime();
-			if (criticalHealthTimer > 2){
+			if (criticalHealthTimer > 1){
 				flash(1,0,0,1,1);
 				criticalHealthTimer = 0;
 			}
@@ -437,3 +437,4 @@ public class Actor {
 		animation.dispose();
 	}
 }
+
