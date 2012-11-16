@@ -1,10 +1,8 @@
 package net.alcuria.online.client;
 
 import net.alcuria.online.client.screens.Field;
-import net.alcuria.online.client.ui.Message;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
@@ -346,29 +344,28 @@ public class Map {
 		
 		// create the collision manager
 		if (containsEnemies){
-			collisions = new CollisionManager(p, this.spawner.monsterList, game.drops, game.slices, game.burns, game.freezes, game.inputs);
+			collisions = new CollisionManager(game.player, this.spawner.monsterList, game.drops, game.slices, game.burns, game.freezes, game.inputs);
 		} else {
-			collisions = new CollisionManager(p, null, game.drops, game.slices, game.burns, game.freezes, game.inputs);
+			collisions = new CollisionManager(game.player, null, game.drops, game.slices, game.burns, game.freezes, game.inputs);
 
 		}
 
 	}
 
-	public void update(Player p, InputHandler input, Message msgBox, CameraManager cameraManager){
-		this.p = p;
+	public void update(){
 		
 		pause = false;
 		for (int i = 0; i < npcs.length; i++){
 			if (npcs[i] != null) {
 				npcs[i].command(this, p);
-				npcs[i].update(this, msgBox, cameraManager, p);
+				npcs[i].update(this, game.msgBox, game.cameraManager, game.player);
 				if (npcs[i].startCommands) {
-					input.typed[InputHandler.ATTACK] = false;
+					game.inputs.typed[InputHandler.ATTACK] = false;
 					pause = true;
 				}
 			}
 		}
-		teleports.update(p, this, input);
+		teleports.update(game.player, this, game.inputs);
 		if (spawner != null && containsEnemies) spawner.update();
 		fg.update(Gdx.graphics.getDeltaTime());
 		collisions.update(this, damageList, game.explosions, game.items);

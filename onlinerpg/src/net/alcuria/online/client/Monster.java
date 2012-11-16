@@ -209,7 +209,7 @@ public class Monster extends Actor {
 			hurtTimer = 0;
 			hurtEnemy.play();
 			
-
+			// handle hp reduction
 			HP -= damage;
 			if (HP <= 0){
 
@@ -224,10 +224,10 @@ public class Monster extends Actor {
 				if (dropRoll < 0.7f){
 					drops.add(this, null);
 				}
-				if (dropRoll < 0.1f){
+				if (dropRoll < 0.05f){
 					drops.add(this, commonDrop);
 				}
-				if (dropRoll < 0.02f){
+				if (dropRoll < 0.01f){
 					drops.add(this, rareDrop);
 				}
 				
@@ -240,10 +240,12 @@ public class Monster extends Actor {
 
 	// spawns a monster at location TILE COORDS X, Y
 	public void spawn(int x, int y) {
+		
 		timeSinceSpawn = 0;
 		bounds.x = x * Config.TILE_WIDTH;
 		bounds.y = y * Config.TILE_WIDTH;
 		xVel = 0;
+		effects.removeAll();
 		HP = maxHP;
 		visible = true;
 		flash(1, 0, 1, 0, 3);

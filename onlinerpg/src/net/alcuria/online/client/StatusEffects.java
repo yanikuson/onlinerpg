@@ -12,7 +12,7 @@ public class StatusEffects {
 	public static final int HEAL = 3;
 	public static final int SPEED = 4;
 	public static final int FREEZE = 5;
-	
+
 	public static final int MAX_EFFECTS = 10;
 	public static final int MAX_DURATION = 5;
 	public static final float EFFECT_FREQUENCY = 0.5f;
@@ -165,9 +165,22 @@ public class StatusEffects {
 				this.timer[effect] = duration;
 				this.severity[effect] = severity;
 				actor.walkSpeed += this.severity[effect];
-				
+
 			}
 			break;
 		}
+	}
+
+	// removes all effects from the actor
+	public void removeAll() {
+		for (int i = 0; i < MAX_EFFECTS; i++) {
+			if (timer[i] > 0){
+				remove(i);
+				timer[i] = 0;
+				subTimer[i] = 0;
+				severity[i] = 0;
+			}
+		}
+
 	}
 }

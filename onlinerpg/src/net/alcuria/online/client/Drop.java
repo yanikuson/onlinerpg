@@ -77,7 +77,7 @@ public class Drop extends Actor {
 		bounds.x = m.bounds.x;
 		bounds.y = m.bounds.y + 12;
 		yVel = (float) (Math.random() + 3);
-		xVel = (float) (m.xVel/4 + (Math.random()/2));
+		xVel = (float) (m.xVel/4 + (Math.random()*2));
 		onGround = false;
 		dropParticle.start(bounds.x, bounds.y, false);
 		dropParticle.playAnimation = true;

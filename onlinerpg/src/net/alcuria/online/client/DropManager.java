@@ -60,7 +60,7 @@ public class DropManager {
 		if (loot == null) {
 			// define money drop as null item
 			dropList[index].particleID = 0;
-			dropList[index].value = (int) (m.money * (1 + (Math.random() - 0.5) / 5));
+			dropList[index].value = (int) (m.money * (1 + (Math.random() - 0.5)));
 		} else {
 			// otherwise drop the enemy's loot
 			dropList[index].particleID = loot.icon;

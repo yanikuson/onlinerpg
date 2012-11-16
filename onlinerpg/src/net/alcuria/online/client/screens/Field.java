@@ -30,17 +30,17 @@ public class Field implements Screen {
 
 	private SpriteBatch batch;
 	public InputHandler inputs;
-	private Player player;
+	public Player player;
 	public DropManager drops;
 	private DamageList damageList;
 	public ParticleList explosions;
 	public ParticleList slices;
 	public ParticleList freezes;
 	public ParticleList burns;
-	private Message msgBox;
+	public Message msgBox;
 	private Map map;
 
-	private CameraManager cameraManager;
+	public CameraManager cameraManager;
 	private HUD hud;
 	private Menu menu;
 	public ItemManager items;
@@ -120,7 +120,7 @@ public class Field implements Screen {
 				burns.update();
 				freezes.update();
 				explosions.update();
-				map.update(player, inputs, msgBox, cameraManager);
+				map.update();
 
 				if (!map.pause){ 
 					player.command(inputs);
