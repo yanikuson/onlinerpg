@@ -38,7 +38,7 @@ public class HUD {
 		hp = new TextureRegion(fullHUD, 0, 32, 1, 5);
 		ep = new TextureRegion(fullHUD, 16, 32, 2, 2);
 		exp = new TextureRegion(fullHUD, 32, 32, 1, 1);
-
+		
 		// hacky numbers
 		numbers = new TextureRegion[11];
 		for (int i=0; i<numbers.length; i++){
@@ -96,6 +96,7 @@ public class HUD {
 	}
 
 	public void render(SpriteBatch batch){
+		
 		batch.draw(hud, x, y);
 		batch.draw(hp, x+24, y+16, (player.HP*58)/player.maxHP, 5);
 		for (int i=0; i<player.EP; i++){

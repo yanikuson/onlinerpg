@@ -7,7 +7,6 @@ import net.alcuria.online.client.InputHandler;
 import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Map;
 import net.alcuria.online.client.NotificationList;
-import net.alcuria.online.client.Particle;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.ui.HUD;
