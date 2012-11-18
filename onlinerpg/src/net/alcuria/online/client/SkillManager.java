@@ -128,7 +128,7 @@ public class SkillManager {
 				area.x = p.bounds.x;
 				area.y = p.bounds.y;
 			}
-			cast = assets.get("sounds/shoot_flame.wav", Sound.class);
+			cast = assets.get("sounds/shoot_ice.wav", Sound.class);
 			visible = true;
 			xVel = 0;
 			yVel = 0;

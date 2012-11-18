@@ -69,8 +69,12 @@ public class Select implements Screen {
 
 		} else if (menu.slot > 0){
 			if (SaveHandler.fileExists(menu.slot)){
+				
+				// load all the data
 				Player p = SaveHandler.loadPlayer(menu.slot, new NotificationList(), assets);
 				ItemManager items = SaveHandler.loadItems(menu.slot);
+				SaveHandler.loadFlags(menu.slot);
+				
 				bgm.stop();
 				myGame.setScreen(new Field(myGame, assets, p, items, menu.slot));
 			} else {

@@ -237,6 +237,7 @@ public class Menu {
 				createStatScreen();
 				SaveHandler.savePlayer(p, saveSlot);
 				SaveHandler.saveItems(saveSlot, inventory);
+				SaveHandler.saveFlags(saveSlot);
 			}
 
 		}
@@ -246,6 +247,7 @@ public class Menu {
 	private void hideMenu(InputHandler input) {
 		SaveHandler.savePlayer(p, saveSlot);
 		SaveHandler.saveItems(saveSlot, inventory);
+		SaveHandler.saveFlags(saveSlot);
 		cancel.play(Config.sfxVol);
 		input.typed[InputHandler.JUMP] = false;
 		input.typed[InputHandler.ESCAPE] = false;

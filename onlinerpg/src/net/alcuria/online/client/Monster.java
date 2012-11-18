@@ -186,7 +186,7 @@ public class Monster extends Actor {
 
 	}
 
-	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList slices, DropManager drops){
+	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList battleEffect, DropManager drops){
 		if (hurtTimer >= invincibilityPeriod && timeSinceSpawn > 0.5){
 
 			// calculate KB
@@ -204,7 +204,8 @@ public class Monster extends Actor {
 			
 			// do all animations
 			flash(1, 0, 0, 1, 5);
-			slices.start(bounds.x - bounds.width + 4, bounds.y - bounds.height, !player.facingLeft);
+			battleEffect.start(bounds.x + (bounds.width - battleEffect.width)/2, bounds.y - bounds.height, !player.facingLeft);
+			
 			damageList.start(damage, bounds.x, bounds.y, player.facingLeft, Damage.TYPE_DAMAGE);
 			hurtTimer = 0;
 			hurtEnemy.play();

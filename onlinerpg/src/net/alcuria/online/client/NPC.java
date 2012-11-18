@@ -35,36 +35,78 @@ public class NPC extends Actor {
 		commands = new NPCCommand[lines.length];
 		for (int i = 0; i < lines.length; i++){
 			lines[i] = lines[i].replaceAll("\\r?\\n", "");
-			if (lines[i].equalsIgnoreCase("<heal>")){
-				// heal command
-				commands[i] = new NPCCommand(NPCCommand.TYPE_HEAL);
-				
-			} else if (lines[i].substring(0, 6).equalsIgnoreCase("<wait>")){
-				// wait command
-				commands[i] = new NPCCommand(NPCCommand.TYPE_WAIT);
-				commands[i].waitDuration = Float.parseFloat(lines[i].substring(7));
 
-			} else {
-				// add message command
-				commands[i] = new NPCCommand(NPCCommand.TYPE_MSG, lines[i]);
-				
+			if (lines[i].length() > 0){
+				if (lines[i].substring(0, 1).equals("#")){
+					continue;
+
+				} else if (lines[i].equalsIgnoreCase("<heal>")){
+					// heal command: <heal>
+					commands[i] = new NPCCommand(NPCCommand.TYPE_HEAL);
+
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<wait>")){
+					// wait command: <wait> (duration)
+					commands[i] = new NPCCommand(NPCCommand.TYPE_WAIT);
+					commands[i].waitDuration = Float.parseFloat(lines[i].substring(7));
+
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<messa")){
+					// message command: <message> (some message to display)
+					commands[i] = new NPCCommand(NPCCommand.TYPE_MSG, lines[i].substring(10));
+
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<move>")){
+					// message command: <message> (some message to display)
+					commands[i] = new NPCCommand(NPCCommand.TYPE_MOVE, lines[i].substring(7));
+
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<stop>")){
+					// message command: <message> (some message to display)
+					commands[i] = new NPCCommand(NPCCommand.TYPE_STOP);
+
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<hero>")){
+					// message command: <hero> (some pose)
+					commands[i] = new NPCCommand(NPCCommand.TYPE_HERO, lines[i].substring(7));	
+
+				} else if (lines[i].substring(0, 5).equalsIgnoreCase("<bgm>")){
+					// change BGM command: <bgm> (song name)
+					commands[i] = new NPCCommand(NPCCommand.TYPE_BGM, lines[i].substring(6));		
+
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<remov")){
+					// hide NPC command: <remove>
+					commands[i] = new NPCCommand(NPCCommand.TYPE_REMOVE);
+
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<flag>")) {
+					// switch a flag <flag> (flag index)
+					commands[i] = new NPCCommand(NPCCommand.TYPE_FLAG, lines[i].substring(7));	
+					
+				}
 			}
 		}
-
 
 	}
 
 	public void start(){
+		// clear all movement commands
+		stopMovement();
+		Config.npcCommand = true;
+		// start the commands
 		startCommands = true;
 		commandIndex = 0;
+	}
+
+	public void stopMovement() {
+		for (int i = 0; i < moveCommand.length; i++) {
+			moveCommand[i] = false;
+			xVel = 0;
+		}
+
 	}
 
 	public void update(Map m, Message msgBox, CameraManager cameraManager, Player p){
 
 		if (startCommands && commandIndex < commands.length){
-			commandIndex = commands[commandIndex].update(msgBox, cameraManager, commandIndex, p);
+			commandIndex = commands[commandIndex].update(msgBox, cameraManager, commandIndex, p, this, m, assets);
 
 		} else {
+			Config.npcCommand = false;
 			startCommands = false;
 			commandIndex = 0;
 		}
@@ -82,7 +124,7 @@ public class NPC extends Actor {
 		if (startCommands) {
 			return;
 		}
-		
+
 		// UPDATE AI or something here
 		commandTimer += Gdx.graphics.getDeltaTime();
 		timeSinceSpawn += Gdx.graphics.getDeltaTime();
@@ -91,9 +133,7 @@ public class NPC extends Actor {
 		if (commandTimer > commandFrequency){
 
 			// clear all previous commands
-			for (int i = 0; i < moveCommand.length; i++) {
-				moveCommand[i] = false;
-			}
+			stopMovement();
 
 			// randomly choose a new command
 			rndCommand = (int) (Math.random()*4);

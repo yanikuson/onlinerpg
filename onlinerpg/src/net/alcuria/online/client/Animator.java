@@ -9,6 +9,8 @@ public class Animator {
 
 	int width;
 	int height;
+	int curWidth, curHeight;
+	
 	int attackIndex = 0;
 	public int framesSinceAttack = 0;
 	boolean flipX;
@@ -25,16 +27,20 @@ public class Animator {
 	float idleTimer = 0f;
 	float CAST_TIME = 0.5f;
 
-	Texture sheet;									// entire graphical sprite sheet
-	TextureRegion frame;							// cell within the sprite sheet (this gets drawn)
+	private Texture sheet;							// entire graphical sprite sheet
+	public TextureRegion frame;						// cell within the sprite sheet (this gets drawn)
 
-	TextureRegion[] idle;
-	TextureRegion[] walking;
-	TextureRegion falling;
-	TextureRegion[] attacking;
-	TextureRegion[] stabbing;
-	TextureRegion casting;
-	TextureRegion[] ready;
+	public TextureRegion[] idle;
+	public TextureRegion[] walking;
+	public TextureRegion falling;
+	public TextureRegion[] attacking;
+	public TextureRegion[] stabbing;
+	public TextureRegion casting;
+	public TextureRegion[] ready;
+	
+	public TextureRegion hurt;
+	public TextureRegion dead;
+	public TextureRegion victory;
 	
 	Particle castParticle;
 	Player p;
@@ -69,14 +75,19 @@ public class Animator {
 		this.stabbing[2] = new TextureRegion(sheet, celWidth*4, celHeight*2, celWidth*2, celHeight);
 
 		this.casting = new TextureRegion(sheet, 0, celHeight*3, celWidth*2, celHeight);
-
+		
+		this.dead = new TextureRegion(sheet, 0, celHeight*4, celWidth*2, celHeight);
+		this.hurt = new TextureRegion(sheet, celWidth*2, celHeight*4, celWidth*2, celHeight);
+		this.victory = new TextureRegion(sheet, celWidth*4, celHeight*4, celWidth*2, celHeight);
+		
 		this.ready = new TextureRegion[2];
 		this.ready[0] = new TextureRegion(sheet, celWidth*5, 0, celWidth, celHeight);
 		this.ready[1] = new TextureRegion(sheet, celWidth*6, 0, celWidth, celHeight);
-
+		
 		// set width/height, for convenience later
 		width = frame.getRegionWidth();
 		height = frame.getRegionHeight();
+
 
 	}
 	
@@ -92,7 +103,7 @@ public class Animator {
 		} else {
 
 			// draw the frame flipped
-			if (swingPose || stabPose || castPose || castComplete){
+			if (curWidth > 14){
 				batch.draw(frame, x+width, y, 0-width*2, height);
 			} else {
 				batch.draw(frame, x+width, y, 0-width, height);
@@ -191,6 +202,10 @@ public class Animator {
 			readyPose = false;
 			readyTimer = 0;
 		}
+		
+		// reset current width
+		curWidth = frame.getRegionWidth();
+		curHeight = frame.getRegionHeight();
 	}
 
 
@@ -205,6 +220,24 @@ public class Animator {
 		readyPose = true;
 	}
 
+	// resets all the timers
+	public void reset(){
+		
+		attackIndex = 0;
+		framesSinceAttack = 0;
+		swingPose = false;
+		stabPose = false;
+		readyPose = false;
+		castPose = false;
+		castComplete = false;
+
+		castTimer = 0;
+		animationTimer = 0f;
+		attackTimer = 0f;
+		readyTimer = 0f;
+		idleTimer = 0f;
+	}
+	
 	public void startAttack(boolean facingLeft) {
 		readyTimer = 0;
 		attackTimer = 0f;

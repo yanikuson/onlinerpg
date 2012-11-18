@@ -113,13 +113,14 @@ public class Loading implements Screen
 		assets.load("sounds/drop.wav", Sound.class);
 		assets.load("sounds/heal.wav", Sound.class);
 		assets.load("sounds/shoot_flame.wav", Sound.class);
+		assets.load("sounds/shoot_ice.wav", Sound.class);
 		
 		// BGM
 		assets.load("music/forest.ogg", Music.class);
 		assets.load("music/title.ogg", Music.class);
 		assets.load("music/select.ogg", Music.class);
 		assets.load("music/beach.ogg", Music.class);
-
+		assets.load("music/victory.ogg", Music.class);
 
 		
 		// SPRITES

@@ -1,8 +1,10 @@
 package net.alcuria.online.client.screens;
 
 import net.alcuria.online.client.CameraManager;
+import net.alcuria.online.client.Config;
 import net.alcuria.online.client.DamageList;
 import net.alcuria.online.client.DropManager;
+import net.alcuria.online.client.GlobalFlags;
 import net.alcuria.online.client.InputHandler;
 import net.alcuria.online.client.ItemManager;
 import net.alcuria.online.client.Map;
@@ -87,7 +89,9 @@ public class Field implements Screen {
 			damageList.render(batch);
 
 			notifications.render(batch, cameraManager);
-			hud.render(batch);
+			if (GlobalFlags.flags[GlobalFlags.INTRO]){
+				hud.render(batch);
+			}
 			msgBox.render(batch);
 			menu.render(batch);
 			inputs.render(batch);
@@ -105,12 +109,15 @@ public class Field implements Screen {
 			// update for our message system
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
 			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.SPACE]);
-			menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
 			notifications.update();
-
+			
 			// we only want to call update on the actors if a messagebox/menu isn't open
-			if (!msgBox.visible && !menu.active){			
-
+			if (!msgBox.visible && !menu.active){
+				
+				if (!Config.npcCommand){
+					menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
+				}
+				
 				// move all our actors: monsters, npcs, player
 				drops.update(map);
 
@@ -152,13 +159,7 @@ public class Field implements Screen {
 
 		// create notification handler
 		notifications = new NotificationList();
-		notifications.add("Welcome to Heroes of Umbra!");
-		notifications.add("Z = Jump");
-		notifications.add("X = Attack");
-		notifications.add("SPACE = Talk");
-		notifications.add("Arrow Keys = Move");
-		notifications.add("ESC = Menu");
-		notifications.add("SHIFT = Fireball (New! :D)");
+		//notifications.add("Welcome to Heroes of Umbra!");
 
 		damageList = new DamageList();
 
@@ -176,6 +177,12 @@ public class Field implements Screen {
 		menu.saveSlot = slot;
 		map = new Map("beach", assets, damageList, this);
 
+		if (!GlobalFlags.flags[GlobalFlags.INTRO]){
+			player.bounds.x = 9 * Config.TILE_WIDTH;
+			player.bounds.y = 3 * Config.TILE_WIDTH;
+			map.npcs[0].start();
+		}
+		
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
 		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);

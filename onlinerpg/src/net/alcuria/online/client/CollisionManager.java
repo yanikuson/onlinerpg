@@ -26,7 +26,7 @@ public class CollisionManager {
 
 
 		for (int i = 0; i < map.npcs.length; i++){
-			if (inputs.typed[InputHandler.SPACE] && player.bounds.overlaps(map.npcs[i].bounds) && !map.npcs[i].startCommands){
+			if (map.npcs[i] != null && inputs.typed[InputHandler.SPACE] && player.bounds.overlaps(map.npcs[i].bounds) && !map.npcs[i].startCommands){
 				inputs.typed[InputHandler.SPACE] = false;
 				map.npcs[i].start();
 			}

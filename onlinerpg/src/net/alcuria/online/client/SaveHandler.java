@@ -97,7 +97,38 @@ public class SaveHandler {
 		}
 		file.writeString(itemData, false);
 	}
+	
+	public static void saveFlags(int slot){
+		
+		// create a reference to the flagsN.dat file
+		file = Gdx.files.local("flags" + slot + ".dat");
 
+		// create string containing all the flags in this array
+		String flagData = new String();
+		for (int i = 0; i < GlobalFlags.flags.length; i++) {
+			flagData = flagData + GlobalFlags.flags[i] + ",";
+		}
+		
+		// and write it to the file
+		file.writeString(flagData, false);
+	}
+
+	public static void loadFlags(int slot){
+		GlobalFlags.init();
+		
+		if(Gdx.files.local("flags" + slot + ".dat").exists()){
+			
+			// create a string with the contents of the file and split it
+			String savedata = Gdx.files.local("flags" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			
+			// update all flags
+			for (int i = 0; i < subdata.length; i++){
+				GlobalFlags.flags[i] = Boolean.parseBoolean(subdata[i]);
+			}
+		}
+	}
+	
 	public static ItemManager loadItems(int slot) {
 		
 		ItemManager items = new ItemManager();

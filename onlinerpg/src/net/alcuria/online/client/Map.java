@@ -81,7 +81,7 @@ public class Map {
 	int[][] upperLayer;
 	int[][] collisionLayer;
 
-	private Music bgm;
+	public Music bgm;
 	private Background bg;
 	private Foreground fg;
 	public boolean containsEnemies = false;
@@ -283,7 +283,7 @@ public class Map {
 			if (name.equalsIgnoreCase("forest.png")){
 				bgm = assets.get("music/forest.ogg", Music.class);
 			} else if (name.equalsIgnoreCase("beach.png")){
-				bgm = assets.get("music/title.ogg", Music.class);
+				bgm = assets.get("music/beach.ogg", Music.class);
 			}
 
 			// start the new bgm
@@ -334,6 +334,11 @@ public class Map {
 		for (int i = 0; i < npclist.length; i++){
 			line = npclist[i].split("\\s");
 			if (line.length == 4){
+				
+				// we dont create the intro npc if we've watched the intro
+				if (line[1].equals("intro") && GlobalFlags.flags[GlobalFlags.INTRO]){
+					break;
+				}
 				npcs[i] = new NPC(line[0], Integer.parseInt(line[2])*Config.TILE_WIDTH, Integer.parseInt(line[3])*Config.TILE_WIDTH, 14, 22, line[1], assets);
 			}
 		}
@@ -357,11 +362,15 @@ public class Map {
 		pause = false;
 		for (int i = 0; i < npcs.length; i++){
 			if (npcs[i] != null) {
-				npcs[i].command(this, p);
+				
 				npcs[i].update(this, game.msgBox, game.cameraManager, game.player);
 				if (npcs[i].startCommands) {
 					game.inputs.typed[InputHandler.ATTACK] = false;
 					pause = true;
+				} else {
+					
+					// we only command the npc to move if there is no NPC Commands being executed
+					npcs[i].command(this, p);
 				}
 			}
 		}

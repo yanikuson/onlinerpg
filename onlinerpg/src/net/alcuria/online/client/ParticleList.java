@@ -9,12 +9,16 @@ public class ParticleList {
 	public int index = 0;
 	public final int MAX_ELEMS = 30;
 	
+	public int width, height;				// w/h of a SINGLE particle
+	
 	public ParticleList(String filename, int width, int height, int totalFrames, int duration, boolean mirror, AssetManager assets) {
 
 		particles = new Particle[MAX_ELEMS];
 		for (int i = 0; i < particles.length; i++){
 			particles[i] = new Particle(filename, 0, 0, width, height, totalFrames, duration, mirror, assets);
 		}
+		this.width = width;
+		this.height = height;
 		
 	}
 	
