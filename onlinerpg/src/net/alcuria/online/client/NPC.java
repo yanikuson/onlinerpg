@@ -75,6 +75,7 @@ public class NPC extends Actor {
 
 				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<flag>")) {
 					// switch a flag <flag> (flag index)
+					System.out.println("flag");
 					commands[i] = new NPCCommand(NPCCommand.TYPE_FLAG, lines[i].substring(7));	
 					
 				}

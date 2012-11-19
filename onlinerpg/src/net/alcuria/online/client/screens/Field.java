@@ -110,13 +110,12 @@ public class Field implements Screen {
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
 			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.SPACE]);
 			notifications.update();
+			if (!Config.npcCommand){
+				menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
+			}
 			
 			// we only want to call update on the actors if a messagebox/menu isn't open
 			if (!msgBox.visible && !menu.active){
-				
-				if (!Config.npcCommand){
-					menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
-				}
 				
 				// move all our actors: monsters, npcs, player
 				drops.update(map);

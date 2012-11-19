@@ -140,7 +140,9 @@ public class CreateMenu extends Menu {
 						break;
 					} else {
 						// flag our Create Screen to create the file
-						createFile = true;
+						if (name.length() > 0) {
+							createFile = true;
+						}
 					}
 				}			
 

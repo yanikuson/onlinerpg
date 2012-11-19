@@ -5,7 +5,7 @@ public class GlobalFlags {
 	
 	public static boolean flags[];
 	
-	public static final int INTRO = 0;
+	public static final int INTRO = 1;
 	
 	public static void init(){
 		

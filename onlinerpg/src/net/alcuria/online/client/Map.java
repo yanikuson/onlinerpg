@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class Map {
 
 	Field game;
-	
+
 	// Collision layer enums
 	final int COLL_EMPTY 		= 0;
 	final int COLL_BLOCKING 	= 1;		// All blocking tiles 
@@ -73,7 +73,7 @@ public class Map {
 	DamageList damageList;
 	CollisionManager collisions;
 	Player p;
-	
+
 	int tileCoordX, tileCoordY = 0;			// coord x and y for getTileAtPoint() method
 	Texture tileset;
 	TextureRegion[] tiles;
@@ -103,9 +103,9 @@ public class Map {
 					}
 				}
 			}
-			
+
 			if (spawner != null) spawner.render(batch);
-			
+
 			for (int i = 0; i < npcs.length; i++){
 				if (npcs[i] != null) {
 					npcs[i].render(batch);
@@ -315,7 +315,7 @@ public class Map {
 				}
 			}
 			this.spawner.doInitialSpawn();
-			
+
 		} else {
 			containsEnemies = false;
 			this.spawner = null;
@@ -325,28 +325,29 @@ public class Map {
 		this.teleports = new TeleportManager(mapfile);
 
 		// create NPCS HERE
-		handle = Gdx.files.internal("maps/" + mapfile + ".npc");
-		fileContent = handle.readString();
-		String[] npclist = fileContent.split("\\r?\\n");
+		if(Gdx.files.internal("maps/" + mapfile + ".npc").exists()){
+			handle = Gdx.files.internal("maps/" + mapfile + ".npc");
+			fileContent = handle.readString();
+			String[] npclist = fileContent.split("\\r?\\n");
 
-		npcs = new NPC[npclist.length];
-		// for each line, split and parse the x and y vals and add a spawn pt at that location
-		for (int i = 0; i < npclist.length; i++){
-			line = npclist[i].split("\\s");
-			if (line.length == 4){
-				
-				// we dont create the intro npc if we've watched the intro
-				if (line[1].equals("intro") && GlobalFlags.flags[GlobalFlags.INTRO]){
-					break;
+			npcs = new NPC[npclist.length];
+			// for each line, split and parse the x and y vals and add a spawn pt at that location
+			for (int i = 0; i < npclist.length; i++){
+				line = npclist[i].split("\\s");
+				if (line.length == 4){
+
+					// we dont create the intro npc if we've watched the intro
+					if (line[1].equals("intro") && GlobalFlags.flags[GlobalFlags.INTRO]){
+						break;
+					}
+					npcs[i] = new NPC(line[0], Integer.parseInt(line[2])*Config.TILE_WIDTH, Integer.parseInt(line[3])*Config.TILE_WIDTH, 14, 22, line[1], assets);
 				}
-				npcs[i] = new NPC(line[0], Integer.parseInt(line[2])*Config.TILE_WIDTH, Integer.parseInt(line[3])*Config.TILE_WIDTH, 14, 22, line[1], assets);
 			}
 		}
-
 		// create new backgrounds
 		bg = new Background(this, assets);
 		fg = new Foreground(this, assets);
-		
+
 		// create the collision manager
 		if (containsEnemies){
 			collisions = new CollisionManager(game.player, this.spawner.monsterList, game.drops, game.slices, game.burns, game.freezes, game.inputs);
@@ -358,17 +359,17 @@ public class Map {
 	}
 
 	public void update(){
-		
+
 		pause = false;
 		for (int i = 0; i < npcs.length; i++){
 			if (npcs[i] != null) {
-				
+
 				npcs[i].update(this, game.msgBox, game.cameraManager, game.player);
 				if (npcs[i].startCommands) {
 					game.inputs.typed[InputHandler.ATTACK] = false;
 					pause = true;
 				} else {
-					
+
 					// we only command the npc to move if there is no NPC Commands being executed
 					npcs[i].command(this, p);
 				}
