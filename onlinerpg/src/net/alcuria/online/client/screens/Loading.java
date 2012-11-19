@@ -121,7 +121,7 @@ public class Loading implements Screen
 		assets.load("music/select.ogg", Music.class);
 		assets.load("music/beach.ogg", Music.class);
 		assets.load("music/victory.ogg", Music.class);
-
+		assets.load("music/village.ogg", Music.class);
 		
 		// SPRITES
 		assets.load("sprites/burn.png", Texture.class);

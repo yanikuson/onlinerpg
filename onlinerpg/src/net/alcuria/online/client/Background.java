@@ -18,6 +18,7 @@ public class Background {
 	int type = -1;
 	public static final int FOREST = 0;
 	public static final int BEACH = 1;
+	public static final int VILLAGE = 2;
 
 	public Background(Map map, AssetManager assets){
 
@@ -32,6 +33,10 @@ public class Background {
 			layerA = new TextureRegion(background, 0, Config.HEIGHT*2, backgroundWidth, Config.HEIGHT);
 		} else if (map.name.equalsIgnoreCase("beach.png")){
 			type = BEACH;
+			background = assets.get("backgrounds/sky.png", Texture.class);	
+			backgroundWidth = 255;
+		} else if (map.name.equalsIgnoreCase("village.png")){
+			type = VILLAGE;
 			background = assets.get("backgrounds/sky.png", Texture.class);	
 			backgroundWidth = 255;
 		}
@@ -62,6 +67,13 @@ public class Background {
 			break;
 			
 		case BEACH:
+			for (int i = 0; i<= numBackgrounds; i++){
+				batch.draw(background, i*backgroundWidth + (cameraManager.offsetX/4) % backgroundWidth, cameraManager.offsetY);
+
+			}
+			break;
+			
+		case VILLAGE:
 			for (int i = 0; i<= numBackgrounds; i++){
 				batch.draw(background, i*backgroundWidth + (cameraManager.offsetX/4) % backgroundWidth, cameraManager.offsetY);
 

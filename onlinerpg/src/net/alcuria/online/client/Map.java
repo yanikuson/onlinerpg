@@ -284,6 +284,8 @@ public class Map {
 				bgm = assets.get("music/forest.ogg", Music.class);
 			} else if (name.equalsIgnoreCase("beach.png")){
 				bgm = assets.get("music/beach.ogg", Music.class);
+			} else if (name.equalsIgnoreCase("village.png")){
+				bgm = assets.get("music/village.ogg", Music.class);
 			}
 
 			// start the new bgm

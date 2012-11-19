@@ -42,13 +42,13 @@ public class TeleportNode {
 			break;
 			
 		case EDGE_WEST:
-			if (((int)p.bounds.x + p.bounds.width)/Config.TILE_WIDTH < 0){
+			if (((int)p.bounds.x + p.bounds.width - 4)/Config.TILE_WIDTH < 0){
 				changeMap(m, p);
 			}
 			break;
 			
 		case EDGE_EAST:
-			if ((int)p.bounds.x/Config.TILE_WIDTH > m.width){
+			if (((int)p.bounds.x + 4)/Config.TILE_WIDTH > m.width){
 				changeMap(m, p);
 
 			}
