@@ -11,6 +11,7 @@ import net.alcuria.online.client.Map;
 import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
+import net.alcuria.online.client.Transition;
 import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
 import net.alcuria.online.client.ui.Menu;
@@ -96,20 +97,23 @@ public class Field implements Screen {
 			menu.render(batch);
 			inputs.render(batch);
 
+			Transition.render(batch, cameraManager);
+			
 			batch.end();
 
 			//-------------------------------------------------------------
 
 			// update the camera state FIRST
 			cameraManager.update(player.bounds.x, player.bounds.y, map.width*map.tileWidth, map.height*map.tileWidth);
-
+			
 			// call the input handler to poll the keyboard's state
 			inputs.update(player, map, cameraManager);
 
-			// update for our message system
+			// update our UI
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
 			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.SPACE]);
 			notifications.update();
+			Transition.update();
 			if (!Config.npcCommand){
 				menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
 			}

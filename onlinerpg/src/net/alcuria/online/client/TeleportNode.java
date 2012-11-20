@@ -1,5 +1,7 @@
 package net.alcuria.online.client;
 
+import com.badlogic.gdx.scenes.scene2d.actions.FadeOut;
+
 public class TeleportNode {
 
 	public static final int EDGE_NORTH = 0;
@@ -10,6 +12,7 @@ public class TeleportNode {
 	String destination;					// name of the destination map (without .cmf)
 	int srcX, srcY, destX, destY;		// source and destination teleport tiles
 	int edge;
+	boolean startedFade = false;
 
 	// constructor for cardinal teleport nodes
 	public TeleportNode(int edge, String destination, int destX, int destY){
@@ -37,23 +40,33 @@ public class TeleportNode {
 		switch (edge) {
 		case EDGE_NORTH:
 			break;
-			
+
 		case EDGE_SOUTH:
 			break;
-			
+
 		case EDGE_WEST:
 			if (((int)p.bounds.x + p.bounds.width - 4)/Config.TILE_WIDTH < 0){
-				changeMap(m, p);
+
+				if (!startedFade){
+					startedFade = true;
+					Transition.fadeOut(1.0f);					
+				}
+				if (Transition.finished) { 
+					changeMap(m, p);
+					Transition.fadeIn(1.0f);
+					startedFade = false;
+				}
+
 			}
 			break;
-			
+
 		case EDGE_EAST:
 			if (((int)p.bounds.x + 4)/Config.TILE_WIDTH > m.width){
 				changeMap(m, p);
 
 			}
 			break;
-			
+
 		default:
 			// key-activated -- check if player is overlapping it and pressing up
 			if (((int)p.bounds.x + 10)/Config.TILE_WIDTH == srcX && ((int)p.bounds.y + 4)/Config.TILE_WIDTH == srcY && input.typed[InputHandler.UP]){
@@ -66,14 +79,14 @@ public class TeleportNode {
 
 
 	}
-	
+
 	public void changeMap(Map m, Player p){
-		
+
 		if (m.spawner != null) m.spawner.removeAllMonsters();
 		m.create(destination);
 		p.bounds.x = destX * 16;
 		p.bounds.y = destY * 16;
-		
+
 	}
 
 }
