@@ -1,6 +1,7 @@
 package net.alcuria.online.client;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL11;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,7 +20,6 @@ public class Transition {
 	private static boolean fadeOut = false;
 	private static boolean fadeIn = false;
 	public static boolean finished = true;
-	public static boolean started = false;
 
 	public static void init() {
 
@@ -39,7 +39,7 @@ public class Transition {
 			targetFade = time;
 			curFade = 0; 
 			duration = time;
-			started = true;
+
 			fadeOut = true;
 		}
 
@@ -50,7 +50,7 @@ public class Transition {
 		if (!fadeIn){
 			if (!initialized) init();
 			fadeOut = false;
-			started = true;
+
 			finished = false;
 			targetFade = 0;
 			curFade = time;
@@ -59,42 +59,37 @@ public class Transition {
 		}
 	}
 
-	public static void update(){
+	public static void update(Music bgm){
 
 		if (fadeOut){
-			System.out.println("fade out");
 			curFade += Gdx.graphics.getDeltaTime();
 			if (curFade >= targetFade) {
 				curFade = targetFade;
 				finished = true;
-				System.out.println("Finished fade out");
 			}
 		} else if (fadeIn){
-			System.out.println("fade in");
 			curFade -= Gdx.graphics.getDeltaTime();
 			if (curFade <= 0) {
 				curFade = 0;
 				finished = true;
-				System.out.println("Finished fade in");
 			}
+		}
+		
+		// update sound vol
+		if (!finished){
+			bgm.setVolume(Config.bgmVol * (1 - curFade/duration));
 		}
 
 
 	}
 	public static void render(SpriteBatch batch, CameraManager camera){
 
-		// draw the semi-transparent dimmer
+		// draw the screen dimming effect
 		if (initialized && (fadeIn || fadeOut) && duration != 0) {
 
-
 			batch.flush();
-			System.out.println(curFade/duration);
-			//batch.setBlendFunction(GL11.GL_ZERO, GL11.GL_SRC_COLOR);
-			batch.setColor(1, 1, 1, curFade/duration);
-
+			batch.setColor(1, 1, 1, 1-(curFade/duration));
 			batch.draw(fade, camera.offsetX, camera.offsetY, Config.WIDTH, Config.HEIGHT);
-			batch.flush();
-
 
 		}
 

@@ -34,11 +34,11 @@ public class Background {
 		} else if (map.name.equalsIgnoreCase("beach.png")){
 			type = BEACH;
 			background = assets.get("backgrounds/sky.png", Texture.class);	
-			backgroundWidth = 255;
+			backgroundWidth = 256;
 		} else if (map.name.equalsIgnoreCase("village.png")){
 			type = VILLAGE;
 			background = assets.get("backgrounds/sky.png", Texture.class);	
-			backgroundWidth = 255;
+			backgroundWidth = 256;
 		}
 
 

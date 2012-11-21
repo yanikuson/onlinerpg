@@ -26,6 +26,7 @@ public class CollisionManager {
 
 
 		for (int i = 0; i < map.npcs.length; i++){
+			
 			if (map.npcs[i] != null && inputs.typed[InputHandler.SPACE] && player.bounds.overlaps(map.npcs[i].bounds) && !map.npcs[i].startCommands){
 				inputs.typed[InputHandler.SPACE] = false;
 				map.npcs[i].start();
@@ -83,11 +84,13 @@ public class CollisionManager {
 		}
 		// check for a collision with loot
 		if (player != null) {
+			
 			for (int i = 0; i < DropManager.MAX_DROPS; i++){
 				if (drops.dropList[i].bounds.overlaps(player.bounds) && drops.dropList[i].visible){
 					drops.collect(i, inventory);
 				}
-			} 
+			}
+			
 		}
 
 

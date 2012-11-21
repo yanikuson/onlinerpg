@@ -327,6 +327,13 @@ public class Map {
 		this.teleports = new TeleportManager(mapfile);
 
 		// create NPCS HERE
+		
+		// wipe out old npcs
+		if (npcs != null) {
+			for (int i = 0; i < npcs.length; i++){
+				npcs[i] = null;
+			}
+		}
 		if(Gdx.files.internal("maps/" + mapfile + ".npc").exists()){
 			handle = Gdx.files.internal("maps/" + mapfile + ".npc");
 			fileContent = handle.readString();
@@ -345,7 +352,8 @@ public class Map {
 					npcs[i] = new NPC(line[0], Integer.parseInt(line[2])*Config.TILE_WIDTH, Integer.parseInt(line[3])*Config.TILE_WIDTH, 14, 22, line[1], assets);
 				}
 			}
-		}
+		} 
+		
 		// create new backgrounds
 		bg = new Background(this, assets);
 		fg = new Foreground(this, assets);

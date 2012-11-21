@@ -44,6 +44,8 @@ public class Animator {
 	
 	Particle castParticle;
 	Player p;
+	
+	VisualEquip hair;
 
 	public Animator(String filename, int celWidth, int celHeight, AssetManager assets){
 
@@ -129,6 +131,7 @@ public class Animator {
 			}
 			else if (castPose){
 				frame = casting;
+				
 				// start cast particle
 				castTimer+= timestep;
 				if (castTimer > CAST_TIME){

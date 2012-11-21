@@ -392,7 +392,6 @@ public class Actor {
 		curFlash += Gdx.graphics.getDeltaTime();
 		batch.flush();
 		batch.setColor(currentRGBA[0], currentRGBA[1], currentRGBA[2], currentRGBA[3]);
-		//batch.setBlendFunction(GL11.GL_DST_COLOR, GL10.GL_SRC_ALPHA);
 
 	}
 

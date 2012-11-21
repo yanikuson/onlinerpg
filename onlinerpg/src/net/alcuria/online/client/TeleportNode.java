@@ -1,7 +1,5 @@
 package net.alcuria.online.client;
 
-import com.badlogic.gdx.scenes.scene2d.actions.FadeOut;
-
 public class TeleportNode {
 
 	public static final int EDGE_NORTH = 0;
@@ -45,15 +43,15 @@ public class TeleportNode {
 			break;
 
 		case EDGE_WEST:
-			if (((int)p.bounds.x + p.bounds.width - 4)/Config.TILE_WIDTH < 0){
+			if (((int)p.bounds.x + p.bounds.width/2)/Config.TILE_WIDTH < 0){
 
 				if (!startedFade){
 					startedFade = true;
-					Transition.fadeOut(1.0f);					
+					Transition.fadeOut(0.35f);					
 				}
 				if (Transition.finished) { 
 					changeMap(m, p);
-					Transition.fadeIn(1.0f);
+					Transition.fadeIn(0.35f);
 					startedFade = false;
 				}
 
@@ -61,8 +59,16 @@ public class TeleportNode {
 			break;
 
 		case EDGE_EAST:
-			if (((int)p.bounds.x + 4)/Config.TILE_WIDTH > m.width){
-				changeMap(m, p);
+			if (((int)p.bounds.x + p.bounds.width/2)/Config.TILE_WIDTH > m.width){
+				if (!startedFade){
+					startedFade = true;
+					Transition.fadeOut(0.35f);					
+				}
+				if (Transition.finished) { 
+					changeMap(m, p);
+					Transition.fadeIn(0.35f);
+					startedFade = false;
+				}
 
 			}
 			break;
