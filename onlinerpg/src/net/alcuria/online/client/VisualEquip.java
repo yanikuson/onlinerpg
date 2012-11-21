@@ -28,15 +28,15 @@ public class VisualEquip {
 		if (region != null){
 			if (!flipX){
 
-				batch.draw(region, x - paddingX, y - paddingY, newWidth, height);
+				batch.draw(region, x - 7, y - paddingY, newWidth, height);
 
 			} else {
 
 				// draw the frame flipped
 				if (newWidth > width){
-					batch.draw(region, x+width, y, 0-width*2, height);
+					batch.draw(region, x + width - 5, y - paddingY, 0-width*2, height);
 				} else {
-					batch.draw(region, x+width, y, 0-width, height);
+					batch.draw(region, x + width - 5, y - paddingY, 0-width, height);
 				}
 			}
 		}
@@ -45,7 +45,7 @@ public class VisualEquip {
 	
 	public void update(TextureRegion region){
 		
-		newX = region.getRegionX()/region.getRegionWidth()*width;
+		newX = region.getRegionX()/14*width;
 		newY = region.getRegionY()/region.getRegionHeight()*height;
 		
 		newWidth = (region.getRegionWidth()/14)*width;

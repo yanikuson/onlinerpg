@@ -44,8 +44,6 @@ public class Animator {
 	
 	Particle castParticle;
 	Player p;
-	
-	VisualEquip hair;
 
 	public Animator(String filename, int celWidth, int celHeight, AssetManager assets){
 
@@ -89,8 +87,6 @@ public class Animator {
 		// set width/height, for convenience later
 		width = frame.getRegionWidth();
 		height = frame.getRegionHeight();
-
-		hair = new VisualEquip("sprites/equips/hair/1.png", assets);
 		
 	}
 	
@@ -112,7 +108,7 @@ public class Animator {
 				batch.draw(frame, x+width, y, 0-width, height);
 			}
 		}
-		hair.render(batch, x, y, flipX);
+		
 
 	}
 
@@ -207,9 +203,6 @@ public class Animator {
 			readyPose = false;
 			readyTimer = 0;
 		}
-	
-		// update visual 
-		hair.update(frame);
 		
 		// reset current width
 		curWidth = frame.getRegionWidth();

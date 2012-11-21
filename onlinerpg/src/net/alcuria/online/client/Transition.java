@@ -91,6 +91,8 @@ public class Transition {
 			batch.setColor(1, 1, 1, 1-(curFade/duration));
 			batch.draw(fade, camera.offsetX, camera.offsetY, Config.WIDTH, Config.HEIGHT);
 
+			// batch.setColor(1, 1, 1, 1);
+
 		}
 
 	}

@@ -29,6 +29,8 @@ public class Player extends Actor {
 	public float knockback;
 
 	public Item weapon, helmet, armor, accessory;
+	VisualEquip hair;
+	
 
 	public Player(String filename, String name, int x, int y, int width, int height, NotificationList notifications, AssetManager assets) {
 		super(filename, x, y, width, height, assets);
@@ -66,6 +68,8 @@ public class Player extends Actor {
 
 		skills = new SkillManager(assets, this);
 
+		hair = new VisualEquip("sprites/equips/hair/1.png", assets);
+		
 		visible = true;
 
 	}
@@ -153,6 +157,9 @@ public class Player extends Actor {
 		}
 
 		skills.update();
+		
+		// update the visual equips
+		hair.update(animation.frame);
 	}
 
 	public void startSwing(){
@@ -187,6 +194,7 @@ public class Player extends Actor {
 			}
 			if (flash) flashPrecheck(batch);
 			animation.render(batch, bounds.x, bounds.y);
+			hair.render(batch, bounds.x, bounds.y, animation.flipX);
 
 			if (renderSensorPoints){
 				for(int i=0; i<sensorY.length; i++){

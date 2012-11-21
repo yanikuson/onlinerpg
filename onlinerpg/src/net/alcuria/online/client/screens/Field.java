@@ -66,6 +66,7 @@ public class Field implements Screen {
 
 	@Override
 	public void render(float delta) {
+		
 		if (assets.update()){
 
 			//Gdx.gl.glViewport((int) viewport.x, (int) viewport.y, (int) viewport.width, (int) viewport.height);
