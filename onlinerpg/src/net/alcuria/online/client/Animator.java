@@ -90,7 +90,8 @@ public class Animator {
 		width = frame.getRegionWidth();
 		height = frame.getRegionHeight();
 
-
+		hair = new VisualEquip("sprites/equips/hair/1.png", assets);
+		
 	}
 	
 	public void assignPlayer(Player p){
@@ -111,6 +112,7 @@ public class Animator {
 				batch.draw(frame, x+width, y, 0-width, height);
 			}
 		}
+		hair.render(batch, x, y, flipX);
 
 	}
 
@@ -205,6 +207,9 @@ public class Animator {
 			readyPose = false;
 			readyTimer = 0;
 		}
+	
+		// update visual 
+		hair.update(frame);
 		
 		// reset current width
 		curWidth = frame.getRegionWidth();
