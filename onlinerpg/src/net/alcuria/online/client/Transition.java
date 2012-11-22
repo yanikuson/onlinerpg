@@ -88,10 +88,10 @@ public class Transition {
 		if (initialized && (fadeIn || fadeOut) && duration != 0) {
 
 			batch.flush();
-			batch.setColor(1, 1, 1, 1-(curFade/duration));
+			batch.setColor(1, 1, 1, Config.smoothstep(curFade/duration));
 			batch.draw(fade, camera.offsetX, camera.offsetY, Config.WIDTH, Config.HEIGHT);
 
-			// batch.setColor(1, 1, 1, 1);
+			batch.setColor(1, 1, 1, 1);
 
 		}
 

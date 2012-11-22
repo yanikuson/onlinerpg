@@ -143,6 +143,7 @@ public class Loading implements Screen
 		
 		// EQUIPS
 		assets.load("sprites/equips/hair/1.png", Texture.class);
+		assets.load("sprites/equips/hair/2.png", Texture.class);
 
 
 		
