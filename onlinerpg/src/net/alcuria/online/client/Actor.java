@@ -69,10 +69,12 @@ public class Actor {
 
 	public boolean[] moveCommand;					// used for actor movement types
 	public float[] sensorX, sensorY;				// array of sensor points: 0 = bot left, 1 = top right, 2 = mid left, 3 = mid right, etc.
+	public float oldY;								// saving off the old Y prior to stepping Y to check for one-way platform collisions
 
 	public boolean playJump = false;
 	public boolean visible = false;					// do we render the Actor?
 
+	public boolean lastFrameInAir = false;			
 	public boolean flash = false;					// are we flashing?
 	public float flashTime = 0;						// number of seconds to flash
 	public float curFlash = 0;						// current flash time
@@ -215,6 +217,7 @@ public class Actor {
 
 		// ############################ STEP Y #################################
 
+		oldY = bounds.y;
 		bounds.y = bounds.y + yVel;
 		setAllSensors(bounds.x, bounds.y);
 
@@ -225,9 +228,30 @@ public class Actor {
 			yVel -= GRAVITY;
 		}
 
+
+		// this check is to see if the prior frame the player was in the air
+		lastFrameInAir = false;
+		if (map.getTileAtPoint(sensorX[0], oldY) == 0 || map.getTileAtPoint(sensorX[1], oldY) == 0){
+			lastFrameInAir = true;
+			
+		}
+		
 		// check if either sensor point A OR B touches the ground
 		if (yVel <= 0 && (map.getSubTileAtPoint(sensorX[0], sensorY[0], yVel) != map.COLL_EMPTY || map.getSubTileAtPoint(sensorX[1], sensorY[1], yVel) != map.COLL_EMPTY)){
 
+			if (map.getTileAtPoint(sensorX[0], sensorY[0]) == map.COLL_DOWNBLOCKING){
+				
+				/*
+				if (!lastFrameInAir){
+					if ((map.getTileAtPoint(sensorX[0], sensorY[0]+1) == map.COLL_EMPTY || map.getTileAtPoint(sensorX[1], sensorY[0]+1) == map.COLL_EMPTY )){
+						onGround = true;
+						yVel = 0;
+					} else {
+						return;
+					}
+				}*/
+				
+			}
 			// set boundsY to the height of the TALLER of the two sensors
 			if(bounds.y - getHigherSensor(map) < 5){
 				bounds.y = getHigherSensor(map);
@@ -262,7 +286,7 @@ public class Actor {
 		if (onGround && moveCommand[MOVE_JUMP] && !animation.swingPose && !animation.stabPose){
 			moveCommand[MOVE_JUMP] = false;
 			onGround = false;
-			yVel = jumpPower/18;
+			yVel = jumpPower/17;
 			if (playJump){
 				jump.play(Config.sfxVol);
 			}

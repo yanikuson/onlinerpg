@@ -158,8 +158,7 @@ public class Player extends Actor {
 
 		skills.update();
 		
-		// update the visual equips
-		hair.update(animation.frame);
+		updateEquips();
 	}
 
 	public void startSwing(){
@@ -312,6 +311,12 @@ public class Player extends Actor {
 			return true;
 		}
 		return false;
+	}
+
+	public void updateEquips() {
+		
+		// update the visual equips
+				hair.update(animation.frame);
 	}
 
 }

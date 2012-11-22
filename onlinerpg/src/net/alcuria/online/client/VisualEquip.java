@@ -45,7 +45,11 @@ public class VisualEquip {
 	
 	public void update(TextureRegion region){
 		
+		
 		newX = region.getRegionX()/14*width;
+		if (region.getRegionX() > 0 && region.getRegionY() > 0){
+			newX += 5;
+		}
 		newY = region.getRegionY()/region.getRegionHeight()*height;
 		
 		newWidth = (region.getRegionWidth()/14)*width;
