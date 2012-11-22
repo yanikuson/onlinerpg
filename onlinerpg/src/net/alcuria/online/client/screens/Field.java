@@ -30,21 +30,21 @@ public class Field implements Screen {
 	public Game g;
 	public int slot;					// which slot the player has loaded
 
-	private SpriteBatch batch;
+	public SpriteBatch batch;
 	public InputHandler inputs;
 	public Player player;
 	public DropManager drops;
-	private DamageList damageList;
+	public DamageList damageList;
 	public ParticleList explosions;
 	public ParticleList slices;
 	public ParticleList freezes;
 	public ParticleList burns;
 	public Message msgBox;
-	private Map map;
+	public Map map;
 
 	public CameraManager cameraManager;
-	private HUD hud;
-	private Menu menu;
+	public HUD hud;
+	public Menu menu;
 	public ItemManager items;
 	public AssetManager assets;
 	public Rectangle viewport;
@@ -53,7 +53,6 @@ public class Field implements Screen {
 	float w;
 	float h;
 	float aspectRatio;
-	long before, after;
 
 	public Field(Game g, AssetManager assets, Player player, ItemManager items, int loadedSlot)
 	{
@@ -121,6 +120,9 @@ public class Field implements Screen {
 			
 			// we only want to call update on the actors if a messagebox/menu isn't open
 			if (!msgBox.visible && !menu.active && Transition.finished){
+				
+				// before we step anything, check if it's on a platform
+				player.checkIfOnMovingPlatform(map);
 				
 				// move all our actors: monsters, npcs, player
 				drops.update(map);

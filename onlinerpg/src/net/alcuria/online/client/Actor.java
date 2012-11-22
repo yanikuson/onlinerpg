@@ -32,6 +32,7 @@ public class Actor {
 	protected Texture debugPoint;					// a small point to display for the sensor points
 	public AssetManager assets;						// player assets
 	public StatusEffects effects;					// all of the actor's status effects
+	public Platform curPlatform;					// current platform player is touching
 
 	public Sound jump;
 	public Sound shoot;
@@ -117,6 +118,31 @@ public class Actor {
 
 		// status effects handler
 		effects = new StatusEffects(this, assets);
+
+	}
+
+	public void checkIfOnMovingPlatform(Map map){
+
+		curPlatform = null;
+		for (int i = 0; i < map.platforms.length; i++){
+			if (map.platforms[i] != null && yVel <= 0) {
+				if (bounds.overlaps(map.platforms[i].bounds)){
+
+					if (curPlatform == null) {
+						yVel = 0;
+						onGround = true;
+						curPlatform = map.platforms[i];
+
+						while (bounds.overlaps(map.platforms[i].bounds)){
+							bounds.y++;
+						}
+						bounds.y--;
+						return;
+					}
+
+				} 
+			}
+		}
 		
 	}
 
@@ -132,6 +158,9 @@ public class Actor {
 		// ############################ STEP X #################################
 
 		bounds.x = bounds.x + xVel;
+		if (curPlatform != null) {
+			bounds.x += curPlatform.dX;
+		}
 		setAllSensors(bounds.x, bounds.y);
 
 
@@ -219,10 +248,13 @@ public class Actor {
 
 		oldY = bounds.y;
 		bounds.y = bounds.y + yVel;
+		if (curPlatform != null) {
+			bounds.y += curPlatform.dY;
+		}
 		setAllSensors(bounds.x, bounds.y);
 
 		// add gravity's acceleration
-		if (onGround){
+		if (onGround || curPlatform != null){
 			yVel = 0;
 		} else if (yVel > TERMINAL_YVEL) {
 			yVel -= GRAVITY;
@@ -233,14 +265,14 @@ public class Actor {
 		lastFrameInAir = false;
 		if (map.getTileAtPoint(sensorX[0], oldY) == 0 || map.getTileAtPoint(sensorX[1], oldY) == 0){
 			lastFrameInAir = true;
-			
+
 		}
-		
+
 		// check if either sensor point A OR B touches the ground
 		if (yVel <= 0 && (map.getSubTileAtPoint(sensorX[0], sensorY[0], yVel) != map.COLL_EMPTY || map.getSubTileAtPoint(sensorX[1], sensorY[1], yVel) != map.COLL_EMPTY)){
 
 			if (map.getTileAtPoint(sensorX[0], sensorY[0]) == map.COLL_DOWNBLOCKING){
-				
+
 				/*
 				if (!lastFrameInAir){
 					if ((map.getTileAtPoint(sensorX[0], sensorY[0]+1) == map.COLL_EMPTY || map.getTileAtPoint(sensorX[1], sensorY[0]+1) == map.COLL_EMPTY )){
@@ -250,7 +282,7 @@ public class Actor {
 						return;
 					}
 				}*/
-				
+
 			}
 			// set boundsY to the height of the TALLER of the two sensors
 			if(bounds.y - getHigherSensor(map) < 5){
@@ -273,17 +305,22 @@ public class Actor {
 		}
 
 		// check if we fall off an edge
-		if (onGround && (map.getSubTileAtPoint(sensorX[0], sensorY[0], yVel) == map.COLL_EMPTY && map.getSubTileAtPoint(sensorX[1], sensorY[1], yVel) == map.COLL_EMPTY)){
-			if(bounds.y - getHigherSensor(map) > 2){
-				onGround = false;
-			} else {
-				bounds.y = getHigherSensor(map);
-				setAllSensors(bounds.x, bounds.y);
+		if (curPlatform == null){
+			if (onGround && (map.getSubTileAtPoint(sensorX[0], sensorY[0], yVel) == map.COLL_EMPTY && map.getSubTileAtPoint(sensorX[1], sensorY[1], yVel) == map.COLL_EMPTY)){
+				if(bounds.y - getHigherSensor(map) > 2){
+					onGround = false;
+				} else {
+					bounds.y = getHigherSensor(map);
+					setAllSensors(bounds.x, bounds.y);
+				}
 			}
+		} else {
+			onGround = true;
 		}
 
 		// check for a JUMP
 		if (onGround && moveCommand[MOVE_JUMP] && !animation.swingPose && !animation.stabPose){
+			
 			moveCommand[MOVE_JUMP] = false;
 			onGround = false;
 			yVel = jumpPower/17;
@@ -305,7 +342,7 @@ public class Actor {
 		if (effects.timer[StatusEffects.FREEZE] <= 0) {
 			animation.update(facingLeft, onGround, moving, Gdx.graphics.getDeltaTime(), attackSpeed);
 		}
-		
+
 		if (hurtTimer < invincibilityPeriod){
 			hurtTimer += Gdx.graphics.getDeltaTime();
 		} 
@@ -324,7 +361,7 @@ public class Actor {
 			bounds.x = 5*16;
 			facingLeft = false;
 		}
-		
+
 		effects.update(this);
 
 	}
@@ -445,7 +482,7 @@ public class Actor {
 			}
 
 			if (flash) flashPostcheck(batch);
-			
+
 			effects.render(batch);
 
 		}

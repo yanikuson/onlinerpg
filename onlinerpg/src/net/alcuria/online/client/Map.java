@@ -69,6 +69,7 @@ public class Map {
 	public MonsterSpawner spawner;
 	public NPC[] npcs;
 	public TeleportManager teleports;
+	public Platform[] platforms;
 	AssetManager assets;
 	DamageList damageList;
 	CollisionManager collisions;
@@ -86,8 +87,8 @@ public class Map {
 	private Foreground fg;
 	public boolean containsEnemies = false;
 
-	public Map(String mapfile, AssetManager assets, DamageList damageList, Field s){
-		this.game = s;
+	public Map(String mapfile, AssetManager assets, DamageList damageList, Field f){
+		this.game = f;
 		this.damageList = damageList;
 		this.assets = assets;
 		create(mapfile);		
@@ -98,12 +99,19 @@ public class Map {
 		if (below){
 			for (int i = (int) (camera.offsetX/Config.TILE_WIDTH); i < camera.offsetX/Config.TILE_WIDTH+26; i++) {
 				for (int j = (int) camera.offsetY/Config.TILE_WIDTH; j < camera.offsetY/Config.TILE_WIDTH+15; j++) { 
-					if (height-1-j > 0 && i < width && lowerLayer[i][height-1-j] > 0){
+					if (height-1-j > 0 && i < width && lowerLayer[i][height-1-j] > 0 && lowerLayer[i][height-1-j] < 255){
 						batch.draw(tiles[lowerLayer[i][height-1-j]], i*tileWidth, j*tileWidth);
 					}
 				}
 			}
 
+			// render all platforms
+			for (int i = 0; i < platforms.length; i++){
+				if (platforms[i] != null){
+					platforms[i].render(game);
+				}
+			}
+			
 			if (spawner != null) spawner.render(batch);
 
 			for (int i = 0; i < npcs.length; i++){
@@ -116,7 +124,7 @@ public class Map {
 
 			for (int i = (int) (camera.offsetX/Config.TILE_WIDTH); i < camera.offsetX/Config.TILE_WIDTH+26; i++) {
 				for (int j = (int) camera.offsetY/Config.TILE_WIDTH; j < camera.offsetY/Config.TILE_WIDTH+15; j++) { 
-					if (height-1-j > 0 && i < width && upperLayer[i][height-1-j] > 0){
+					if (height-1-j > 0 && i < width && upperLayer[i][height-1-j] > 0 && upperLayer[i][height-1-j] < 255){
 						batch.draw(tiles[upperLayer[i][height-1-j]], i*tileWidth, j*tileWidth);
 					}
 				}
@@ -365,6 +373,11 @@ public class Map {
 			collisions = new CollisionManager(game.player, null, game.drops, game.slices, game.burns, game.freezes, game.inputs);
 
 		}
+		
+		// create the PLATFORMS
+		platforms = new Platform[10];
+		platforms[0] = new Platform(game);
+		
 
 	}
 
@@ -389,6 +402,14 @@ public class Map {
 		if (spawner != null && containsEnemies) spawner.update();
 		fg.update(Gdx.graphics.getDeltaTime());
 		collisions.update(this, damageList, game.explosions, game.items);
+		
+		// update platforms
+		for (int i = 0; i < platforms.length; i++){
+			if (platforms[i] != null){
+				platforms[i].update(game);
+			}
+		}
+		
 
 	}
 
