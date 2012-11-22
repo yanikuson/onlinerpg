@@ -8,6 +8,7 @@ import net.alcuria.online.client.ui.Message;
 
 public class NPCCommand {
 
+	public static final int DEFAULT = -1;
 	public static final int TYPE_MSG = 0;
 	public static final int TYPE_HEAL = 1;
 	public static final int TYPE_WAIT = 2;
@@ -17,6 +18,7 @@ public class NPCCommand {
 	public static final int TYPE_BGM = 6;
 	public static final int TYPE_REMOVE = 7;
 	public static final int TYPE_FLAG = 8;
+
 
 	public float waitCount = 0;
 	public float waitDuration = 0;
@@ -111,6 +113,9 @@ public class NPCCommand {
 			
 		case TYPE_FLAG:
 			GlobalFlags.flags[Integer.parseInt(msg)] = true;
+			return commandIndex + 1;
+			
+		case DEFAULT:
 			return commandIndex + 1;
 			
 		}

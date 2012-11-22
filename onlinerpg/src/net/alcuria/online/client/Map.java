@@ -206,7 +206,7 @@ public class Map {
 				if (collisionLayer[tileCoordX][tileCoordY] == COLL_HALF){
 					return 8;
 				}
-				if (collisionLayer[tileCoordX][tileCoordY] == COLL_DOWNBLOCKING && yVel <= 0){
+				if (collisionLayer[tileCoordX][tileCoordY] == COLL_DOWNBLOCKING){
 					return (16 + getSubTileAtPoint(x, y+16, yVel));
 				}
 

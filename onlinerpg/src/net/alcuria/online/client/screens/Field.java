@@ -139,6 +139,7 @@ public class Field implements Screen {
 
 
 			}
+			player.updateEquips();
 
 		}
 

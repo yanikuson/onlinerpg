@@ -1,4 +1,3 @@
-Hello, traveler! Are you lost?<br>
-I've not seen you here before.;
+<message> Hello, traveler! Are you lost?<br>I've not seen you here before.;
 <wait> 0.4;
-Be sure to equip your weapon!
+<message> Be sure to equip your weapon!
