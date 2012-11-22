@@ -10,15 +10,17 @@ public class Background {
 	int backgroundWidth;
 	int numBackgrounds;
 
-	Texture background;
-	TextureRegion layerA;
-	TextureRegion layerB;
-	TextureRegion layerC;
+	public Texture background;
+	public TextureRegion layerA;
+	public TextureRegion layerB;
+	public TextureRegion layerC;
 
 	int type = -1;
 	public static final int FOREST = 0;
 	public static final int BEACH = 1;
 	public static final int VILLAGE = 2;
+	
+	public int x = 0;
 
 	public Background(Map map, AssetManager assets){
 
@@ -35,6 +37,7 @@ public class Background {
 			type = BEACH;
 			background = assets.get("backgrounds/sky.png", Texture.class);	
 			backgroundWidth = 256;
+			
 		} else if (map.name.equalsIgnoreCase("village.png")){
 			type = VILLAGE;
 			background = assets.get("backgrounds/sky.png", Texture.class);	
@@ -42,8 +45,9 @@ public class Background {
 		}
 
 
-		numBackgrounds = (int) (Config.WIDTH / backgroundWidth+2);
+		numBackgrounds = (int) (Config.WIDTH / backgroundWidth + 2);
 
+		
 
 	}
 
@@ -52,30 +56,47 @@ public class Background {
 		switch (type){
 		case FOREST:
 
+			if (cameraManager.offsetX > (x + backgroundWidth)){
+				x += backgroundWidth;
+			} else if (cameraManager.offsetX < x){
+				x -= backgroundWidth;
+			}
+			
 			for (int i = 0; i<= numBackgrounds; i++){
-				batch.draw(layerA, i*backgroundWidth + (cameraManager.offsetX/4) % backgroundWidth, cameraManager.offsetY);
+				batch.draw(layerA,  ((i*backgroundWidth) + (cameraManager.offsetX/2) % backgroundWidth) + x, cameraManager.offsetY);
 
 			}
 			for (int i = 0; i<= numBackgrounds; i++){
-				batch.draw(layerB, i*backgroundWidth + (cameraManager.offsetX/8) % backgroundWidth, cameraManager.offsetY);
+				batch.draw(layerB,  ((i*backgroundWidth) + (cameraManager.offsetX/4) % backgroundWidth) + x, cameraManager.offsetY);
 
 			}
 			for (int i = 0; i<= numBackgrounds; i++){
-				batch.draw(layerC, i*backgroundWidth + (cameraManager.offsetX/16) % backgroundWidth, cameraManager.offsetY);
+				batch.draw(layerC, ((i*backgroundWidth) + (cameraManager.offsetX/8) % backgroundWidth) + x, cameraManager.offsetY);
 
 			}		
 			break;
 			
 		case BEACH:
-			for (int i = 0; i<= numBackgrounds; i++){
-				batch.draw(background, i*backgroundWidth + (cameraManager.offsetX/4) % backgroundWidth, cameraManager.offsetY);
-
+			
+			//System.out.println("\n new draw!  " + cameraManager.offsetX);
+			if (cameraManager.offsetX > (x + backgroundWidth)){
+				x += backgroundWidth;
+			} else if (cameraManager.offsetX < x){
+				x -= backgroundWidth;
 			}
+			
+			for (int i = -1; i<= numBackgrounds; i++){
+				//System.out.print("drawing at " + (((i*backgroundWidth) + (cameraManager.offsetX/4) % backgroundWidth) + x) + "  ");
+				batch.draw(background,  ((i*backgroundWidth) + (cameraManager.offsetX/2) % backgroundWidth) + x, cameraManager.offsetY - 1);
+				
+			}
+
+			
 			break;
 			
 		case VILLAGE:
 			for (int i = 0; i<= numBackgrounds; i++){
-				batch.draw(background, i*backgroundWidth + (cameraManager.offsetX/4) % backgroundWidth, cameraManager.offsetY);
+				batch.draw(background, i*backgroundWidth + (cameraManager.camX/4) % backgroundWidth, cameraManager.offsetY);
 
 			}
 			break;

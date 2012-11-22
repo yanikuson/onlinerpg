@@ -124,9 +124,11 @@ public class Actor {
 	public void checkIfOnMovingPlatform(Map map){
 
 		curPlatform = null;
-		for (int i = 0; i < map.platforms.length; i++){
-			if (map.platforms[i] != null && yVel <= 0) {
-				if (bounds.overlaps(map.platforms[i].bounds)){
+		if (map.platforms != null) {
+
+			// iterate through each of the platforms
+			for (int i = 0; i < map.platforms.length; i++){
+				if (map.platforms[i] != null && yVel <= 0 && bounds.overlaps(map.platforms[i].bounds)) {
 
 					if (curPlatform == null) {
 						yVel = 0;
@@ -140,10 +142,10 @@ public class Actor {
 						return;
 					}
 
-				} 
+				}
 			}
+
 		}
-		
 	}
 
 	// handles actor movement, jumping, collision, etc. 
@@ -320,7 +322,7 @@ public class Actor {
 
 		// check for a JUMP
 		if (onGround && moveCommand[MOVE_JUMP] && !animation.swingPose && !animation.stabPose){
-			
+
 			moveCommand[MOVE_JUMP] = false;
 			onGround = false;
 			yVel = jumpPower/17;

@@ -5,10 +5,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 public class CameraManager {
 
 	public OrthographicCamera camera;
-
 	
-	private float camX;
-	private float camY;
+	public float camX;
+	public float camY;
 	private float camW;
 	private float camH;
 	

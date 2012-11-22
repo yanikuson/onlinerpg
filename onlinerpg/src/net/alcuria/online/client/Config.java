@@ -25,6 +25,8 @@ public class Config {
 	// NPC identifiers -- see NPC.java
 	public static final int NPC_WELCOME = 0;
 	public static final int NPC_SHOP = 1;
+	
+	public static final int MAX_PLATFORMS = 10;
 
 	// int for damage calculating
 	private static int damage = 0;

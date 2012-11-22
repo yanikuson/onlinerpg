@@ -76,6 +76,7 @@ public class Field implements Screen {
 			batch.begin();
 
 			map.renderBG(batch, cameraManager);
+			
 			map.render(batch, true, cameraManager);
 			player.render(batch);
 			map.render(batch, false, cameraManager);

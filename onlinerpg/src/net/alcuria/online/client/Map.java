@@ -50,8 +50,8 @@ public class Map {
 	final int[] heightmapSlopeP15B 	= { 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9,10,10,10,11,11};
 	final int[] heightmapSlopeP15C 	= {11,12,12,12,12,13,13,13,14,14,14,15,15,15,16,16};
 	final int[] heightmapSlopeN15A 	= {16,16,15,15,15,14,14,14,13,13,13,12,12,12,12,11};
-	final int[] heightmapSlopeN15B 	= { 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9,10,10,10,11,11};
-	final int[] heightmapSlopeN15C 	= {11,12,12,12,12,13,13,13,14,14,14,15,15,15,16,16};
+	final int[] heightmapSlopeN15B 	= {11,11,10,10,10, 9, 9, 9, 8, 8, 8, 7, 7, 7, 6, 6};
+	final int[] heightmapSlopeN15C 	= { 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1};
 	final int[] heightmapSlopeP45H 	= { 1, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8};
 	final int[] heightmapSlopeN45H 	= { 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 6, 5, 4, 3, 2, 1};
 
@@ -83,8 +83,8 @@ public class Map {
 	int[][] collisionLayer;
 
 	public Music bgm;
-	private Background bg;
-	private Foreground fg;
+	public Background bg;
+	public Foreground fg;
 	public boolean containsEnemies = false;
 
 	public Map(String mapfile, AssetManager assets, DamageList damageList, Field f){
@@ -106,12 +106,14 @@ public class Map {
 			}
 
 			// render all platforms
-			for (int i = 0; i < platforms.length; i++){
-				if (platforms[i] != null){
-					platforms[i].render(game);
+			if (platforms != null) {
+				for (int i = 0; i < platforms.length; i++){
+					if (platforms[i] != null){
+						platforms[i].render(game);
+					}
 				}
 			}
-			
+
 			if (spawner != null) spawner.render(batch);
 
 			for (int i = 0; i < npcs.length; i++){
@@ -335,7 +337,7 @@ public class Map {
 		this.teleports = new TeleportManager(mapfile);
 
 		// create NPCS HERE
-		
+
 		// wipe out old npcs
 		if (npcs != null) {
 			for (int i = 0; i < npcs.length; i++){
@@ -361,7 +363,7 @@ public class Map {
 				}
 			}
 		} 
-		
+
 		// create new backgrounds
 		bg = new Background(this, assets);
 		fg = new Foreground(this, assets);
@@ -373,11 +375,24 @@ public class Map {
 			collisions = new CollisionManager(game.player, null, game.drops, game.slices, game.burns, game.freezes, game.inputs);
 
 		}
-		
+
 		// create the PLATFORMS
-		platforms = new Platform[10];
-		platforms[0] = new Platform(game);
-		
+		if(Gdx.files.internal("maps/" + mapfile + ".plat").exists()){
+
+			// create a filehandle, read in the string and split it by line
+			handle = Gdx.files.internal("maps/" + mapfile + ".plat");
+			String contents = handle.readString();
+			String[] contentsSplit = contents.split("\\r?\\n");
+
+			// init each element
+			platforms = new Platform[Config.MAX_PLATFORMS];
+			for (int i = 0; i < contentsSplit.length; i++){
+				platforms[i] = new Platform(game, contentsSplit[i]);
+			}
+
+		}
+
+
 
 	}
 
@@ -402,14 +417,16 @@ public class Map {
 		if (spawner != null && containsEnemies) spawner.update();
 		fg.update(Gdx.graphics.getDeltaTime());
 		collisions.update(this, damageList, game.explosions, game.items);
-		
+
 		// update platforms
-		for (int i = 0; i < platforms.length; i++){
-			if (platforms[i] != null){
-				platforms[i].update(game);
+		if (platforms != null) {
+			for (int i = 0; i < platforms.length; i++){
+				if (platforms[i] != null){
+					platforms[i].update(game);
+				}
 			}
 		}
-		
+
 
 	}
 
