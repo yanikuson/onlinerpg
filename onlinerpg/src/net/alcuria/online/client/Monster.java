@@ -75,6 +75,28 @@ public class Monster extends Actor {
 			this.money = 20;
 
 			break;
+			
+		case Config.MON_CRAB:
+
+			this.maxHP = 10;
+
+			this.atk = 5;
+			this.def = 0;
+			this.matk = 0;
+			this.mdef = 0;
+
+			this.power = 5;
+			this.stamina = 5;
+			this.wisdom = 5;
+
+			this.expVal = 3;
+			this.walkSpeed = 40;
+			this.jumpPower = 80;
+			this.commandFrequency = 1;
+
+			this.money = 20;
+
+			break;
 		default:
 
 		}
@@ -143,7 +165,10 @@ public class Monster extends Actor {
 			clearCommands();
 		}
 
-
+		// update projectiles
+		if (projectile != null){
+			projectile.update(map);
+		}
 
 		// also check if anything can change the command (for instance, enemy walks to a cliff or bumps a wall)
 
@@ -151,30 +176,30 @@ public class Monster extends Actor {
 		if (moveCommand[MOVE_RIGHT] && sensorTouchesRightSide(map)){
 			moveCommand[MOVE_LEFT] = true;
 			moveCommand[MOVE_RIGHT] = false;
+			return;
 		}
 
 		// if we're moving left and we bump a wall on the left, let's turn the enemy around
 		if (moveCommand[MOVE_LEFT] && sensorTouchesLeftSide(map)){
 			moveCommand[MOVE_LEFT] = false;
 			moveCommand[MOVE_RIGHT] = true;
+			return;
 		}
 
 		// if the bottom left sensor is off the ground and we're moving left, turn around so we don't suicide!	
-		if (moveCommand[MOVE_LEFT] && !bottomSensorTouchesGround(0, map)){
+		if (moveCommand[MOVE_LEFT] && getHigherSensor(map) > 10){
 			moveCommand[MOVE_LEFT] = false;
 			moveCommand[MOVE_RIGHT] = true;
+			return;
 		}
 
 		// if the bottom right sensor is off the ground and we're moving right, turn around
-		if (moveCommand[MOVE_RIGHT] && !bottomSensorTouchesGround(1, map)){
+		if (moveCommand[MOVE_RIGHT] && getHigherSensor(map) > 10){
 			moveCommand[MOVE_LEFT] = true;
 			moveCommand[MOVE_RIGHT] = false;
+			return;
 		}
 
-		// update projectiles
-		if (projectile != null){
-			projectile.update(map);
-		}
 
 	}
 

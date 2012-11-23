@@ -320,10 +320,21 @@ public class Map {
 			containsEnemies = true;
 			this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn", damageList);
 			for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
-				if (Math.random() > 0.3){
-					this.spawner.addMonster(new Monster("sprites/slime.png", 14, 16, Config.MON_SLIME, assets));
+
+				// WHICH MONSTER?
+				if (mapfile.equals("beachroad")){
+					
+					// BEACH
+					this.spawner.addMonster(new Monster("sprites/monsters/crab.png", 16, 16, Config.MON_CRAB, assets));
+
 				} else {
-					this.spawner.addMonster(new Monster("sprites/eye.png", 14, 18, Config.MON_EYE, assets));
+
+					// DEFAULT SLIMES/EYES
+					if (Math.random() > 0.3){
+						this.spawner.addMonster(new Monster("sprites/monsters/slime.png", 14, 16, Config.MON_SLIME, assets));
+					} else {
+						this.spawner.addMonster(new Monster("sprites/monsters/eye.png", 14, 18, Config.MON_EYE, assets));
+					}
 				}
 			}
 			this.spawner.doInitialSpawn();
@@ -377,6 +388,12 @@ public class Map {
 		}
 
 		// create the PLATFORMS
+		if (platforms != null){
+			for (int i = 0; i < platforms.length; i++){
+				platforms[i] = null;
+			}
+		}
+		
 		if(Gdx.files.internal("maps/" + mapfile + ".plat").exists()){
 
 			// create a filehandle, read in the string and split it by line

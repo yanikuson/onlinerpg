@@ -126,8 +126,6 @@ public class Loading implements Screen
 		// SPRITES
 		assets.load("sprites/burn.png", Texture.class);
 		assets.load("sprites/drops.png", Texture.class);
-		assets.load("sprites/fireball.png", Texture.class);
-		assets.load("sprites/eye.png", Texture.class);
 		assets.load("sprites/kill.png", Texture.class);
 		assets.load("sprites/levelup.png", Texture.class);
 		assets.load("sprites/logo.png", Texture.class);
@@ -135,12 +133,17 @@ public class Loading implements Screen
 		assets.load("sprites/point.png", Texture.class);
 		assets.load("sprites/projectile.png", Texture.class);
 		assets.load("sprites/slice.png", Texture.class);
-		assets.load("sprites/slime.png", Texture.class);
+		assets.load("sprites/fireball.png", Texture.class);
 		assets.load("sprites/swing.png", Texture.class);
 		assets.load("sprites/sparkle.png", Texture.class);
 		assets.load("sprites/cast.png", Texture.class);
 		assets.load("sprites/ice.png", Texture.class);
 		assets.load("sprites/platform.png", Texture.class);
+		
+		// MONSTERS
+		assets.load("sprites/monsters/slime.png", Texture.class);
+		assets.load("sprites/monsters/eye.png", Texture.class);
+		assets.load("sprites/monsters/crab.png", Texture.class);
 		
 		// EQUIPS
 		assets.load("sprites/equips/hair/1.png", Texture.class);

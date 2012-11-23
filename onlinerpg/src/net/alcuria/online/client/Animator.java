@@ -102,7 +102,7 @@ public class Animator {
 		} else {
 
 			// draw the frame flipped
-			if (curWidth > 14){
+			if (curWidth > this.idle[0].getRegionWidth()){
 				batch.draw(frame, x+width, y, 0-width*2, height);
 			} else {
 				batch.draw(frame, x+width, y, 0-width, height);

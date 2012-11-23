@@ -28,6 +28,7 @@ public class Actor {
 	public float criticalHealthTimer = 0;
 
 	public Rectangle bounds;						// physical representation of our player, for collisions
+	public Rectangle feet;							// a rectangle just at the feet (for platforms)
 	public Animator animation;						// graphical representation of our player, for "pretty" gameplay
 	protected Texture debugPoint;					// a small point to display for the sensor points
 	public AssetManager assets;						// player assets
@@ -89,6 +90,7 @@ public class Actor {
 
 		// create the bounding box and assign it the passed in position
 		this.bounds = new Rectangle(x+6, y+6, celWidth-3, celHeight-3);
+		this.feet = new Rectangle(x+6, y+6, celWidth-3, 5);
 
 		// create new sensor point texture
 		this.debugPoint = assets.get("sprites/point.png", Texture.class);
@@ -128,7 +130,7 @@ public class Actor {
 
 			// iterate through each of the platforms
 			for (int i = 0; i < map.platforms.length; i++){
-				if (map.platforms[i] != null && yVel <= 0 && bounds.overlaps(map.platforms[i].bounds)) {
+				if (map.platforms[i] != null && yVel <= 0 && feet.overlaps(map.platforms[i].bounds)) {
 
 					if (curPlatform == null) {
 						yVel = 0;
@@ -158,7 +160,7 @@ public class Actor {
 		}
 
 		// ############################ STEP X #################################
-
+		
 		bounds.x = bounds.x + xVel;
 		if (curPlatform != null) {
 			bounds.x += curPlatform.dX;
@@ -364,6 +366,10 @@ public class Actor {
 			facingLeft = false;
 		}
 
+		// update the feet bounds for the moving platform collision check
+		feet.x = bounds.x;
+		feet.y = bounds.y;
+		
 		effects.update(this);
 
 	}
