@@ -19,7 +19,7 @@ public class Background {
 	public static final int FOREST = 0;
 	public static final int BEACH = 1;
 	public static final int VILLAGE = 2;
-	
+
 	public int x = 0;
 
 	public Background(Map map, AssetManager assets){
@@ -37,31 +37,31 @@ public class Background {
 			type = BEACH;
 			background = assets.get("backgrounds/sky.png", Texture.class);	
 			backgroundWidth = 256;
-			
+
 		} else if (map.name.equalsIgnoreCase("village.png")){
 			type = VILLAGE;
 			background = assets.get("backgrounds/sky.png", Texture.class);	
 			backgroundWidth = 256;
 		}
 
-
 		numBackgrounds = (int) (Config.WIDTH / backgroundWidth + 2);
 
-		
+
 
 	}
 
 	public void render(SpriteBatch batch, CameraManager cameraManager) {
 
+		//System.out.println("\n new draw!  " + cameraManager.offsetX);
+		if (cameraManager.offsetX > (x + backgroundWidth)){
+			x += backgroundWidth;
+		} else if (cameraManager.offsetX < x){
+			x -= backgroundWidth;
+		}
+
 		switch (type){
 		case FOREST:
 
-			if (cameraManager.offsetX > (x + backgroundWidth)){
-				x += backgroundWidth;
-			} else if (cameraManager.offsetX < x){
-				x -= backgroundWidth;
-			}
-			
 			for (int i = 0; i<= numBackgrounds; i++){
 				batch.draw(layerA,  ((i*backgroundWidth) + (cameraManager.offsetX/2) % backgroundWidth) + x, cameraManager.offsetY);
 
@@ -75,33 +75,17 @@ public class Background {
 
 			}		
 			break;
-			
+
+		case VILLAGE:
 		case BEACH:
-			
-			//System.out.println("\n new draw!  " + cameraManager.offsetX);
-			if (cameraManager.offsetX > (x + backgroundWidth)){
-				x += backgroundWidth;
-			} else if (cameraManager.offsetX < x){
-				x -= backgroundWidth;
-			}
-			
+
 			for (int i = -1; i<= numBackgrounds; i++){
 				//System.out.print("drawing at " + (((i*backgroundWidth) + (cameraManager.offsetX/4) % backgroundWidth) + x) + "  ");
 				batch.draw(background,  ((i*backgroundWidth) + (cameraManager.offsetX/2) % backgroundWidth) + x, cameraManager.offsetY - 1);
-				
-			}
-
-			
-			break;
-			
-		case VILLAGE:
-			for (int i = 0; i<= numBackgrounds; i++){
-				batch.draw(background, i*backgroundWidth + (cameraManager.camX/4) % backgroundWidth, cameraManager.offsetY);
 
 			}
 			break;
+
 		}
-
 	}
-
 }
