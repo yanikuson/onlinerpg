@@ -11,10 +11,12 @@ import net.alcuria.online.client.Map;
 import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
+import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.Transition;
 import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
 import net.alcuria.online.client.ui.Menu;
+import net.alcuria.online.client.ui.ShopMenu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -42,6 +44,7 @@ public class Field implements Screen {
 	public Message msgBox;
 	public Map map;
 
+	public ShopMenu shop;
 	public CameraManager cameraManager;
 	public HUD hud;
 	public Menu menu;
@@ -54,11 +57,9 @@ public class Field implements Screen {
 	float h;
 	float aspectRatio;
 
-	public Field(Game g, AssetManager assets, Player player, ItemManager items, int loadedSlot)
+	public Field(Game g, AssetManager assets, int loadedSlot)
 	{
 		this.slot = loadedSlot;
-		this.player = player;
-		this.items = items;
 		this.assets = assets;
 		this.g = g;
 	}
@@ -94,6 +95,7 @@ public class Field implements Screen {
 			if (GlobalFlags.flags[GlobalFlags.INTRO]){
 				hud.render(batch);
 			}
+			shop.render(batch);
 			msgBox.render(batch);
 			menu.render(batch);
 			inputs.render(batch);
@@ -161,13 +163,18 @@ public class Field implements Screen {
 		h = Gdx.graphics.getHeight();
 		aspectRatio = w/h;
 
+		notifications = new NotificationList();
+		//notifications.add("Welcome to Heroes of Umbra!");
+		
+		player = SaveHandler.loadPlayer(slot, notifications, this);
+		items = SaveHandler.loadItems(slot);
+		SaveHandler.loadFlags(slot);
+		
 		cameraManager = new CameraManager();		
 
 		batch = new SpriteBatch();
 
 		// create notification handler
-		notifications = new NotificationList();
-		//notifications.add("Welcome to Heroes of Umbra!");
 
 		damageList = new DamageList();
 
@@ -178,7 +185,7 @@ public class Field implements Screen {
 
 
 		// create our item manager
-		drops = new DropManager(assets, notifications);
+		drops = new DropManager(this, notifications);
 
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
@@ -199,6 +206,10 @@ public class Field implements Screen {
 
 		// create our hud
 		hud = new HUD(player);
+		
+		// create a default shop
+		shop = new ShopMenu(this, new ItemManager());
+		shop.active = false;
 	}
 
 	@Override

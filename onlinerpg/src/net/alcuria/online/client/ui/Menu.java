@@ -244,7 +244,7 @@ public class Menu {
 
 	}
 
-	private void hideMenu(InputHandler input) {
+	protected void hideMenu(InputHandler input) {
 		SaveHandler.savePlayer(p, saveSlot);
 		SaveHandler.saveItems(saveSlot, inventory);
 		SaveHandler.saveFlags(saveSlot);
@@ -253,7 +253,6 @@ public class Menu {
 		input.typed[InputHandler.ESCAPE] = false;
 		active = false;
 		dispose();
-
 	}
 
 	// user is IN item menu and selecting whether to USE or TOSS an item
@@ -294,9 +293,9 @@ public class Menu {
 			if (selection[depth] == 0){
 				// if selection type = consumable, do the effect -- close menu
 				if (inventory.getItem(selection[1]).type == Item.TYPE_CONSUMABLE){
-					switch (inventory.getItem(selection[1]).id) {
-
+					
 					// do the effect
+					switch (inventory.getItem(selection[1]).id) {
 					case Item.ID_POTION:
 						p.effects.add(StatusEffects.HEAL, 50, 1);
 						break;
@@ -308,6 +307,10 @@ public class Menu {
 					// remove from inventory and close the menu
 					inventory.removeIndex(selection[1]);
 					hideMenu(input);
+					
+					// update the player's pose
+					p.animation.itemPose = true;
+					
 				} else {
 					cancel.play(Config.sfxVol);
 				}

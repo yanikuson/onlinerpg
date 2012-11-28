@@ -8,8 +8,9 @@ public class Item {
 	
 	public int atk, matk, def, mdef, speed, jump, kb;
 	
-	public String name;
-	public String description;
+	public String name;					// name of item
+	public String description;			// description of item
+	public String visualName;			// url to visual equipment sprite
 	
 	public static final int ID_BLANK = 0;
 	public static final int ID_POTION = 1; 
@@ -29,7 +30,9 @@ public class Item {
 	public static final int TYPE_RARE = 10;
 	
 	public Item(int id){
+		
 		this.id = id;
+		this.visualName = "";
 		
 		switch (id) {
 		
@@ -60,6 +63,7 @@ public class Item {
 			this.name = "Wooden Sword";
 			this.description = "ATK+10";
 			this.atk = 10;
+			this.visualName = "sprites/weapons/wooden-sword.png";
 			break;
 			
 		case ID_STARLESS_UMBRA:

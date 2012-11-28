@@ -2,9 +2,6 @@ package net.alcuria.online.client.screens;
 
 import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
-import net.alcuria.online.client.ItemManager;
-import net.alcuria.online.client.NotificationList;
-import net.alcuria.online.client.Player;
 import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.ui.SelectMenu;
 
@@ -70,13 +67,9 @@ public class Select implements Screen {
 		} else if (menu.slot > 0){
 			if (SaveHandler.fileExists(menu.slot)){
 				
-				// load all the data
-				Player p = SaveHandler.loadPlayer(menu.slot, new NotificationList(), assets);
-				ItemManager items = SaveHandler.loadItems(menu.slot);
-				SaveHandler.loadFlags(menu.slot);
 				
 				bgm.stop();
-				myGame.setScreen(new Field(myGame, assets, p, items, menu.slot));
+				myGame.setScreen(new Field(myGame, assets, menu.slot));
 			} else {
 				myGame.setScreen(new Create(myGame, assets, menu.slot));
 			}

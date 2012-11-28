@@ -1,6 +1,7 @@
 package net.alcuria.online.client;
 
-import com.badlogic.gdx.assets.AssetManager;
+import net.alcuria.online.client.screens.Field;
+
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -15,15 +16,15 @@ public class DropManager {
 	public Sound pickup;
 	public NotificationList notifications;
 
-	public DropManager(AssetManager assets, NotificationList notifications){
+	public DropManager(Field f, NotificationList notifications){
 
 		dropList = new Drop[MAX_DROPS];
 		for (int i = 0; i < MAX_DROPS; i++){
-			dropList[i] = new Drop("sprites/drops.png", -40, -40, 14, 11, assets);
+			dropList[i] = new Drop("sprites/drops.png", -40, -40, 14, 11, f);
 		}
 
-		pickup = assets.get("sounds/pickup.wav", Sound.class);
-		drop = assets.get("sounds/drop.wav", Sound.class);
+		pickup = f.assets.get("sounds/pickup.wav", Sound.class);
+		drop = f.assets.get("sounds/drop.wav", Sound.class);
 		this.notifications = notifications;
 
 	}

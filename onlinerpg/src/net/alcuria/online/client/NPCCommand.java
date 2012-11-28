@@ -1,10 +1,11 @@
 package net.alcuria.online.client;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 
+import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.client.ui.Message;
+import net.alcuria.online.client.ui.ShopMenu;
 
 public class NPCCommand {
 
@@ -18,8 +19,8 @@ public class NPCCommand {
 	public static final int TYPE_BGM = 6;
 	public static final int TYPE_REMOVE = 7;
 	public static final int TYPE_FLAG = 8;
-
-
+	public static final int TYPE_SHOP = 9;
+	
 	public float waitCount = 0;
 	public float waitDuration = 0;
 	public int type;
@@ -35,18 +36,18 @@ public class NPCCommand {
 		this.msg = msg;
 	}
 
-	public int update(Message msgBox, CameraManager cameraManager, int commandIndex, Player p, NPC npc, Map m, AssetManager assets){
+	public int update(Field f, NPC npc, int commandIndex){
 
 		switch (type){
 		case TYPE_MSG:
 			if (!startedCommand){
-				msg = msg.replace("|name|", p.name);
-				msgBox.startMessage(msg, (int)cameraManager.offsetX + Message.h_center, (int)cameraManager.offsetY + 200);
+				msg = msg.replace("|name|", f.player.name);
+				f.msgBox.startMessage(msg, (int)f.cameraManager.offsetX + Message.h_center, (int)f.cameraManager.offsetY + 200);
 				startedCommand = true;
 			} else {
 
 				// test for a complete message
-				if (!msgBox.visible){
+				if (!f.msgBox.visible){
 					startedCommand = false;
 					return commandIndex + 1;
 				}
@@ -54,7 +55,7 @@ public class NPCCommand {
 			break;
 		case TYPE_HEAL:
 
-			p.effects.add(StatusEffects.HEAL, p.maxHP, 1);
+			f.player.effects.add(StatusEffects.HEAL, f.player.maxHP, 1);
 			return commandIndex + 1;
 
 		case TYPE_WAIT:
@@ -80,31 +81,31 @@ public class NPCCommand {
 			return commandIndex + 1;
 
 		case TYPE_HERO:
-			p.animation.reset();
+			f.player.animation.reset();
 
 			if (msg.equalsIgnoreCase("dead")){
-				p.animation.frame = p.animation.dead;
+				f.player.animation.frame = f.player.animation.dead;
 			} else if (msg.equalsIgnoreCase("hurt")){
-				p.animation.frame = p.animation.hurt;
+				f.player.animation.frame = f.player.animation.hurt;
 			} else if (msg.equalsIgnoreCase("victory")){
-				p.animation.frame = p.animation.victory;
+				f.player.animation.frame = f.player.animation.victory;
 			} else if (msg.equalsIgnoreCase("idle")){
-				p.animation.frame = p.animation.idle[0];
+				f.player.animation.frame = f.player.animation.idle[0];
 			}
-			p.animation.curWidth = p.animation.frame.getRegionWidth();
-			p.animation.curHeight = p.animation.frame.getRegionHeight();
+			f.player.animation.curWidth = f.player.animation.frame.getRegionWidth();
+			f.player.animation.curHeight = f.player.animation.frame.getRegionHeight();
 			return commandIndex + 1;
 
 		case TYPE_BGM:
-			m.bgm.stop();
+			f.map.bgm.stop();
 			if (msg.equalsIgnoreCase("beach")){
-				m.bgm = assets.get("music/beach.ogg", Music.class);
-				m.bgm.setLooping(true);
+				f.map.bgm = f.assets.get("music/beach.ogg", Music.class);
+				f.map.bgm.setLooping(true);
 			} else if (msg.equalsIgnoreCase("victory")){
-				m.bgm = assets.get("music/victory.ogg", Music.class);
-				m.bgm.setLooping(false);
+				f.map.bgm = f.assets.get("music/victory.ogg", Music.class);
+				f.map.bgm.setLooping(false);
 			}
-			m.bgm.play();
+			f.map.bgm.play();
 			return commandIndex + 1;
 		
 		case TYPE_REMOVE:
@@ -114,6 +115,25 @@ public class NPCCommand {
 		case TYPE_FLAG:
 			GlobalFlags.flags[Integer.parseInt(msg)] = true;
 			return commandIndex + 1;
+			
+		case TYPE_SHOP:
+			if (!startedCommand){
+				ItemManager items = new ItemManager();
+				items.add(Item.ID_POTION);
+				items.add(Item.ID_SPEED_PILL);
+				f.shop = new ShopMenu(f, items);
+				f.map.pause = true;
+				startedCommand = true;
+			} else {
+				// test for a completed shop
+				f.shop.update(f.inputs, f.cameraManager.offsetX, f.cameraManager.offsetY);
+				if (!f.shop.active){
+					f.map.pause = false;
+					startedCommand = false;
+					return commandIndex + 1;
+				}
+			}
+			break;
 			
 		case DEFAULT:
 			return commandIndex + 1;

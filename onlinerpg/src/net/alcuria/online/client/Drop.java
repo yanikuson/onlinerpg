@@ -1,6 +1,7 @@
 package net.alcuria.online.client;
 
-import com.badlogic.gdx.assets.AssetManager;
+import net.alcuria.online.client.screens.Field;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Drop extends Actor {
@@ -14,11 +15,11 @@ public class Drop extends Actor {
 	public int value = 0;				// value: for gold this is the amount, for items it is the item's ID!
 	
 
-	public Drop(String filename, int x, int y, int width, int height, AssetManager assets) {
-		super(filename, x, y, width, height, assets);
+	public Drop(String filename, int x, int y, int width, int height, Field f) {
+		super(filename, x, y, width, height, f);
 
-		this.dropParticle = new Particle(filename, x, y, width, height, 4, 5, false, assets);
-
+		this.dropParticle = new Particle(filename, x, y, width, height, 4, 5, false, f.assets);
+		
 		this.dropParticle.loop = true;
 		this.maxHP = 1;
 		this.bounds.width -= 8;

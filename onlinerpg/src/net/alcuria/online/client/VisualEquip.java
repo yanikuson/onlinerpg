@@ -16,11 +16,19 @@ public class VisualEquip {
 	private TextureRegion region;
 	
 	private int newX, newY, newWidth;
+	private AssetManager assets;
 	
 	public VisualEquip(String filename, AssetManager assets) {
 		
+		this.assets = assets;
 		sheet = assets.get("sprites/equips/hair/1.png", Texture.class);
 		region = new TextureRegion(sheet, 0, 0, 0, 0);
+	}
+	
+	public void changeTexture(String filename){
+		
+		sheet = assets.get(filename, Texture.class);
+		
 	}
 	
 	public void render(SpriteBatch batch, float x, float y, boolean flipX){

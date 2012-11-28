@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Map {
 
-	Field game;
+	Field f;
 
 	// Collision layer enums
 	final int COLL_EMPTY 		= 0;
@@ -88,7 +88,7 @@ public class Map {
 	public boolean containsEnemies = false;
 
 	public Map(String mapfile, AssetManager assets, DamageList damageList, Field f){
-		this.game = f;
+		this.f = f;
 		this.damageList = damageList;
 		this.assets = assets;
 		create(mapfile);		
@@ -109,7 +109,7 @@ public class Map {
 			if (platforms != null) {
 				for (int i = 0; i < platforms.length; i++){
 					if (platforms[i] != null){
-						platforms[i].render(game);
+						platforms[i].render(f);
 					}
 				}
 			}
@@ -325,15 +325,15 @@ public class Map {
 				if (mapfile.equals("beachroad")){
 					
 					// BEACH
-					this.spawner.addMonster(new Monster("sprites/monsters/crab.png", 16, 16, Config.MON_CRAB, assets));
+					this.spawner.addMonster(new Monster("sprites/monsters/crab.png", 16, 16, Config.MON_CRAB, f));
 
 				} else {
 
 					// DEFAULT SLIMES/EYES
 					if (Math.random() > 0.3){
-						this.spawner.addMonster(new Monster("sprites/monsters/slime.png", 14, 16, Config.MON_SLIME, assets));
+						this.spawner.addMonster(new Monster("sprites/monsters/slime.png", 14, 16, Config.MON_SLIME, f));
 					} else {
-						this.spawner.addMonster(new Monster("sprites/monsters/eye.png", 14, 18, Config.MON_EYE, assets));
+						this.spawner.addMonster(new Monster("sprites/monsters/eye.png", 14, 18, Config.MON_EYE, f));
 					}
 				}
 			}
@@ -370,7 +370,7 @@ public class Map {
 					if (line[1].equals("intro") && GlobalFlags.flags[GlobalFlags.INTRO]){
 						break;
 					}
-					npcs[i] = new NPC(line[0], Integer.parseInt(line[2])*Config.TILE_WIDTH, Integer.parseInt(line[3])*Config.TILE_WIDTH, 14, 22, line[1], assets);
+					npcs[i] = new NPC(line[0], Integer.parseInt(line[2])*Config.TILE_WIDTH, Integer.parseInt(line[3])*Config.TILE_WIDTH, 14, 22, line[1], f);
 				}
 			}
 		} 
@@ -381,9 +381,9 @@ public class Map {
 
 		// create the collision manager
 		if (containsEnemies){
-			collisions = new CollisionManager(game.player, this.spawner.monsterList, game.drops, game.slices, game.burns, game.freezes, game.inputs);
+			collisions = new CollisionManager(f.player, this.spawner.monsterList, f.drops, f.slices, f.burns, f.freezes, f.inputs);
 		} else {
-			collisions = new CollisionManager(game.player, null, game.drops, game.slices, game.burns, game.freezes, game.inputs);
+			collisions = new CollisionManager(f.player, null, f.drops, f.slices, f.burns, f.freezes, f.inputs);
 
 		}
 
@@ -404,7 +404,7 @@ public class Map {
 			// init each element
 			platforms = new Platform[Config.MAX_PLATFORMS];
 			for (int i = 0; i < contentsSplit.length; i++){
-				platforms[i] = new Platform(game, contentsSplit[i]);
+				platforms[i] = new Platform(f, contentsSplit[i]);
 			}
 
 		}
@@ -419,9 +419,9 @@ public class Map {
 		for (int i = 0; i < npcs.length; i++){
 			if (npcs[i] != null) {
 
-				npcs[i].update(this, game.msgBox, game.cameraManager, game.player);
+				npcs[i].update(this, f.msgBox, f.cameraManager, f.player);
 				if (npcs[i].startCommands) {
-					game.inputs.typed[InputHandler.ATTACK] = false;
+					f.inputs.typed[InputHandler.ATTACK] = false;
 					pause = true;
 				} else {
 
@@ -430,16 +430,16 @@ public class Map {
 				}
 			}
 		}
-		teleports.update(game.player, this, game.inputs);
+		teleports.update(f.player, this, f.inputs);
 		if (spawner != null && containsEnemies) spawner.update();
 		fg.update(Gdx.graphics.getDeltaTime());
-		collisions.update(this, damageList, game.explosions, game.items);
+		collisions.update(this, damageList, f.explosions, f.items);
 
 		// update platforms
 		if (platforms != null) {
 			for (int i = 0; i < platforms.length; i++){
 				if (platforms[i] != null){
-					platforms[i].update(game);
+					platforms[i].update(f);
 				}
 			}
 		}

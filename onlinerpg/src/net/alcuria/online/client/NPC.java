@@ -1,14 +1,14 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.client.ui.Message;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class NPC extends Actor {
-
+	
 	float timeSinceSpawn = 0;
 	float commandTimer = 0;
 	float commandFrequency = 2;
@@ -19,8 +19,8 @@ public class NPC extends Actor {
 	public Message msgBox;
 	public CameraManager cameraManager;
 
-	public NPC(String filename, int x, int y, int width, int height, String npcname, AssetManager assets) {
-		super(filename, x, y, width, height, assets);
+	public NPC(String filename, int x, int y, int width, int height, String npcname, Field f) {
+		super(filename, x, y, width, height, f);
 
 		this.maxHP = 1;
 		this.visible = true;
@@ -76,7 +76,11 @@ public class NPC extends Actor {
 				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<flag>")) {
 					// switch a flag <flag> (flag index)
 					commands[i] = new NPCCommand(NPCCommand.TYPE_FLAG, lines[i].substring(7));	
-					
+				
+				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<shop>")) {
+					// open a shop: <shop> items|weapons
+					commands[i] = new NPCCommand(NPCCommand.TYPE_SHOP, lines[i].substring(7));	
+
 				} else {
 					// something else... undefined!
 					commands[i] = new NPCCommand(NPCCommand.DEFAULT);	
@@ -107,7 +111,7 @@ public class NPC extends Actor {
 	public void update(Map m, Message msgBox, CameraManager cameraManager, Player p){
 
 		if (startCommands && commandIndex < commands.length){
-			commandIndex = commands[commandIndex].update(msgBox, cameraManager, commandIndex, p, this, m, assets);
+			commandIndex = commands[commandIndex].update(f, this, commandIndex);
 
 		} else {
 			Config.npcCommand = false;

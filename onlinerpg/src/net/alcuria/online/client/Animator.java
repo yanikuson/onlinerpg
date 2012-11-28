@@ -16,15 +16,17 @@ public class Animator {
 	boolean flipX;
 	public boolean swingPose = false;
 	public boolean stabPose = false;
-	boolean readyPose = false;
+	public boolean readyPose = false;
 	public boolean castPose = false;
 	public boolean castComplete = false;
-
+	public boolean itemPose = false;
+	
 	float castTimer = 0;
 	float animationTimer = 0f;
 	float attackTimer = 0f;
 	float readyTimer = 0f;
 	float idleTimer = 0f;
+	float itemTimer = 0f;
 	float CAST_TIME = 0.5f;
 
 	private Texture sheet;							// entire graphical sprite sheet
@@ -142,6 +144,13 @@ public class Animator {
 					
 				}
 				
+			} else if(itemPose) {
+				frame = victory;
+				itemTimer += timestep;
+				if (itemTimer > 0.5){
+					itemTimer = 0;
+					itemPose = false;
+				}
 			} else {
 				if (onGround){
 					if (moving){

@@ -1,7 +1,8 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.screens.Field;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Monster extends Actor {
@@ -21,8 +22,8 @@ public class Monster extends Actor {
 	
 	public Projectile projectile;			// monster's projectile
 
-	public Monster(String filename, int width, int height, int type, AssetManager assets) {
-		super(filename, -60, -60, width, height, assets);
+	public Monster(String filename, int width, int height, int type, Field f) {
+		super(filename, -60, -60, width, height, f);
 
 		// monster-specific updates
 		switch (type){
@@ -44,7 +45,7 @@ public class Monster extends Actor {
 			this.jumpPower = 0;
 
 			this.commandFrequency = 1;
-			this.projectile = new Projectile("sprites/projectile.png", -10, -10, 4, 4, assets);
+			this.projectile = new Projectile("sprites/projectile.png", -10, -10, 4, 4, f);
 
 			this.commonDrop = new Item(Item.ID_POTION);
 			this.rareDrop = new Item(Item.ID_LEATHER_BOOTS);

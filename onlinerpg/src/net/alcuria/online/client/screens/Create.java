@@ -2,12 +2,9 @@ package net.alcuria.online.client.screens;
 
 import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
-import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.TypeHandler;
 import net.alcuria.online.client.ui.CreateMenu;
-import net.alcuria.online.client.Player;
-
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -63,7 +60,8 @@ public class Create implements Screen {
 		if(menu.leaveMenu){
 			myGame.setScreen(new Select(myGame, assets));
 		} else if (menu.createFile){
-			SaveHandler.savePlayer(new Player("sprites/player.png", menu.name, 160, 120, 14, 22, new NotificationList(), assets), id);
+
+			SaveHandler.createPlayer(id, menu.name);
 			myGame.setScreen(new Select(myGame, assets));
 		}
 	}

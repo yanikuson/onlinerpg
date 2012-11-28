@@ -1,12 +1,20 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.screens.Field;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Player extends Actor {
+	
+	// visual equip static values
+	public static int GENDER_MALE = 0;
+	public static int GENDER_FEMALE = 1;
+	public static int SKIN_PALE = 0;
+	public static int SKIN_TAN = 1;
+	public static int SKIN_DARK = 2;
+	
 	// a counter to calculate how long the player is invincible
 	public float swingTimer = 0;						// time since last swing
 	public float swingPeriod = 0.35f;						// how long the player must wait to swing again
@@ -29,16 +37,20 @@ public class Player extends Actor {
 	public float knockback;
 
 	public Item weapon, helmet, armor, accessory;
-	VisualEquip hair;
-	
+	public int gender = GENDER_MALE;
+	public int skinTone = SKIN_PALE;
+	VisualEquip visualHair;
+	VisualEquip visualHelm;
+	VisualEquip visualWeapon;
+	VisualEquip visualArmor;
 
-	public Player(String filename, String name, int x, int y, int width, int height, NotificationList notifications, AssetManager assets) {
-		super(filename, x, y, width, height, assets);
+	public Player(String filename, String name, int x, int y, int width, int height, NotificationList notifications, Field f) {
+		super(filename, x, y, width, height, f);
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);
 		this.HP = this.maxHP;
 		this.name = name;
-		
+
 		this.walkSpeed = 100;
 		this.jumpPower = 100;
 		this.knockback = 100;
@@ -47,14 +59,14 @@ public class Player extends Actor {
 		this.notifications = notifications;
 
 		// TODO: really add these to an animations hash or something
-		cast = new Particle("sprites/cast.png", x, y, 22, 16, 6, 3, false, assets);
-		swing = new Particle("sprites/swing.png", x, y, 84, 84, 7, 3, false, assets);
-		swingSound = assets.get("sounds/swing.wav", Sound.class);
-		castSound = assets.get("sounds/cast.wav", Sound.class);
+		cast = new Particle("sprites/cast.png", x, y, 22, 16, 6, 3, false, f.assets);
+		swing = new Particle("sprites/swing.png", x, y, 84, 84, 7, 3, false, f.assets);
+		swingSound = f.assets.get("sounds/swing.wav", Sound.class);
+		castSound = f.assets.get("sounds/cast.wav", Sound.class);
 		animation.assignPlayer(this);
 
-		levelupSound = assets.get("sounds/levelup.wav", Sound.class);
-		levelup = new Particle("sprites/levelup.png", 32, 32, 32, 32, 27, 3, false, assets);
+		levelupSound = f.assets.get("sounds/levelup.wav", Sound.class);
+		levelup = new Particle("sprites/levelup.png", 32, 32, 32, 32, 27, 3, false, f.assets);
 
 		// give our player some equipment
 		weapon = new Item(Item.ID_BLANK);
@@ -66,10 +78,10 @@ public class Player extends Actor {
 		this.stamina = 5;
 		this.wisdom = 5;
 
-		skills = new SkillManager(assets, this);
+		skills = new SkillManager(f.assets, this);
 
-		hair = new VisualEquip("sprites/equips/hair/1.png", assets);
-		
+		visualHair = new VisualEquip("sprites/equips/hair/1.png", f.assets);
+
 		visible = true;
 
 	}
@@ -77,7 +89,7 @@ public class Player extends Actor {
 	// the player's command must override the default command method, because it needs to poll the inputhandler to do proper (read: not random) input
 	public void command(InputHandler inputs){
 
-		if (!animation.castPose && !animation.stabPose && !animation.swingPose){
+		if (!animation.castPose && !animation.stabPose && !animation.swingPose && !animation.itemPose){
 			if (inputs.pressing[InputHandler.LEFT]){
 				moveCommand[MOVE_LEFT] = true;
 			} else {
@@ -157,7 +169,7 @@ public class Player extends Actor {
 		}
 
 		skills.update();
-		
+
 		updateEquips();
 	}
 
@@ -193,7 +205,7 @@ public class Player extends Actor {
 			}
 			if (flash) flashPrecheck(batch);
 			animation.render(batch, bounds.x, bounds.y);
-			hair.render(batch, bounds.x, bounds.y, animation.flipX);
+			visualHair.render(batch, bounds.x, bounds.y, animation.flipX);
 
 			if (renderSensorPoints){
 				for(int i=0; i<sensorY.length; i++){
@@ -314,9 +326,9 @@ public class Player extends Actor {
 	}
 
 	public void updateEquips() {
-		
+
 		// update the visual equips
-				hair.update(animation.frame);
+		visualHair.update(animation.frame);
 	}
 
 }

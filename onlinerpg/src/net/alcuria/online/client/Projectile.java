@@ -1,7 +1,8 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.screens.Field;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,8 +12,8 @@ public class Projectile extends Actor {
 	float launchTime = 0;
 	TextureRegion projectileTexture;
 	
-	public Projectile(String filename, int x, int y, int width, int height,	AssetManager assets) {
-		super(filename, x, y, width, height, assets);
+	public Projectile(String filename, int x, int y, int width, int height,	Field f) {
+		super(filename, x, y, width, height, f);
 
 		projectileTexture = new TextureRegion(new Texture(Gdx.files.internal(filename)));
 	}

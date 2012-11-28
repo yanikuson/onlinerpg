@@ -1,7 +1,8 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.screens.Field;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,6 +10,8 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Actor {
 
+	Field f;
+	
 	final float GRAVITY = 0.3f;
 	final float GROUND_ACCEL = 30f;
 	final float GROUND_DECEL = 0.40f;
@@ -31,7 +34,6 @@ public class Actor {
 	public Rectangle feet;							// a rectangle just at the feet (for platforms)
 	public Animator animation;						// graphical representation of our player, for "pretty" gameplay
 	protected Texture debugPoint;					// a small point to display for the sensor points
-	public AssetManager assets;						// player assets
 	public StatusEffects effects;					// all of the actor's status effects
 	public Platform curPlatform;					// current platform player is touching
 
@@ -83,8 +85,9 @@ public class Actor {
 	public float[] targetRGBA = {1f,1f,1f,1f};
 	public float[] currentRGBA = {1f,1f,1f,1f};
 
-	public Actor(String filename, int x, int y, int width, int height, AssetManager assets){
-
+	public Actor(String filename, int x, int y, int width, int height, Field f){
+		this.f = f;
+				
 		celWidth = width;
 		celHeight = height;
 
@@ -93,7 +96,7 @@ public class Actor {
 		this.feet = new Rectangle(x+6, y+6, celWidth-3, 5);
 
 		// create new sensor point texture
-		this.debugPoint = assets.get("sprites/point.png", Texture.class);
+		this.debugPoint = f.assets.get("sprites/point.png", Texture.class);
 		sensorX = new float[6];
 		sensorY = new float[6];
 		for(int i=0; i<sensorY.length; i++){
@@ -102,7 +105,7 @@ public class Actor {
 		}
 
 		// create our graphical player
-		animation = new Animator(filename, celWidth, celHeight, assets);
+		animation = new Animator(filename, celWidth, celHeight, f.assets);
 
 		// create the movement array
 		moveCommand = new boolean[10];
@@ -111,15 +114,14 @@ public class Actor {
 		}
 
 		// load sound assets
-		this.assets = assets;
-		hurt = assets.get("sounds/hurt.wav", Sound.class);
-		jump = assets.get("sounds/jump.wav", Sound.class);
-		hurtEnemy = assets.get("sounds/hurt_enemy.wav", Sound.class);
-		kill = assets.get("sounds/kill.wav",Sound.class);
-		shoot = assets.get("sounds/shoot.wav", Sound.class);
+		hurt = f.assets.get("sounds/hurt.wav", Sound.class);
+		jump = f.assets.get("sounds/jump.wav", Sound.class);
+		hurtEnemy = f.assets.get("sounds/hurt_enemy.wav", Sound.class);
+		kill = f.assets.get("sounds/kill.wav",Sound.class);
+		shoot = f.assets.get("sounds/shoot.wav", Sound.class);
 
 		// status effects handler
-		effects = new StatusEffects(this, assets);
+		effects = new StatusEffects(this, f.assets);
 
 	}
 
