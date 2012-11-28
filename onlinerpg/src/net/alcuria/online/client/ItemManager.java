@@ -52,6 +52,13 @@ public class ItemManager {
 
 	}
 
+	public int getItemCost(int id) {
+		if (id < items.size && id >= 0){
+			return items.get(id).cost;
+		}
+		return 0;
+	}
+	
 	public String getItemDesc(int id){
 
 		if (id < items.size && id >= 0){

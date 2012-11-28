@@ -11,6 +11,7 @@ public class Item {
 	public String name;					// name of item
 	public String description;			// description of item
 	public String visualName;			// url to visual equipment sprite
+	public int cost;					// cost of the item
 	
 	public static final int ID_BLANK = 0;
 	public static final int ID_POTION = 1; 
@@ -33,6 +34,7 @@ public class Item {
 		
 		this.id = id;
 		this.visualName = "";
+		this.cost = 1;
 		
 		switch (id) {
 		
@@ -48,6 +50,7 @@ public class Item {
 			this.type = TYPE_CONSUMABLE;
 			this.name = "Potion";
 			this.description = "Recovers 50 HP";
+			this.cost = 20;
 			break;
 			
 		case ID_SPEED_PILL:
@@ -55,6 +58,7 @@ public class Item {
 			this.type = TYPE_CONSUMABLE;
 			this.name = "Speed Pill";
 			this.description = "Walk speed increased for one minute";
+			this.cost = 50;
 			break;
 			
 		case ID_WOOD_SWORD:
@@ -64,6 +68,7 @@ public class Item {
 			this.description = "ATK+10";
 			this.atk = 10;
 			this.visualName = "sprites/weapons/wooden-sword.png";
+			this.cost = 100;
 			break;
 			
 		case ID_STARLESS_UMBRA:
@@ -80,6 +85,7 @@ public class Item {
 			this.name = "Wooden Armor";
 			this.description = "DEF+2";
 			this.def = 2;
+			this.cost = 120;
 			break;
 			
 		case ID_WOOD_HELM:
@@ -88,6 +94,7 @@ public class Item {
 			this.name = "Wooden Helm";
 			this.description = "DEF+2";
 			this.def = 2;
+			this.cost = 80;
 			break;
 			
 		case ID_WIZARD_HAT:
@@ -96,6 +103,7 @@ public class Item {
 			this.name = "Wizard Hat";
 			this.description = "How magical! MATK+10";
 			this.matk = 10;
+			this.cost = 75;
 			break;
 			
 		case ID_LEATHER_BOOTS:
