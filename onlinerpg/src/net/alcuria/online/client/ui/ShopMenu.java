@@ -24,24 +24,24 @@ public class ShopMenu extends Menu {
 		depth = 0;
 		selection[0] = 0;
 		selection[1] = -1;
-		cursorY[0] = Config.HEIGHT - 25;
-		cursorX[0] = 75;
+		cursorY[0] = -20;
+		cursorX[0] = -20;
 		cursorFacingRight[0] = false;
 		createMainShopScreen();
 
 	}
 
 	public void update(InputHandler input, float offsetX, float offsetY){
-		System.out.println(depth);
+		
 		// update the offset due to camera shifts
-		this.offsetX = offsetX;
-		this.offsetY = offsetY;
+		this.offsetX = f.cameraManager.offsetX;
+		this.offsetY = f.cameraManager.offsetY;
 
 		// update the offset of the submenu items
 		for (int i=0; i < curWindow; i++){
 			windows[i].update((int) this.offsetX, (int) this.offsetY);
 		}
-
+		System.out.println(this.offsetX);
 		// handle input
 		if (active){
 
@@ -113,13 +113,11 @@ public class ShopMenu extends Menu {
 
 	public void createMainShopScreen() {
 		
-		addWindow(195, 10, 60, 35);
+		addWindow(195, 10, (int)f.cameraManager.offsetX, (int)f.cameraManager.offsetY, 60, 35);
 		cursorFacingRight[0] = true;
 		windows[curWindow-1].addText(203, Config.HEIGHT - 195, 70, 70, "Buy\nSell\nLeave");
 		selection[0] = 0;
-		cursorY[0] = Config.HEIGHT - 205 + 11*-selection[0];
-		cursorX[0] = 190;
-		
+
 	}
 	
 	public void createBuyScreen() {

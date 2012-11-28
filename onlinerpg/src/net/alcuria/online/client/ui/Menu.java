@@ -86,6 +86,10 @@ public class Menu {
 	}
 
 	public void addWindow(int x, int y, int width, int height){
+		addWindow(x, y, (int) offsetX, (int) offsetY, width, height);
+		
+	}
+	public void addWindow(int x, int y, int offsetX, int offsetY, int width, int height){
 
 		if (curWindow < MAX_WINDOWS){
 			windows[curWindow] = new Window((int)(x+offsetX), (int)(y+offsetY), width, height, (int)offsetX, (int)offsetY, background, border);
@@ -96,7 +100,6 @@ public class Menu {
 
 	public void update(InputHandler input, float offsetX, float offsetY, Screen g){
 		
-
 		// update the offset due to camera shifts
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
