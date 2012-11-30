@@ -33,7 +33,7 @@ public class Item {
 	public Item(int id){
 		
 		this.id = id;
-		this.visualName = "";
+		this.visualName = "sprites/equips/empty.png";
 		this.cost = 1;
 		
 		switch (id) {
@@ -67,7 +67,7 @@ public class Item {
 			this.name = "Wooden Sword";
 			this.description = "ATK+10";
 			this.atk = 10;
-			this.visualName = "sprites/weapons/wooden-sword.png";
+			this.visualName = "sprites/equips/weapons/1.png";
 			this.cost = 100;
 			break;
 			

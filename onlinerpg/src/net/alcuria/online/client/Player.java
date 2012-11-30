@@ -81,6 +81,9 @@ public class Player extends Actor {
 		skills = new SkillManager(f.assets, this);
 
 		visualHair = new VisualEquip("sprites/equips/hair/1.png", f.assets);
+		visualWeapon = new VisualEquip(weapon.visualName, f.assets);
+		visualHelm = new VisualEquip(helmet.visualName, f.assets);
+		visualArmor = new VisualEquip(armor.visualName, f.assets);
 
 		visible = true;
 
@@ -205,7 +208,12 @@ public class Player extends Actor {
 			}
 			if (flash) flashPrecheck(batch);
 			animation.render(batch, bounds.x, bounds.y);
+			
 			visualHair.render(batch, bounds.x, bounds.y, animation.flipX);
+			visualHelm.render(batch, bounds.x, bounds.y, animation.flipX);
+			visualArmor.render(batch, bounds.x, bounds.y, animation.flipX);
+			visualWeapon.render(batch, bounds.x, bounds.y, animation.flipX);
+	
 
 			if (renderSensorPoints){
 				for(int i=0; i<sensorY.length; i++){
@@ -324,11 +332,21 @@ public class Player extends Actor {
 		}
 		return false;
 	}
+	
+	// resets all the equips (when a player changes gear)
+	public void resetVisualEquips(){
+
+		//visualHair = new VisualEquip("sprites/equips/hair/1.png", f.assets);
+		visualWeapon.changeTexture(weapon.visualName);
+		
+	}
 
 	public void updateEquips() {
 
 		// update the visual equips
 		visualHair.update(animation.frame);
+		visualWeapon.update(animation.frame);
+
 	}
 
 }

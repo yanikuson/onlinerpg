@@ -42,7 +42,10 @@ public class ItemManager {
 
 	public Item getItem(int id){
 		
-		return items.get(id);
+		if (id < items.size && id >= 0) {
+			return items.get(id);
+		} 
+		return new Item(Item.ID_BLANK);
 		
 	}
 	

@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class Field implements Screen {
 
@@ -48,14 +49,15 @@ public class Field implements Screen {
 	public CameraManager cameraManager;
 	public HUD hud;
 	public Menu menu;
-	public ItemManager items;
+	public ItemManager inventory;
 	public AssetManager assets;
-	public Rectangle viewport;
 	public NotificationList notifications;
 
-	float w;
-	float h;
-	float aspectRatio;
+	private static final int VIRTUAL_WIDTH = Config.WIDTH;
+	private static final int VIRTUAL_HEIGHT = Config.HEIGHT;
+	private static final float ASPECT_RATIO =
+			(float)VIRTUAL_WIDTH/(float)VIRTUAL_HEIGHT;
+	private Rectangle viewport;
 
 	public Field(Game g, AssetManager assets, int loadedSlot)
 	{
@@ -66,10 +68,10 @@ public class Field implements Screen {
 
 	@Override
 	public void render(float delta) {
-		
+
 		if (assets.update()){
 
-			//Gdx.gl.glViewport((int) viewport.x, (int) viewport.y, (int) viewport.width, (int) viewport.height);
+			Gdx.gl.glViewport((int) viewport.x, (int) viewport.y, (int) viewport.width, (int) viewport.height);
 			Gdx.gl.glClearColor(0, 0, 0, 1);
 			Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
@@ -77,7 +79,7 @@ public class Field implements Screen {
 			batch.begin();
 
 			map.renderBG(batch, cameraManager);
-			
+
 			map.render(batch, true, cameraManager);
 			player.render(batch);
 			map.render(batch, false, cameraManager);
@@ -95,38 +97,39 @@ public class Field implements Screen {
 			if (GlobalFlags.flags[GlobalFlags.INTRO]){
 				hud.render(batch);
 			}
-			shop.render(batch);
+
 			msgBox.render(batch);
+			shop.render(batch);
 			menu.render(batch);
 			inputs.render(batch);
 
 			Transition.render(batch, cameraManager);
-			
+
 			batch.end();
 
 			//-------------------------------------------------------------
 
 			// update the camera state FIRST
 			cameraManager.update(player.bounds.x, player.bounds.y, map.width*map.tileWidth, map.height*map.tileWidth);
-			
+
 			// call the input handler to poll the keyboard's state
 			inputs.update(player, map, cameraManager);
 
 			// update our UI
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
-			msgBox.update(Gdx.graphics.getDeltaTime(), inputs.typed[InputHandler.SPACE]);
+			msgBox.update(Gdx.graphics.getDeltaTime(), inputs);
 			notifications.update();
 			Transition.update(map.bgm);
 			if (!Config.npcCommand){
 				menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
 			}
-			
+
 			// we only want to call update on the actors if a messagebox/menu isn't open
 			if (!msgBox.visible && !menu.active && Transition.finished){
-				
+
 				// before we step anything, check if it's on a platform
 				player.checkIfOnMovingPlatform(map);
-				
+
 				// move all our actors: monsters, npcs, player
 				drops.update(map);
 
@@ -153,23 +156,41 @@ public class Field implements Screen {
 	@Override
 	public void resize(int width, int height) {
 
+		// calculate new viewport
+		float aspectRatio = (float)width/(float)height;
+		float scale = 1f;
+		Vector2 crop = new Vector2(0f, 0f);
 
+		if(aspectRatio > ASPECT_RATIO)
+		{
+			scale = (float)height/(float)VIRTUAL_HEIGHT;
+			crop.x = (width - VIRTUAL_WIDTH*scale)/2f;
+		}
+		else if(aspectRatio < ASPECT_RATIO)
+		{
+			scale = (float)width/(float)VIRTUAL_WIDTH;
+			crop.y = (height - VIRTUAL_HEIGHT*scale)/2f;
+		}
+		else
+		{
+			scale = (float)width/(float)VIRTUAL_WIDTH;
+		}
+
+		float w = (float)VIRTUAL_WIDTH*scale;
+		float h = (float)VIRTUAL_HEIGHT*scale;
+		viewport = new Rectangle(crop.x, crop.y, w, h);
 	}
 
 	@Override
 	public void show() {
 
-		w = Gdx.graphics.getWidth();
-		h = Gdx.graphics.getHeight();
-		aspectRatio = w/h;
-
 		notifications = new NotificationList();
 		//notifications.add("Welcome to Heroes of Umbra!");
-		
+
 		player = SaveHandler.loadPlayer(slot, notifications, this);
-		items = SaveHandler.loadItems(slot);
+		inventory = SaveHandler.loadItems(slot);
 		SaveHandler.loadFlags(slot);
-		
+
 		cameraManager = new CameraManager();		
 
 		batch = new SpriteBatch();
@@ -188,7 +209,7 @@ public class Field implements Screen {
 		drops = new DropManager(this, notifications);
 
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
-		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, items, drops);
+		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, inventory, drops);
 		menu.saveSlot = slot;
 		map = new Map("beach", assets, damageList, this);
 
@@ -197,7 +218,7 @@ public class Field implements Screen {
 			player.bounds.y = 3 * Config.TILE_WIDTH;
 			map.npcs[0].start();
 		}
-		
+
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
 		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);
@@ -206,10 +227,12 @@ public class Field implements Screen {
 
 		// create our hud
 		hud = new HUD(player);
-		
+
 		// create a default shop
 		shop = new ShopMenu(this, new ItemManager());
 		shop.active = false;
+		
+		player.resetVisualEquips();
 	}
 
 	@Override
