@@ -30,9 +30,11 @@
 <wait> 0.2;
 <message> Well, it was on the hilt of this sword I found. <br>It must be yours!;
 <wait> 0.2;
+<equip> 20;
 <bgm> victory;
 <hero> victory;
-<wait> 8.5;
+<wait> 7.5;
+<message> Acquired |name|'s Sword!;
 <hero> idle;
 <wait> 0.2;
 <message> Come back to our village until your memory returns.<br>We can help you find your way.;

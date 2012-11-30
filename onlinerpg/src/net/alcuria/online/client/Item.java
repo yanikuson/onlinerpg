@@ -30,6 +30,8 @@ public class Item {
 	public static final int TYPE_OTHER = 5;
 	public static final int TYPE_RARE = 10;
 	
+	static Item getIDer;
+	
 	public Item(int id){
 		
 		this.id = id;
@@ -129,5 +131,10 @@ public class Item {
 			this.description = "null description";
 		}
 		
+	}
+
+	public static int getType(int itemID) {
+		getIDer = new Item(itemID);
+		return getIDer.id;
 	}
 }

@@ -20,7 +20,8 @@ public class NPCCommand {
 	public static final int TYPE_REMOVE = 7;
 	public static final int TYPE_FLAG = 8;
 	public static final int TYPE_SHOP = 9;
-	
+	public static final int TYPE_EQUIP = 10;
+
 	public float waitCount = 0;
 	public float waitDuration = 0;
 	public int type;
@@ -107,15 +108,15 @@ public class NPCCommand {
 			}
 			f.map.bgm.play();
 			return commandIndex + 1;
-		
+
 		case TYPE_REMOVE:
 			npc.visible = false;
 			return commandIndex + 1;
-			
+
 		case TYPE_FLAG:
 			GlobalFlags.flags[Integer.parseInt(msg)] = true;
 			return commandIndex + 1;
-			
+
 		case TYPE_SHOP:
 			if (!startedCommand){
 				ItemManager items = new ItemManager();
@@ -134,12 +135,42 @@ public class NPCCommand {
 				}
 			}
 			break;
+		case TYPE_EQUIP:
+			int ID = Integer.parseInt(msg);
+
+			// switch out the equipment based on the passed in ID
+			switch (Item.getType(ID)) {
+			case Item.TYPE_WEAPON:
+				f.inventory.addItem(f.player.weapon);
+				f.player.weapon = new Item(ID);
+				break;
+				
+			case Item.TYPE_HELM:
+				f.inventory.addItem(f.player.helmet);
+				f.player.helmet = new Item(ID);
+				break;
+				
+			case Item.TYPE_ARMOR:
+				f.inventory.addItem(f.player.armor);
+				f.player.armor = new Item(ID);
+				break;
+				
+			case Item.TYPE_OTHER:
+				f.inventory.addItem(f.player.accessory);
+				f.player.accessory = new Item(ID);
+				break;
+
+			default:
+				break;
+			}
+			f.player.updateEquips();
+			return commandIndex + 1;
 			
 		case DEFAULT:
 			return commandIndex + 1;
-			
+
 		}
-		
+
 		return commandIndex;
 	}
 }

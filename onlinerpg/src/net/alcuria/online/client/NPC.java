@@ -8,7 +8,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class NPC extends Actor {
-	
+
 	float timeSinceSpawn = 0;
 	float commandTimer = 0;
 	float commandFrequency = 2;
@@ -76,10 +76,14 @@ public class NPC extends Actor {
 				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<flag>")) {
 					// switch a flag <flag> (flag index)
 					commands[i] = new NPCCommand(NPCCommand.TYPE_FLAG, lines[i].substring(7));	
-				
+
 				} else if (lines[i].substring(0, 6).equalsIgnoreCase("<shop>")) {
 					// open a shop: <shop> items|weapons
 					commands[i] = new NPCCommand(NPCCommand.TYPE_SHOP, lines[i].substring(7));	
+
+				} else if (lines[i].substring(0, 7).equalsIgnoreCase("<equip>")) {
+					// change a hero's equip: <equip> id
+					commands[i] = new NPCCommand(NPCCommand.TYPE_EQUIP, lines[i].substring(8));	
 
 				} else {
 					// something else... undefined!
