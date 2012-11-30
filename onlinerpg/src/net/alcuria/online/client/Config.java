@@ -3,8 +3,8 @@ package net.alcuria.online.client;
 public class Config {
 
 	// graphics settings
-	public static final int WIDTH = 416;
-	public static final int HEIGHT = 240;
+	public static int WIDTH = 416;
+	public static int HEIGHT = 240;
 
 	// map settings
 	public static final int TILE_WIDTH = 16;
