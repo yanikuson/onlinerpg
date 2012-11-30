@@ -1,6 +1,8 @@
 package net.alcuria.online.client.ui;
 
 
+import net.alcuria.online.client.InputHandler;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -91,7 +93,7 @@ public class Message {
 	}
 
 	// update the message
-	public void update(float deltaTime, boolean pressedKey){
+	public void update(float deltaTime, InputHandler inputs){
 
 		if (visible){
 			if (curLine < numLines){
@@ -107,7 +109,10 @@ public class Message {
 			} else {
 				
 				// hide message on key press
-				if(pressedKey){
+				if(inputs.typed[InputHandler.ATTACK] || inputs.typed[InputHandler.SPACE] || inputs.typed[InputHandler.ENTER]){
+					inputs.typed[InputHandler.ATTACK] = false;
+					inputs.typed[InputHandler.SPACE] = false;
+					inputs.typed[InputHandler.ENTER] = false;
 					removeMessage();
 				}
 			}

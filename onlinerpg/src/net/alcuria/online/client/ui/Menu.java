@@ -87,7 +87,7 @@ public class Menu {
 
 	public void addWindow(int x, int y, int width, int height){
 		addWindow(x, y, (int) offsetX, (int) offsetY, width, height);
-		
+
 	}
 	public void addWindow(int x, int y, int offsetX, int offsetY, int width, int height){
 
@@ -99,7 +99,7 @@ public class Menu {
 	}
 
 	public void update(InputHandler input, float offsetX, float offsetY, Screen g){
-		
+
 		// update the offset due to camera shifts
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
@@ -296,7 +296,7 @@ public class Menu {
 			if (selection[depth] == 0){
 				// if selection type = consumable, do the effect -- close menu
 				if (inventory.getItem(selection[1]).type == Item.TYPE_CONSUMABLE){
-					
+
 					// do the effect
 					switch (inventory.getItem(selection[1]).id) {
 					case Item.ID_POTION:
@@ -310,10 +310,10 @@ public class Menu {
 					// remove from inventory and close the menu
 					inventory.removeIndex(selection[1]);
 					hideMenu(input);
-					
+
 					// update the player's pose
 					p.animation.itemPose = true;
-					
+
 				} else {
 					cancel.play(Config.sfxVol);
 				}
@@ -405,6 +405,9 @@ public class Menu {
 			p.walkSpeed = calculatedStats[5];
 			p.jumpPower = calculatedStats[6];
 
+			// change visual effects
+			p.resetVisualEquips();
+			
 			equip.play(Config.sfxVol);
 			refreshText = true;
 			depth--;
@@ -512,43 +515,48 @@ public class Menu {
 			selection[1] = -1;
 			refreshText = true;
 		}
+		
+		// can only update cursor pos if we have enough items
+		if (inventory.getSize() > 1) {
+			if (input.typed[InputHandler.UP]){
+				input.typed[InputHandler.UP] = false;
 
-		if (input.typed[InputHandler.UP]){
-			input.typed[InputHandler.UP] = false;
 
-			move.play(Config.sfxVol);
-			selection[depth]-=2;
-			if (selection[depth] < 0){
-				selection[depth] += inventory.getSize(); 
+				move.play(Config.sfxVol);
+				selection[depth]-=2;
+				if (selection[depth] < 0){
+					selection[depth] += inventory.getSize(); 
+				}
+				refreshText = true;
+
 			}
-			refreshText = true;
+
+			if (input.typed[InputHandler.DOWN]){
+				input.typed[InputHandler.DOWN] = false;
+
+				move.play(Config.sfxVol);
+				selection[depth]+=2;
+				if (selection[depth] >= inventory.getSize()){
+					selection[depth] -= inventory.getSize(); 
+				}
+				refreshText = true;
+			}
+
+			if (input.typed[InputHandler.LEFT] || input.typed[InputHandler.RIGHT]){
+				input.typed[InputHandler.LEFT] = false;
+				input.typed[InputHandler.RIGHT] = false;
+
+				move.play(Config.sfxVol);
+				if (selection[depth] % 2 == 0){
+					selection[depth]++; 
+					if (selection[depth] >= inventory.getSize()) selection[depth]-= 2;
+				} else {
+					selection[depth]--;
+				}
+				refreshText = true;
+			}
 		}
 
-		if (input.typed[InputHandler.DOWN]){
-			input.typed[InputHandler.DOWN] = false;
-
-			move.play(Config.sfxVol);
-			selection[depth]+=2;
-			if (selection[depth] >= inventory.getSize()){
-				selection[depth] -= inventory.getSize(); 
-			}
-			refreshText = true;
-		}
-
-		if (input.typed[InputHandler.LEFT] || input.typed[InputHandler.RIGHT]){
-			input.typed[InputHandler.LEFT] = false;
-			input.typed[InputHandler.RIGHT] = false;
-
-			move.play(Config.sfxVol);
-			if (selection[depth] % 2 == 0){
-				selection[depth]++; 
-				if (selection[depth] > inventory.getSize()) selection[depth]--;
-			} else {
-				selection[depth]--;
-				if (selection[depth] > inventory.getSize()) selection[depth]++;
-			}
-			refreshText = true;
-		}
 		// update cursor POS
 		cursorX[1] = 76 + 100 * (selection[1]%2);
 		cursorY[1] = Config.HEIGHT - 84 - selection[1]/2 * 11;

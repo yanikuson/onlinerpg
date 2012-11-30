@@ -433,7 +433,7 @@ public class Map {
 		teleports.update(f.player, this, f.inputs);
 		if (spawner != null && containsEnemies) spawner.update();
 		fg.update(Gdx.graphics.getDeltaTime());
-		collisions.update(this, damageList, f.explosions, f.items);
+		collisions.update(this, damageList, f.explosions, f.inventory);
 
 		// update platforms
 		if (platforms != null) {

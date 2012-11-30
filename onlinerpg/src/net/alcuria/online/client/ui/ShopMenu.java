@@ -14,7 +14,7 @@ public class ShopMenu extends Menu {
 	ItemManager items; 			// list of items the shop will sell
 
 	public ShopMenu(Field f, ItemManager items) {
-		super(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), f.assets, f.player, f.items, f.drops);
+		super(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), f.assets, f.player, f.inventory, f.drops);
 
 		this.f = f;
 		this.items = items;
@@ -76,20 +76,34 @@ public class ShopMenu extends Menu {
 					input.typed[InputHandler.SPACE] = false;
 					input.typed[InputHandler.ENTER] = false;
 
-					select.play(Config.sfxVol);
 					switch (selection[0]){
 					case 0: // buy
 					case 1: // sell
-						
-						depth++;
-						refreshText = true;
-						cursorFacingRight[depth] = true;
-						selection[depth] = 0;
 
-						// set initial cursor pos
-						cursorX[1] = 76;
-						cursorY[1] = Config.HEIGHT - 82 - selection[1]*11;
-						
+						if (selection[0] == 1 && f.inventory.getSize() == 0){
+							// if we are trying to sell and have no items play an error sound
+							cancel.play(Config.sfxVol);
+
+						} else {
+
+							// else we can enter the submenu
+							select.play(Config.sfxVol);
+							depth++;
+							refreshText = true;
+							cursorFacingRight[depth] = true;
+							selection[depth] = 0;
+
+							// set initial cursor pos
+							if (selection[0] == 0) {
+								cursorX[1] = 76;
+								cursorY[1] = Config.HEIGHT - 82 - selection[1]*11;
+							}
+							if (selection[0] == 1) {
+								cursorX[1] = 76 + 100 * (selection[depth]%2);
+								cursorY[1] = Config.HEIGHT - 84 - selection[depth]/2 * 11;
+							}
+						}
+
 						break;
 					case 2: // quit
 						hideMenu(input);
@@ -100,7 +114,6 @@ public class ShopMenu extends Menu {
 
 				// if user pressed escape, we can close the shop menu
 				if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
-					cancel.play(Config.sfxVol);
 					input.typed[InputHandler.ESCAPE] = false;
 					input.typed[InputHandler.JUMP] = false;
 					hideMenu(input);
@@ -110,6 +123,7 @@ public class ShopMenu extends Menu {
 				// update the cursor position
 				cursorY[0] = Config.HEIGHT - 20;
 				cursorX[0] = 143 + selection[0] * 50;
+
 				break;
 
 			case 1:
@@ -123,6 +137,8 @@ public class ShopMenu extends Menu {
 
 						cancel.play(Config.sfxVol);
 						selection[depth] = 0;
+						cursorX[depth] = - 20;
+						cursorY[depth] = - 20;
 						depth--;
 						refreshText = true;
 					}
@@ -150,47 +166,129 @@ public class ShopMenu extends Menu {
 						input.typed[InputHandler.ATTACK] = false;
 
 						// check if player has enough money to buy the selected item
-						if (f.items.money >= items.getItemCost(selection[depth])){
-							
+						if (f.inventory.money >= items.getItemCost(selection[depth])){
+
 							// remove money/add to inventory
 							f.drops.pickup.play(Config.sfxVol);
-							f.items.money -= items.getItemCost(selection[depth]);
-							f.items.addItem(items.getItem(selection[depth]));
+							f.inventory.money -= items.getItemCost(selection[depth]);
+							f.inventory.addItem(items.getItem(selection[depth]));
 							refreshText = true;
-							
+
 						} else {
-							
+
 							cancel.play(Config.sfxVol);
 						}
 
 					}
 
+					// update cursor position
+					cursorX[1] = 76;
+					cursorY[1] = Config.HEIGHT - 82 - selection[1]*11;
 
 					if (refreshText){
 						dispose();
 						createBuyScreen();
 						refreshText = false;
 					}
+
+
+
 				} else {
+
 					// SELL UPDATES
+					if (input.typed[InputHandler.ATTACK]){
+
+						if (f.inventory.getItem(selection[depth]).id > 0){
+							f.drops.pickup.play(Config.sfxVol);
+							f.inventory.removeIndex(selection[depth]);
+							f.inventory.money += f.inventory.getItemCost(selection[depth])/2;
+							if (selection[depth] >= f.inventory.getSize()){
+								selection[depth]--;
+							}
+
+							refreshText = true;
+
+						}
+
+						if (f.inventory.getSize() <= 0){
+							cursorX[depth] = - 20;
+							cursorY[depth] = - 20;
+							depth--;
+						}
 
 
+
+
+					}
+					if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
+						input.typed[InputHandler.ESCAPE] = false;
+						input.typed[InputHandler.JUMP] = false;
+
+						cancel.play(Config.sfxVol);
+						selection[depth] = -1;
+						cursorX[depth] = - 20;
+						cursorY[depth] = - 20;
+						depth--;
+						refreshText = true;
+					}
+
+					if (input.typed[InputHandler.UP]){
+						input.typed[InputHandler.UP] = false;
+
+						move.play(Config.sfxVol);
+						selection[depth]-=2;
+						if (selection[depth] < 0){
+							selection[depth] += f.inventory.getSize(); 
+						}
+						refreshText = true;
+					}
+
+					if (input.typed[InputHandler.DOWN]){
+						input.typed[InputHandler.DOWN] = false;
+
+						move.play(Config.sfxVol);
+						selection[depth]+=2;
+						if (selection[depth] >= f.inventory.getSize()){
+							selection[depth] -= f.inventory.getSize(); 
+						}
+						refreshText = true;
+					}
+
+					if (input.typed[InputHandler.LEFT] || input.typed[InputHandler.RIGHT]){
+						input.typed[InputHandler.LEFT] = false;
+						input.typed[InputHandler.RIGHT] = false;
+
+						move.play(Config.sfxVol);
+						if (selection[depth] % 2 == 0){
+							selection[depth]++; 
+							if (selection[depth] >= f.inventory.getSize()) selection[depth]-= 2;
+						} else {
+							selection[depth]--;
+						}
+						refreshText = true;
+					}
+
+					// update cursor POS
+					cursorX[1] = 76 + 100 * (selection[depth]%2);
+					cursorY[1] = Config.HEIGHT - 84 - selection[depth]/2 * 11;
+
+					cursorFacingRight[1] = true;
+
+					// if we've moved the cursor, we need to refresh the item list again to update the description
 					if (refreshText){
 						dispose();
 						createSellScreen();
 						refreshText = false;
 					}
 				}
-				// update cursor position
-				cursorX[1] = 76;
-				cursorY[1] = Config.HEIGHT - 82 - selection[1]*11;
+
 
 				break;
 			}
 		}
 	}
 
-	//#############
+	//###################################################################################################################################################################################################
 
 	public void drawNewScreen(int selection){
 		dispose();
@@ -242,7 +340,7 @@ public class ShopMenu extends Menu {
 
 		// total $$$
 		addWindow(234, Config.HEIGHT - 97, 39, 25);
-		windows[curWindow-1].addText(238, Config.HEIGHT - 72, 30, 30, (" Flips:\n"+f.items.money));
+		windows[curWindow-1].addText(238, Config.HEIGHT - 72, 30, 30, (" Flips:\n"+f.inventory.money));
 
 	}
 
@@ -252,7 +350,7 @@ public class ShopMenu extends Menu {
 		// description window
 		addWindow(85, Config.HEIGHT - 64, 238, 16);
 		if (depth >= 1) {
-			windows[curWindow-1].addText(89, Config.HEIGHT - 50, 238, 16, inventory.getItemDesc(selection[1]));
+			windows[curWindow-1].addText(89, Config.HEIGHT - 50, 238, 16, f.inventory.getItemDesc(selection[1]));
 		}
 		// item list
 		addWindow(85, Config.HEIGHT - 206, 191, 134);
@@ -261,12 +359,12 @@ public class ShopMenu extends Menu {
 
 		// total $$$
 		addWindow(284, Config.HEIGHT - 97, 39, 25);
-		windows[curWindow-1].addText(288, Config.HEIGHT - 72, 30, 30, (" Flips:\n"+f.items.money));
+		windows[curWindow-1].addText(288, Config.HEIGHT - 72, 30, 30, (" Flips:\n"+f.inventory.money));
 
 		// render submenu that contains the sell price of the item if we're selecting them
 		if (depth >= 1){
-			addWindow(284, Config.HEIGHT - 131, 34, 25);
-			windows[curWindow-1].addText(288, Config.HEIGHT - 107, 30, 30, ("Value:\n"+inventory.getItemCost((selection[1])/2)));
+			addWindow(284, Config.HEIGHT - 131, 39, 25);
+			windows[curWindow-1].addText(288, Config.HEIGHT - 107, 30, 30, ("Value:\n"+ f.inventory.getItemCost(selection[1])/2));
 		}
 
 	}
