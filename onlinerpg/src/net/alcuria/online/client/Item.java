@@ -135,6 +135,7 @@ public class Item {
 
 	public static int getType(int itemID) {
 		getIDer = new Item(itemID);
-		return getIDer.id;
+		return getIDer.type;
 	}
+
 }

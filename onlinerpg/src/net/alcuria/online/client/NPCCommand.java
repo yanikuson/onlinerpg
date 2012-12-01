@@ -136,28 +136,31 @@ public class NPCCommand {
 			}
 			break;
 		case TYPE_EQUIP:
-			int ID = Integer.parseInt(msg);
-
+			int ID = Item.getType(Integer.parseInt(msg));
+			System.out.println("id = " + ID);
 			// switch out the equipment based on the passed in ID
-			switch (Item.getType(ID)) {
+			switch (ID) {
 			case Item.TYPE_WEAPON:
-				f.inventory.addItem(f.player.weapon);
-				f.player.weapon = new Item(ID);
+				System.out.println("weapon");
+				if (!f.player.weapon.name.equalsIgnoreCase("")){
+					f.inventory.addItem(f.player.weapon);
+				}
+				f.player.weapon = new Item(Integer.parseInt(msg));
 				break;
-				
+
 			case Item.TYPE_HELM:
 				f.inventory.addItem(f.player.helmet);
-				f.player.helmet = new Item(ID);
+				f.player.helmet = new Item(Integer.parseInt(msg));
 				break;
-				
+
 			case Item.TYPE_ARMOR:
 				f.inventory.addItem(f.player.armor);
-				f.player.armor = new Item(ID);
+				f.player.armor = new Item(Integer.parseInt(msg));
 				break;
-				
+
 			case Item.TYPE_OTHER:
 				f.inventory.addItem(f.player.accessory);
-				f.player.accessory = new Item(ID);
+				f.player.accessory = new Item(Integer.parseInt(msg));
 				break;
 
 			default:
@@ -165,7 +168,7 @@ public class NPCCommand {
 			}
 			f.player.updateEquips();
 			return commandIndex + 1;
-			
+
 		case DEFAULT:
 			return commandIndex + 1;
 
