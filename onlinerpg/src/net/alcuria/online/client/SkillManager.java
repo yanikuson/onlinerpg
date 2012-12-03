@@ -42,6 +42,7 @@ public class SkillManager {
 	
 	public Particle fireball;
 	public Particle ice;
+	public Particle iceCast;
 	public Particle swing;
 	public Particle activeParticle;			// pointer to the active particle
 	
@@ -64,6 +65,8 @@ public class SkillManager {
 	
 		swing = new Particle("sprites/swing.png", 0, 0, 84, 84, 7, 3, false, assets);
 		fireball = new Particle("sprites/fireball.png", 0, 0, 16, 16, 2, 3, false, assets);
+		iceCast = new Particle("sprites/ice-cast.png", 0, 0, 64, 32, 8, 2, false, assets);
+
 	}
 	
 	public void start(int skillID){
@@ -133,7 +136,11 @@ public class SkillManager {
 			xVel = 0;
 			yVel = 0;
 			duration = 0.2f;
-			activeParticle = null;
+			
+			activeParticle = iceCast;
+			activeParticle.loop = false;
+			activeParticle.start(area.x, area.y, p.facingLeft);
+			
 			harmful = true;
 			break;
 		}

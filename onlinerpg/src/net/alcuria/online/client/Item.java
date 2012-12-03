@@ -18,7 +18,7 @@ public class Item {
 	public static final int ID_SPEED_PILL = 10;
 	public static final int ID_WOOD_SWORD = 20;
 	public static final int ID_STARLESS_UMBRA = 39;
-	public static final int ID_WOOD_ARMOR = 40;
+	public static final int ID_LEATHER_VEST = 40;
 	public static final int ID_WOOD_HELM = 60;
 	public static final int ID_WIZARD_HAT = 61;
 	public static final int ID_LEATHER_BOOTS = 80;
@@ -81,13 +81,14 @@ public class Item {
 			this.atk = 1000;
 			break;
 			
-		case ID_WOOD_ARMOR:
+		case ID_LEATHER_VEST:
 			this.icon = 3;
 			this.type = TYPE_ARMOR;
-			this.name = "Wooden Armor";
+			this.name = "Leather Vest";
 			this.description = "DEF+2";
 			this.def = 2;
 			this.cost = 120;
+			this.visualName = "sprites/equips/armor/1.png";
 			break;
 			
 		case ID_WOOD_HELM:

@@ -1,4 +1,5 @@
 <hero> dead;
+<equip> 40;
 <move> left;
 <wait> 0.5;
 <stop>;

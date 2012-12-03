@@ -136,12 +136,45 @@ public class NPCCommand {
 			}
 			break;
 		case TYPE_EQUIP:
+			
+			// pre-stat change
+			f.player.atk -= f.player.weapon.atk;
+			f.player.def -= f.player.weapon.def;
+			f.player.matk -= f.player.weapon.matk;
+			f.player.mdef -= f.player.weapon.mdef;
+			f.player.jumpPower -= f.player.weapon.jump;
+			f.player.walkSpeed -= f.player.weapon.speed;
+			f.player.knockback -= f.player.weapon.kb;
+			
+			f.player.atk -= f.player.helmet.atk;
+			f.player.def -= f.player.helmet.def;
+			f.player.matk -= f.player.helmet.matk;
+			f.player.mdef -= f.player.helmet.mdef;
+			f.player.jumpPower -= f.player.helmet.jump;
+			f.player.walkSpeed -= f.player.helmet.speed;
+			f.player.knockback -= f.player.helmet.kb;
+			
+			f.player.atk -= f.player.armor.atk;
+			f.player.def -= f.player.armor.def;
+			f.player.matk -= f.player.armor.matk;
+			f.player.mdef -= f.player.armor.mdef;
+			f.player.jumpPower -= f.player.armor.jump;
+			f.player.walkSpeed -= f.player.armor.speed;
+			f.player.knockback -= f.player.armor.kb;
+			
+			f.player.atk -= f.player.accessory.atk;
+			f.player.def -= f.player.accessory.def;
+			f.player.matk -= f.player.accessory.matk;
+			f.player.mdef -= f.player.accessory.mdef;
+			f.player.jumpPower -= f.player.accessory.jump;
+			f.player.walkSpeed -= f.player.accessory.speed;
+			f.player.knockback -= f.player.accessory.kb;
+			
 			int ID = Item.getType(Integer.parseInt(msg));
-			System.out.println("id = " + ID);
-			// switch out the equipment based on the passed in ID
+			// switch out the equipment based on the passed in item ID
 			switch (ID) {
 			case Item.TYPE_WEAPON:
-				System.out.println("weapon");
+				
 				if (!f.player.weapon.name.equalsIgnoreCase("")){
 					f.inventory.addItem(f.player.weapon);
 				}
@@ -149,24 +182,64 @@ public class NPCCommand {
 				break;
 
 			case Item.TYPE_HELM:
-				f.inventory.addItem(f.player.helmet);
+				if (!f.player.helmet.name.equalsIgnoreCase("")){
+					f.inventory.addItem(f.player.helmet);
+				}
 				f.player.helmet = new Item(Integer.parseInt(msg));
 				break;
 
 			case Item.TYPE_ARMOR:
-				f.inventory.addItem(f.player.armor);
+				if (!f.player.armor.name.equalsIgnoreCase("")){
+					f.inventory.addItem(f.player.armor);
+				}
 				f.player.armor = new Item(Integer.parseInt(msg));
 				break;
 
 			case Item.TYPE_OTHER:
-				f.inventory.addItem(f.player.accessory);
+				if (!f.player.accessory.name.equalsIgnoreCase("")){
+					f.inventory.addItem(f.player.accessory);
+				}
 				f.player.accessory = new Item(Integer.parseInt(msg));
 				break;
 
 			default:
 				break;
 			}
-			f.player.updateEquips();
+			f.player.resetVisualEquips();
+			
+			// post stat update
+			f.player.atk += f.player.weapon.atk;
+			f.player.def += f.player.weapon.def;
+			f.player.matk += f.player.weapon.matk;
+			f.player.mdef += f.player.weapon.mdef;
+			f.player.jumpPower += f.player.weapon.jump;
+			f.player.walkSpeed += f.player.weapon.speed;
+			f.player.knockback += f.player.weapon.kb;
+			
+			f.player.atk += f.player.helmet.atk;
+			f.player.def += f.player.helmet.def;
+			f.player.matk += f.player.helmet.matk;
+			f.player.mdef += f.player.helmet.mdef;
+			f.player.jumpPower += f.player.helmet.jump;
+			f.player.walkSpeed += f.player.helmet.speed;
+			f.player.knockback += f.player.helmet.kb;
+			
+			f.player.atk += f.player.armor.atk;
+			f.player.def += f.player.armor.def;
+			f.player.matk += f.player.armor.matk;
+			f.player.mdef += f.player.armor.mdef;
+			f.player.jumpPower += f.player.armor.jump;
+			f.player.walkSpeed += f.player.armor.speed;
+			f.player.knockback += f.player.armor.kb;
+			
+			f.player.atk += f.player.accessory.atk;
+			f.player.def += f.player.accessory.def;
+			f.player.matk += f.player.accessory.matk;
+			f.player.mdef += f.player.accessory.mdef;
+			f.player.jumpPower += f.player.accessory.jump;
+			f.player.walkSpeed += f.player.accessory.speed;
+			f.player.knockback += f.player.accessory.kb;
+			
 			return commandIndex + 1;
 
 		case DEFAULT:

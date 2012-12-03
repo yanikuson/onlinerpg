@@ -138,6 +138,7 @@ public class Loading implements Screen
 		assets.load("sprites/sparkle.png", Texture.class);
 		assets.load("sprites/cast.png", Texture.class);
 		assets.load("sprites/ice.png", Texture.class);
+		assets.load("sprites/ice-cast.png", Texture.class);
 		assets.load("sprites/platform.png", Texture.class);
 		
 		// MONSTERS
@@ -150,6 +151,8 @@ public class Loading implements Screen
 		assets.load("sprites/equips/hair/2.png", Texture.class);
 		
 		assets.load("sprites/equips/weapons/1.png", Texture.class);
+		
+		assets.load("sprites/equips/armor/1.png", Texture.class);
 		
 		assets.load("sprites/equips/empty.png", Texture.class);
 

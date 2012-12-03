@@ -338,6 +338,9 @@ public class Player extends Actor {
 
 		//visualHair = new VisualEquip("sprites/equips/hair/1.png", f.assets);
 		visualWeapon.changeTexture(weapon.visualName);
+		visualArmor.changeTexture(armor.visualName);
+
+		
 		
 	}
 
@@ -346,6 +349,7 @@ public class Player extends Actor {
 		// update the visual equips
 		visualHair.update(animation.frame);
 		visualWeapon.update(animation.frame);
+		visualArmor.update(animation.frame);
 
 	}
 

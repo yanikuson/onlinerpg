@@ -72,7 +72,7 @@ public class Monster extends Actor {
 			this.commandFrequency = 1;
 			
 			this.commonDrop = new Item(Item.ID_SPEED_PILL);
-			this.rareDrop = new Item(Item.ID_WOOD_ARMOR);
+			this.rareDrop = new Item(Item.ID_LEATHER_VEST);
 			this.money = 20;
 
 			break;
