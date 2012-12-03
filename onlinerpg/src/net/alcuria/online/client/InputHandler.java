@@ -160,6 +160,8 @@ public class InputHandler {
 			setInput(ESCAPE, Keys.ESCAPE);
 			setInput(ENTER, Keys.ENTER);
 			setInput(SKILL_1, Keys.SHIFT_LEFT);
+			setInput(SKILL_2, Keys.CONTROL_LEFT);
+			setInput(SKILL_3, Keys.ALT_LEFT);
 			
 		if (!readyForInput) {
 			if (!pressingAKey()){

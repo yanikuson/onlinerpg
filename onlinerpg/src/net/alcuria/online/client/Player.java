@@ -7,20 +7,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Player extends Actor {
-	
+
 	// visual equip static values
 	public static int GENDER_MALE = 0;
 	public static int GENDER_FEMALE = 1;
 	public static int SKIN_PALE = 0;
 	public static int SKIN_TAN = 1;
 	public static int SKIN_DARK = 2;
-	
+
 	// a counter to calculate how long the player is invincible
 	public float swingTimer = 0;						// time since last swing
-	public float swingPeriod = 0.35f;						// how long the player must wait to swing again
+	public float swingPeriod = 0.35f;					// how long the player must wait to swing again
 
 	public boolean renderToggler = false;				// a toggler, to render the player invisible every other frame when damaged
+	public boolean lightningWep = false;	
+	public int lightningToggler = 0;
 	public Rectangle swingBounds;
+
 	Particle swing;
 	Particle cast;
 
@@ -34,6 +37,7 @@ public class Player extends Actor {
 
 	public int statPts = 0;
 	public String name;
+	public String currentMap;
 	public float knockback;
 
 	public Item weapon, helmet, armor, accessory;
@@ -43,6 +47,9 @@ public class Player extends Actor {
 	VisualEquip visualHelm;
 	VisualEquip visualWeapon;
 	VisualEquip visualArmor;
+
+	public float epCounter = 0;
+	public float epDelay = 4;
 
 	public Player(String filename, String name, int x, int y, int width, int height, NotificationList notifications, Field f) {
 		super(filename, x, y, width, height, f);
@@ -118,8 +125,8 @@ public class Player extends Actor {
 			moveCommand[MOVE_JUMP] = false;
 		}
 
-		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod && !animation.castPose){
-
+		// check if the player is trying to attack
+		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod && !animation.castPose && !animation.itemPose){
 			moveCommand[MOVE_ATTACK] = true;
 			inputs.typed[InputHandler.ATTACK] = false;
 			startSwing();
@@ -133,11 +140,18 @@ public class Player extends Actor {
 			swingTimer += Gdx.graphics.getDeltaTime();
 		}
 
-		if (inputs.typed[InputHandler.SKILL_1] && !animation.swingPose && !animation.stabPose && !animation.castPose && !skills.visible){
-			inputs.typed[InputHandler.SKILL_1] = false;
-			animation.castPose = true;
-			cast.playAnimation = true;
-			castSound.play(Config.sfxVol);
+		// check if the player pressed a skill button
+		if (!animation.itemPose && !animation.swingPose && !animation.stabPose && !animation.castPose && !skills.visible && EP > 0){
+			if (inputs.typed[InputHandler.SKILL_1]){
+				inputs.typed[InputHandler.SKILL_1] = false;
+				startSkill(0);
+			} else if (inputs.typed[InputHandler.SKILL_2]){
+				inputs.typed[InputHandler.SKILL_2] = false;
+				startSkill(1);
+			} else if (inputs.typed[InputHandler.SKILL_3]){
+				inputs.typed[InputHandler.SKILL_3] = false;
+				startSkill(2);
+			}
 		}
 
 		// update the swing bounds (collision rectangle) while the animation is being played.
@@ -172,8 +186,21 @@ public class Player extends Actor {
 		}
 
 		skills.update();
-
 		updateEquips();
+		updateEP();
+
+
+	}
+
+	private void startSkill(int i) {
+		animation.whichSkill = i;
+		animation.castPose = true;
+		cast.playAnimation = true;
+		castSound.play(Config.sfxVol);
+		
+		EP--;
+		epCounter = 0;
+
 	}
 
 	public void startSwing(){
@@ -208,12 +235,26 @@ public class Player extends Actor {
 			}
 			if (flash) flashPrecheck(batch);
 			animation.render(batch, bounds.x, bounds.y);
-			
+
 			visualHair.render(batch, bounds.x, bounds.y, animation.flipX);
 			visualHelm.render(batch, bounds.x, bounds.y, animation.flipX);
 			visualArmor.render(batch, bounds.x, bounds.y, animation.flipX);
+
+			if (lightningWep){
+				if ((lightningToggler/4) % 2 == 0){
+					batch.flush();
+					batch.setColor(1, 1, 0, 1);
+				} else {
+					batch.flush();
+					batch.setColor(1, 1, 1, 1);
+				}
+			}
 			visualWeapon.render(batch, bounds.x, bounds.y, animation.flipX);
-	
+			if (lightningWep){
+				batch.flush();
+				batch.setColor(1, 1, 1, 1);
+				lightningToggler+= 1;
+			}
 
 			if (renderSensorPoints){
 				for(int i=0; i<sensorY.length; i++){
@@ -332,7 +373,7 @@ public class Player extends Actor {
 		}
 		return false;
 	}
-	
+
 	// resets all the equips (when a player changes gear)
 	public void resetVisualEquips(){
 
@@ -340,8 +381,8 @@ public class Player extends Actor {
 		visualWeapon.changeTexture(weapon.visualName);
 		visualArmor.changeTexture(armor.visualName);
 
-		
-		
+
+
 	}
 
 	public void updateEquips() {
@@ -353,4 +394,14 @@ public class Player extends Actor {
 
 	}
 
+	public void updateEP(){
+
+		if (EP < 10){
+			epCounter+= Gdx.graphics.getDeltaTime();
+			if (epCounter >= epDelay){
+				epCounter = 0;
+				EP++;
+			}
+		}
+	}
 }

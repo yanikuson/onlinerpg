@@ -38,6 +38,11 @@ public class SaveHandler {
 		playerData = playerData + 0 + ",";
 
 		playerData = playerData + name + ",";
+		
+		// location, x, y (in tiles)
+		playerData = playerData + "beach,";
+		playerData = playerData + 0 + ",";
+		playerData = playerData + 0 + ",";
 
 		file.writeString(playerData, false);
 
@@ -70,7 +75,11 @@ public class SaveHandler {
 		playerData = playerData + p.accessory.id + ",";
 
 		playerData = playerData + p.name + ",";
-
+		
+		playerData = playerData + p.currentMap + ",";
+		playerData = playerData + (int)(p.bounds.x/16) + ",";
+		playerData = playerData + (int)(p.bounds.y/16) + ",";
+		
 		file.writeString(playerData, false);
 	}
 
@@ -87,7 +96,7 @@ public class SaveHandler {
 		// get the length of the save data. if it's too short we also return
 		String savedata = Gdx.files.local("player" + slot + ".dat").readString();
 		String[] subdata = savedata.split(",");
-		if (subdata.length < 18){
+		if (subdata.length < 21){
 			return p;
 		}
 
@@ -113,7 +122,14 @@ public class SaveHandler {
 		p.accessory = new Item(Integer.parseInt(subdata[17]));
 
 		p.name = subdata[18];
+		p.currentMap = subdata[19];
 
+		p.bounds.x = Float.parseFloat(subdata[20]) * 16;
+		p.bounds.y = Float.parseFloat(subdata[21]) * 16;
+		
+		// ---------
+		
+		
 		p.neededEXP = Config.getNextLvl(p.lvl);
 		p.HP = p.maxHP;
 

@@ -184,6 +184,13 @@ public class Field implements Screen {
 	@Override
 	public void show() {
 
+		
+		// create all the particles
+		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
+		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);
+		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
+		freezes = new ParticleList("sprites/ice.png", 24, 24, 21, 2, false, assets);
+		
 		notifications = new NotificationList();
 		//notifications.add("Welcome to Heroes of Umbra!");
 
@@ -211,7 +218,7 @@ public class Field implements Screen {
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, inventory, drops);
 		menu.saveSlot = slot;
-		map = new Map("beach", assets, damageList, this);
+		map = new Map(player.currentMap, assets, damageList, this);
 
 		if (!GlobalFlags.flags[GlobalFlags.INTRO]){
 			player.bounds.x = 9 * Config.TILE_WIDTH;
@@ -219,11 +226,7 @@ public class Field implements Screen {
 			map.npcs[0].start();
 		}
 
-		// create all the particles
-		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
-		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);
-		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
-		freezes = new ParticleList("sprites/ice.png", 24, 24, 21, 2, false, assets);
+
 
 		// create our hud
 		hud = new HUD(player);
@@ -233,6 +236,8 @@ public class Field implements Screen {
 		shop.active = false;
 		
 		player.resetVisualEquips();
+		
+		Transition.fadeIn(1.0f);
 	}
 
 	@Override

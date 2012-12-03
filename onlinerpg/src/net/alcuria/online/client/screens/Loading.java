@@ -97,6 +97,7 @@ public class Loading implements Screen
 		assets.load("sounds/collect.wav", Sound.class);
 		assets.load("sounds/equip.wav", Sound.class);
 		assets.load("sounds/hurt.wav", Sound.class);
+		assets.load("sounds/lightning.wav", Sound.class);
 		assets.load("sounds/hurt_enemy.wav", Sound.class);
 		assets.load("sounds/jump.wav", Sound.class);
 		assets.load("sounds/kill.wav", Sound.class);
@@ -139,6 +140,7 @@ public class Loading implements Screen
 		assets.load("sprites/cast.png", Texture.class);
 		assets.load("sprites/ice.png", Texture.class);
 		assets.load("sprites/ice-cast.png", Texture.class);
+		assets.load("sprites/lightning.png", Texture.class);
 		assets.load("sprites/platform.png", Texture.class);
 		
 		// MONSTERS

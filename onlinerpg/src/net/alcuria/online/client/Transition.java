@@ -10,6 +10,7 @@ public class Transition {
 
 	private static Texture t;
 	private static TextureRegion fade;
+	private static TextureRegion flash;
 
 	private static float duration = 0;
 	private static float curFade = 0;
@@ -17,14 +18,17 @@ public class Transition {
 	private static boolean initialized = false;
 
 	private static boolean fadeOut = false;
-	private static boolean fadeIn = false;
+	static boolean fadeIn = false;
 	public static boolean finished = true;
+
+	static boolean doFlash = false;
 
 	public static void init() {
 
 		if (!initialized) {
 			t = new Texture(Gdx.files.internal("ui/fade.png"));
 			fade = new TextureRegion(t, 0, 0, 1, 1);
+			flash = new TextureRegion(t, 2, 0, 1, 1);
 			initialized = true;
 		}
 	}
@@ -65,15 +69,17 @@ public class Transition {
 			if (curFade >= targetFade) {
 				curFade = targetFade;
 				finished = true;
+				if(doFlash) doFlash = false;
 			}
 		} else if (fadeIn){
 			curFade -= Gdx.graphics.getDeltaTime();
 			if (curFade <= 0) {
 				curFade = 0;
 				finished = true;
+				if(doFlash) doFlash = false;
 			}
 		}
-		
+
 		// update sound vol
 		if (!finished){
 			bgm.setVolume(Config.bgmVol * (1 - curFade/duration));
@@ -88,8 +94,12 @@ public class Transition {
 
 			batch.flush();
 			batch.setColor(1, 1, 1, Config.smoothstep(curFade/duration));
-			batch.draw(fade, camera.offsetX, camera.offsetY, Config.WIDTH, Config.HEIGHT);
 
+			if (!doFlash) {
+				batch.draw(fade, camera.offsetX, camera.offsetY, Config.WIDTH, Config.HEIGHT);
+			} else {
+				batch.draw(flash, camera.offsetX, camera.offsetY, Config.WIDTH, Config.HEIGHT);
+			}
 			batch.setColor(1, 1, 1, 1);
 
 		}

@@ -8,10 +8,11 @@ public class CollisionManager {
 	ParticleList slices;
 	ParticleList burns;
 	ParticleList freezes;
-	
+
 	InputHandler inputs;
 
 	public CollisionManager(Player player, Monster[] enemies, DropManager drops, ParticleList slices, ParticleList burns, ParticleList freezes, InputHandler inputs){
+
 		this.player = player;
 		this.enemies = enemies;
 		this.drops = drops;
@@ -25,11 +26,13 @@ public class CollisionManager {
 	public void update(Map map, DamageList damageList, ParticleList explosions, ItemManager inventory){
 
 
-		for (int i = 0; i < map.npcs.length; i++){
-			
-			if (map.npcs[i] != null && inputs.typed[InputHandler.SPACE] && player.bounds.overlaps(map.npcs[i].bounds) && !map.npcs[i].startCommands){
-				inputs.typed[InputHandler.SPACE] = false;
-				map.npcs[i].start();
+		if (map.npcs != null){
+			for (int i = 0; i < map.npcs.length; i++){
+
+				if (map.npcs[i] != null && inputs.typed[InputHandler.SPACE] && player.bounds.overlaps(map.npcs[i].bounds) && !map.npcs[i].startCommands){
+					inputs.typed[InputHandler.SPACE] = false;
+					map.npcs[i].start();
+				}
 			}
 		}
 
@@ -74,6 +77,12 @@ public class CollisionManager {
 							enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, freezes, drops);
 							enemies[i].effects.add(StatusEffects.FREEZE, 10, 5);
 							break;
+						case SkillManager.BOLT:
+							enemies[i].damage(player, Config.getDamageDone(player.matk + 25, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
+							break;
+						case SkillManager.POISON:
+							enemies[i].effects.add(StatusEffects.POISON, player.wisdom/4 + 1, 10);
+							break;
 						}
 
 					}
@@ -84,13 +93,13 @@ public class CollisionManager {
 		}
 		// check for a collision with loot
 		if (player != null) {
-			
+
 			for (int i = 0; i < DropManager.MAX_DROPS; i++){
 				if (drops.dropList[i].bounds.overlaps(player.bounds) && drops.dropList[i].visible){
 					drops.collect(i, inventory);
 				}
 			}
-			
+
 		}
 
 

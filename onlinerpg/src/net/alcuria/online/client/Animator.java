@@ -44,6 +44,8 @@ public class Animator {
 	public TextureRegion dead;
 	public TextureRegion victory;
 	
+	public int whichSkill = 0;
+	
 	Particle castParticle;
 	Player p;
 
@@ -139,7 +141,18 @@ public class Animator {
 					castPose = false;
 					
 					// do cast
-					p.skills.start(SkillManager.hotkey1);
+					switch(whichSkill){
+					case 0:
+						p.skills.start(SkillManager.hotkey1);
+						break;
+					case 1:
+						p.skills.start(SkillManager.hotkey2);
+						break;
+					case 2:
+						p.skills.start(SkillManager.hotkey3);
+						break;
+					}
+					
 					castComplete = true;
 					
 				}
@@ -256,5 +269,10 @@ public class Animator {
 		} else {
 			swingPose = true;
 		}
+	}
+
+	public void setToItemPose() {
+		itemPose = true;
+		
 	}
 }

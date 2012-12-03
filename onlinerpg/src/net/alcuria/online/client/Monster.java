@@ -211,6 +211,13 @@ public class Monster extends Actor {
 	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList battleEffect, DropManager drops){
 		if (hurtTimer >= invincibilityPeriod && timeSinceSpawn > 0.5){
 
+			// boost damage for lightning
+			if (player.lightningWep){
+				damage *= 1.5;
+				player.lightningWep = false;
+				player.lightningToggler = 0;
+				kill.play(Config.sfxVol);
+			}
 			// calculate KB
 			if (player.bounds.x > bounds.x){
 				xVel = player.knockback/50 * -1;
@@ -230,7 +237,7 @@ public class Monster extends Actor {
 			
 			damageList.start(damage, bounds.x, bounds.y, player.facingLeft, Damage.TYPE_DAMAGE);
 			hurtTimer = 0;
-			hurtEnemy.play();
+			hurtEnemy.play(Config.sfxVol);
 			
 			// handle hp reduction
 			HP -= damage;
@@ -238,7 +245,7 @@ public class Monster extends Actor {
 
 				// kill off the enemy
 				explosions.start(bounds.x + bounds.width/2 - 16, bounds.y - 16, false);
-				kill.play();
+				kill.play(Config.sfxVol);
 				player.giveEXP(expVal);
 				visible = false;
 

@@ -116,9 +116,11 @@ public class Map {
 
 			if (spawner != null) spawner.render(batch);
 
-			for (int i = 0; i < npcs.length; i++){
-				if (npcs[i] != null) {
-					npcs[i].render(batch);
+			if (npcs != null){
+				for (int i = 0; i < npcs.length; i++){
+					if (npcs[i] != null) {
+						npcs[i].render(batch);
+					}
 				}
 			}
 
@@ -228,6 +230,8 @@ public class Map {
 	// creates a new map
 	public void create(String mapfile){
 
+		f.player.currentMap = mapfile;
+
 		// read in the map file into an array of strings
 		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
 		String fileContent = handle.readString();
@@ -323,7 +327,7 @@ public class Map {
 
 				// WHICH MONSTER?
 				if (mapfile.equals("beachroad")){
-					
+
 					// BEACH
 					this.spawner.addMonster(new Monster("sprites/monsters/crab.png", 16, 16, Config.MON_CRAB, f));
 
@@ -393,7 +397,7 @@ public class Map {
 				platforms[i] = null;
 			}
 		}
-		
+
 		if(Gdx.files.internal("maps/" + mapfile + ".plat").exists()){
 
 			// create a filehandle, read in the string and split it by line
@@ -416,17 +420,19 @@ public class Map {
 	public void update(){
 
 		pause = false;
-		for (int i = 0; i < npcs.length; i++){
-			if (npcs[i] != null) {
+		if (npcs != null){
+			for (int i = 0; i < npcs.length; i++){
+				if (npcs[i] != null) {
 
-				npcs[i].update(this, f.msgBox, f.cameraManager, f.player);
-				if (npcs[i].startCommands) {
-					f.inputs.typed[InputHandler.ATTACK] = false;
-					pause = true;
-				} else {
+					npcs[i].update(this, f.msgBox, f.cameraManager, f.player);
+					if (npcs[i].startCommands) {
+						f.inputs.typed[InputHandler.ATTACK] = false;
+						pause = true;
+					} else {
 
-					// we only command the npc to move if there is no NPC Commands being executed
-					npcs[i].command(this, p);
+						// we only command the npc to move if there is no NPC Commands being executed
+						npcs[i].command(this, p);
+					}
 				}
 			}
 		}
