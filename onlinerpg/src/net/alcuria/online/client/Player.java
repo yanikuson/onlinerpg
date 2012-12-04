@@ -41,8 +41,11 @@ public class Player extends Actor {
 	public float knockback;
 
 	public Item weapon, helmet, armor, accessory;
-	public int gender = GENDER_MALE;
-	public int skinTone = SKIN_PALE;
+	
+	public int gender;
+	public int skin;
+	public int hair;
+	
 	VisualEquip visualHair;
 	VisualEquip visualHelm;
 	VisualEquip visualWeapon;
@@ -51,7 +54,7 @@ public class Player extends Actor {
 	public float epCounter = 0;
 	public float epDelay = 4;
 
-	public Player(String filename, String name, int x, int y, int width, int height, NotificationList notifications, Field f) {
+	public Player(String filename, String name, int gender, int skin, int hair, int x, int y, int width, int height, NotificationList notifications, Field f) {
 		super(filename, x, y, width, height, f);
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);
@@ -70,7 +73,6 @@ public class Player extends Actor {
 		swing = new Particle("sprites/swing.png", x, y, 84, 84, 7, 3, false, f.assets);
 		swingSound = f.assets.get("sounds/swing.wav", Sound.class);
 		castSound = f.assets.get("sounds/cast.wav", Sound.class);
-		animation.assignPlayer(this);
 
 		levelupSound = f.assets.get("sounds/levelup.wav", Sound.class);
 		levelup = new Particle("sprites/levelup.png", 32, 32, 32, 32, 27, 3, false, f.assets);
@@ -377,7 +379,9 @@ public class Player extends Actor {
 	// resets all the equips (when a player changes gear)
 	public void resetVisualEquips(){
 
-		//visualHair = new VisualEquip("sprites/equips/hair/1.png", f.assets);
+		
+		visualHair = new VisualEquip("sprites/equips/hair/" + (hair+1) + ".png", f.assets);
+		
 		visualWeapon.changeTexture(weapon.visualName);
 		visualArmor.changeTexture(armor.visualName);
 

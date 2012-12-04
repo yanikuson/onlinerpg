@@ -25,6 +25,9 @@ public class CreateMenu extends Menu {
 
 	public String values = "";
 	public String name = "";
+	public int skin = 0;
+	public int gender = 0;
+	public int hair = 0;
 
 	public CreateMenu(Texture background, Texture border, AssetManager assets) {
 		super(background, border, assets, null, null, null);
@@ -45,7 +48,40 @@ public class CreateMenu extends Menu {
 
 
 	private void createScreen() {
+		// 			values = name + "\n\nMale\n\nPale\n\nStyle 1\n\n";
+
+		// set strings
+		if (mode == MODE_CHANGE_COMPONENT && selection[0] == 0 && name.length() < 8){
+			values = name + "_\n\n";
+		} else {
+			values = name + "\n\n";
+		}
+			
+		switch (gender) {
+		case 0:
+			values = values + "Male\n\n";
+			break;
+		case 1:
+			values = values + "Female\n\n";
+			break;
+		}
 		
+		switch (skin) {
+		case 0:
+			values = values + "Pale\n\n";
+			break;
+		case 1:
+			values = values + "Tan\n\n";
+			break;
+		case 2:
+			values = values + "Dark\n\n";
+			break;
+		}
+		
+		values = values + "Style " + (hair + 1) + "\n\n";
+	
+		
+		// update menu
 		dispose();
 		
 		addWindow(117, Config.HEIGHT - 42, Config.WIDTH-200, 20);
@@ -53,11 +89,7 @@ public class CreateMenu extends Menu {
 
 		addWindow(117, 79, 100, 92);
 		windows[curWindow-1].addText(123, 170, 160, 50, "Name:\n\nGender:\n\nSkin:\n\nHair:\n\n");
-		if (mode == MODE_CHANGE_COMPONENT && selection[0] == 0 && name.length() < 8){
-			values = name + "_\n\nMale\n\nPale\n\nStyle 1\n\n";
-		} else {
-			values = name + "\n\nMale\n\nPale\n\nStyle 1\n\n";
-		}
+		
 		windows[curWindow-1].addText(145, 159, 160, 50, values);
 
 		// character preview
@@ -131,8 +163,9 @@ public class CreateMenu extends Menu {
 					input.typed[InputHandler.SPACE] = false;
 					input.typed[InputHandler.ENTER] = false;
 					refreshText = true;
-					
+
 					if (selection[depth] != 4){
+						select.play(Config.sfxVol);
 						triangleX = cursorX[depth] + 20;
 						triangleY = cursorY[depth] - 11;
 						depth++;
@@ -141,7 +174,10 @@ public class CreateMenu extends Menu {
 					} else {
 						// flag our Create Screen to create the file
 						if (name.length() > 0) {
+							select.play(Config.sfxVol);
 							createFile = true;
+						} else {
+							cancel.play(Config.sfxVol);
 						}
 					}
 				}			
@@ -163,23 +199,44 @@ public class CreateMenu extends Menu {
 					// make changes for any non-name entry component
 					if (input.typed[InputHandler.LEFT]){
 						input.typed[InputHandler.LEFT] = false;
+						if (selection[0] == 1) {
+							gender-= 1;
+							if (gender <0) gender = 1;
+						} else if (selection[0] == 2){
+							skin -= 1;
+							if (skin <0) skin = 2;
+						} else if (selection[0] == 3){
+							hair -= 1;
+							if (hair < 0) hair = 3;
+						}
 						move.play(Config.sfxVol);
-
+						refreshText = true;
 					}
 
 					if (input.typed[InputHandler.RIGHT]){
 						input.typed[InputHandler.RIGHT] = false;
+						if (selection[0] == 1) {
+							gender+= 1;
+							gender %= 2;
+						} else if (selection[0] == 2){
+							skin += 1;
+							skin %= 3;
+						} else if (selection[0] == 3){
+							hair += 1;
+							hair %= 4;
+						}
 						move.play(Config.sfxVol);
-
+						refreshText = true;
 					}
 					
 					if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.JUMP]){
 						input.typed[InputHandler.ESCAPE] = false;
 						input.typed[InputHandler.JUMP] = false;
-
+						cancel.play(Config.sfxVol);
 						depth--;
 						mode = MODE_CHOOSE_COMPONENT;
-					}
+					}					
+					
 				} else {
 					
 					// handle the name entry component
@@ -191,7 +248,8 @@ public class CreateMenu extends Menu {
 					if (input.typed[InputHandler.ESCAPE] || input.typed[InputHandler.ENTER]){
 						input.typed[InputHandler.ESCAPE] = false;
 						input.typed[InputHandler.ENTER] = false;
-
+						
+						cancel.play(Config.sfxVol);
 						depth--;
 						mode = MODE_CHOOSE_COMPONENT;
 						refreshText = true;

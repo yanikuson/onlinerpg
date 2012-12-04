@@ -12,6 +12,7 @@ import net.alcuria.online.client.NotificationList;
 import net.alcuria.online.client.ParticleList;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.SaveHandler;
+import net.alcuria.online.client.SaveThread;
 import net.alcuria.online.client.Transition;
 import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
@@ -33,6 +34,7 @@ public class Field implements Screen {
 	public Game g;
 	public int slot;					// which slot the player has loaded
 
+	public SaveThread t;
 	public SpriteBatch batch;
 	public InputHandler inputs;
 	public Player player;
@@ -197,6 +199,9 @@ public class Field implements Screen {
 		player = SaveHandler.loadPlayer(slot, notifications, this);
 		inventory = SaveHandler.loadItems(slot);
 		SaveHandler.loadFlags(slot);
+		
+		player.animation.assignPlayer(player);
+		player.resetVisualEquips();
 
 		cameraManager = new CameraManager();		
 
@@ -236,6 +241,9 @@ public class Field implements Screen {
 		shop.active = false;
 		
 		player.resetVisualEquips();
+		
+		// launch our save thread
+		(new Thread(new SaveThread(this, slot))).start();
 		
 		Transition.fadeIn(1.0f);
 	}

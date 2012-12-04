@@ -139,4 +139,9 @@ public class Item {
 		return getIDer.type;
 	}
 
+	public static String getVisualFilename(int itemID) {
+		getIDer = new Item(itemID);
+		return getIDer.visualName;
+	}
+
 }
