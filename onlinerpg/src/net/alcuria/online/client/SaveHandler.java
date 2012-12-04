@@ -7,11 +7,12 @@ import com.badlogic.gdx.files.FileHandle;
 
 public class SaveHandler {
 
+	public static final int NUM_SAVE_ELEMS = 25;
 	public static FileHandle file;
 	public static int slotSelected = 0;
 	public static final int MAX_SAVES = 3;
 
-	public static void createPlayer(int slot, String name){
+	public static void createPlayer(int slot, String name, int gender, int skin, int hair){
 
 
 		file = Gdx.files.local("player" + slot + ".dat");
@@ -32,17 +33,23 @@ public class SaveHandler {
 		playerData = playerData + 100 + ",";
 		playerData = playerData + 0 + ",";
 
+		// weapon helm armor acc
 		playerData = playerData + 0 + ",";
-		playerData = playerData + 0 + ",";
+		playerData = playerData + Item.ID_LEATHER_VEST + ",";
 		playerData = playerData + 0 + ",";
 		playerData = playerData + 0 + ",";
 
 		playerData = playerData + name + ",";
-		
+
 		// location, x, y (in tiles)
 		playerData = playerData + "beach,";
 		playerData = playerData + 0 + ",";
 		playerData = playerData + 0 + ",";
+
+		// gender, skin, and hair values (internal, need to be converted to file location + 1)
+		playerData = playerData + gender + ",";
+		playerData = playerData + skin + ",";
+		playerData = playerData + hair + ",";
 
 		file.writeString(playerData, false);
 
@@ -75,18 +82,22 @@ public class SaveHandler {
 		playerData = playerData + p.accessory.id + ",";
 
 		playerData = playerData + p.name + ",";
-		
+
 		playerData = playerData + p.currentMap + ",";
 		playerData = playerData + (int)(p.bounds.x/16) + ",";
 		playerData = playerData + (int)(p.bounds.y/16) + ",";
-		
+
+		playerData = playerData + p.gender + ",";
+		playerData = playerData + p.skin + ",";
+		playerData = playerData + p.hair + ",";
+
 		file.writeString(playerData, false);
 	}
 
 
 	public static Player loadPlayer(int slot, NotificationList notifications, Field f){
 
-		Player p = new Player("sprites/player.png", "", 160, 120, 14, 22, notifications, f);
+		Player p = new Player("sprites/player.png", "", 0, 0, 0, 160, 120, 14, 22, notifications, f);
 
 		//return if a file doesnt exist
 		if(!Gdx.files.local("player" + slot + ".dat").exists()){
@@ -96,7 +107,7 @@ public class SaveHandler {
 		// get the length of the save data. if it's too short we also return
 		String savedata = Gdx.files.local("player" + slot + ".dat").readString();
 		String[] subdata = savedata.split(",");
-		if (subdata.length < 21){
+		if (subdata.length < NUM_SAVE_ELEMS){
 			return p;
 		}
 
@@ -126,10 +137,15 @@ public class SaveHandler {
 
 		p.bounds.x = Float.parseFloat(subdata[20]) * 16;
 		p.bounds.y = Float.parseFloat(subdata[21]) * 16;
-		
+
+		p.gender = Integer.parseInt(subdata[22]);
+		p.skin = Integer.parseInt(subdata[23]);
+		p.hair = Integer.parseInt(subdata[24]);
+
 		// ---------
-		
-		
+
+		p.animation = new Animator(("sprites/equips/skin/" + (p.skin+1) + ".png"), 14, 22, f.assets);
+		p.animation.assignPlayer(p);
 		p.neededEXP = Config.getNextLvl(p.lvl);
 		p.HP = p.maxHP;
 
@@ -218,7 +234,7 @@ public class SaveHandler {
 
 			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
-			if (subdata.length < 19){
+			if (subdata.length < NUM_SAVE_ELEMS){
 				return "";
 			}
 
@@ -235,7 +251,7 @@ public class SaveHandler {
 
 			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
-			if (subdata.length < 19){
+			if (subdata.length < NUM_SAVE_ELEMS){
 				return 0;
 			}
 
@@ -245,5 +261,80 @@ public class SaveHandler {
 		return 0;
 	}
 
+
+	public static String getPlayerSkinFilename(int slot) {
+		
+		if (fileExists(slot)){
+			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			if (subdata.length < NUM_SAVE_ELEMS){
+				return "sprites/equips/empty.png";
+			}
+
+			// assign our player object the values loaded from the file
+			return ("sprites/equips/skin/" + (Integer.parseInt(subdata[23])+1) + ".png");
+		}
+		return "sprites/equips/empty.png";
+	}
+
+
+	public static String getPlayerHairFilename(int slot) {
+		
+		if (fileExists(slot)){
+			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			if (subdata.length < NUM_SAVE_ELEMS){
+				return "sprites/equips/empty.png";
+			}
+
+			// assign our player object the values loaded from the file
+			return ("sprites/equips/hair/" + (Integer.parseInt(subdata[24])+1) + ".png");
+		}
+		return "sprites/equips/empty.png";
+	}
+
+
+	public static String getPlayerArmorFilename(int slot) {
+		if (fileExists(slot)){
+			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			if (subdata.length < NUM_SAVE_ELEMS){
+				return "sprites/equips/empty.png";
+			}
+
+			// assign our player object the values loaded from the file
+			return (Item.getVisualFilename(Integer.parseInt(subdata[16])));
+		}
+		return "sprites/equips/empty.png";
+	}
+
+
+	public static String getPlayerWeaponFilename(int slot) {
+		if (fileExists(slot)){
+			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			if (subdata.length < NUM_SAVE_ELEMS){
+				return "sprites/equips/empty.png";
+			}
+
+			// assign our player object the values loaded from the file
+			return (Item.getVisualFilename(Integer.parseInt(subdata[14])));
+		}
+		return "sprites/equips/empty.png";
+	}
+
+	public static String getPlayerHelmetFilename(int slot) {
+		if (fileExists(slot)){
+			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String[] subdata = savedata.split(",");
+			if (subdata.length < NUM_SAVE_ELEMS){
+				return "sprites/equips/empty.png";
+			}
+
+			// assign our player object the values loaded from the file
+			return (Item.getVisualFilename(Integer.parseInt(subdata[15])));
+		}
+		return "sprites/equips/empty.png";
+	}
 
 }
