@@ -14,6 +14,7 @@ import net.alcuria.online.client.Player;
 import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.SaveThread;
 import net.alcuria.online.client.Transition;
+import net.alcuria.online.client.connection.GameClient;
 import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
 import net.alcuria.online.client.ui.Menu;
@@ -244,6 +245,8 @@ public class Field implements Screen {
 		
 		// launch our save thread
 		(new Thread(new SaveThread(this, slot))).start();
+		
+		GameClient.start();
 		
 		Transition.fadeIn(1.0f);
 	}
