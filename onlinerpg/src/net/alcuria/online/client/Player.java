@@ -31,7 +31,6 @@ public class Player extends Actor {
 	public Sound levelupSound;
 	public Sound castSound;
 	private Particle levelup;
-	public NotificationList notifications;
 	public SkillManager skills;
 	private boolean levelSoundPlayed = false;
 
@@ -54,8 +53,8 @@ public class Player extends Actor {
 	public float epCounter = 0;
 	public float epDelay = 4;
 
-	public Player(String filename, String name, int gender, int skin, int hair, int x, int y, int width, int height, NotificationList notifications, Field f) {
-		super(filename, x, y, width, height, f);
+	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
+		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);
 		this.HP = this.maxHP;
@@ -66,7 +65,6 @@ public class Player extends Actor {
 		this.knockback = 100;
 
 		swingBounds = new Rectangle(0,0,0,0);
-		this.notifications = notifications;
 
 		// TODO: really add these to an animations hash or something
 		cast = new Particle("sprites/cast.png", x, y, 22, 16, 6, 3, false, f.assets);
@@ -327,11 +325,11 @@ public class Player extends Actor {
 
 	public void giveEXP(int expVal) {
 		do {
-			if (Config.notifExp) notifications.add("Earned " + expVal + " EXP.");
+			if (Config.notifExp) NotificationList.add("Earned " + expVal + " EXP.");
 			curEXP += expVal;
 			if (curEXP >= neededEXP){
 				lvl++;
-				if (Config.notifLevel) notifications.add("Congratulations! You've reached level " + lvl + ".");
+				if (Config.notifLevel) NotificationList.add("Congratulations! You've reached level " + lvl + ".");
 				statPts += 2;
 
 				// set new max HP

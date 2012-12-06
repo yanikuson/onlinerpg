@@ -6,38 +6,42 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class NotificationList {
 
-	public final int MAX_NOTIFICATIONS = 8;
-	public final float NOTIFICATION_DURATION = 7;
+	public static final int MAX_NOTIFICATIONS = 8;
+	public static final float NOTIFICATION_DURATION = 7;
 
-	public BitmapFont notificationFont;
-	public String[] notifications;
-	public float[] durations;
-	public float[] x, y;
-	public float deltaTime;
-	private boolean doFlush = false;
+	public static BitmapFont notificationFont;
+	public static String[] notifications;
+	public static float[] durations;
+	public static float[] x, y;
+	public static float deltaTime;
 
-	private int shiftAccumulator = 0;
+	private static boolean doFlush = false;
+	private static int shiftAccumulator = 0;
+	private static boolean initialized = false;
 
-	public NotificationList(){
-		notificationFont = new BitmapFont(Gdx.files.internal("fonts/ui.fnt"), false);
-		notifications = new String[MAX_NOTIFICATIONS];
-		x = new float[MAX_NOTIFICATIONS];
-		y = new float[MAX_NOTIFICATIONS];
-		durations = new float[MAX_NOTIFICATIONS];
 
-		for (int i = 0; i < MAX_NOTIFICATIONS; i++) {
-			notifications[i] = "";
-			x[i] = 10;
-			y[i] = 0;
-			durations[i] = 0;
+	public static void init(){
+		if (!initialized){
+			notificationFont = new BitmapFont(Gdx.files.internal("fonts/ui.fnt"), false);
+			notifications = new String[MAX_NOTIFICATIONS];
+			x = new float[MAX_NOTIFICATIONS];
+			y = new float[MAX_NOTIFICATIONS];
+			durations = new float[MAX_NOTIFICATIONS];
 
+			for (int i = 0; i < MAX_NOTIFICATIONS; i++) {
+				notifications[i] = "";
+				x[i] = 10;
+				y[i] = 0;
+				durations[i] = 0;
+
+			}
+			initialized = true;
 		}
-
 	}
 
-	public void update(){
-		// TODO: update all of the notifications
-		// also check if a notice is invisible and clear it?
+	public static void update(){
+		if (!initialized)init();
+
 		deltaTime = Gdx.graphics.getDeltaTime();
 		for (int i = 0; i < MAX_NOTIFICATIONS; i++){
 			if (durations[i] > 0){
@@ -53,8 +57,10 @@ public class NotificationList {
 
 	}
 
-	public void render(SpriteBatch batcher, CameraManager cam){
-		// TODO: render the list of notices
+	public static void render(SpriteBatch batcher, CameraManager cam){
+
+		if (!initialized) init();
+
 		for (int i = 0; i < MAX_NOTIFICATIONS; i++) {
 			if (durations[i] > 0){
 				if (durations[i] < 1){
@@ -72,7 +78,9 @@ public class NotificationList {
 		}
 	}
 
-	public void add(String s){
+	public static void add(String s){
+		if (!initialized) init();
+
 		for (int i = MAX_NOTIFICATIONS - 1; i > 0; i--){
 			notifications[i] = notifications[i - 1];
 			x[i] = x[i-1];

@@ -90,7 +90,7 @@ public class DropManager {
 	}
 
 	public void collect(int i, ItemManager inventory) {
-		dropList[i].collect(inventory, notifications);
+		dropList[i].collect(inventory);
 		pickup.play(Config.sfxVol);
 	}
 

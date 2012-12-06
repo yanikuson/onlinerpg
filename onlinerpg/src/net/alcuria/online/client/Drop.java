@@ -102,7 +102,7 @@ public class Drop extends Actor {
 		dropParticle.playAnimation = true;
 	}
 
-	public void collect(ItemManager inventory, NotificationList notifications) {
+	public void collect(ItemManager inventory) {
 		visible = false;
 		dropParticle.playAnimation = false;
 		bounds.x = -30;
@@ -110,11 +110,11 @@ public class Drop extends Actor {
 		
 		if (particleID == 0){
 			inventory.money += value;
-			if (Config.notifMoney) notifications.add("Found " + value + " Flips!");
+			if (Config.notifMoney) NotificationList.add("Found " + value + " Flips!");
 		} else {
 			droppedItem = new Item(value);
 			inventory.addItem(droppedItem);
-			if (Config.notifItem) notifications.add(droppedItem.name + " Acquired!");
+			if (Config.notifItem) NotificationList.add(droppedItem.name + " Acquired!");
 		}
 
 	}

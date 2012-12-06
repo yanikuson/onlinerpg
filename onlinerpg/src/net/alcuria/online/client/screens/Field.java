@@ -14,11 +14,12 @@ import net.alcuria.online.client.Player;
 import net.alcuria.online.client.SaveHandler;
 import net.alcuria.online.client.SaveThread;
 import net.alcuria.online.client.Transition;
-import net.alcuria.online.client.connection.GameClient;
+import net.alcuria.online.client.connection.ClientThread;
 import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
 import net.alcuria.online.client.ui.Menu;
 import net.alcuria.online.client.ui.ShopMenu;
+import net.alcuria.online.server.GameServer;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -62,11 +63,15 @@ public class Field implements Screen {
 			(float)VIRTUAL_WIDTH/(float)VIRTUAL_HEIGHT;
 	private Rectangle viewport;
 
+	
 	public Field(Game g, AssetManager assets, int loadedSlot)
 	{
 		this.slot = loadedSlot;
 		this.assets = assets;
 		this.g = g;
+	}
+	public Field(){
+		
 	}
 
 	@Override
@@ -96,7 +101,7 @@ public class Field implements Screen {
 			map.renderFG(batch, cameraManager);
 			damageList.render(batch);
 
-			notifications.render(batch, cameraManager);
+			NotificationList.render(batch, cameraManager);
 			if (GlobalFlags.flags[GlobalFlags.INTRO]){
 				hud.render(batch);
 			}
@@ -121,7 +126,7 @@ public class Field implements Screen {
 			// update our UI
 			hud.update(cameraManager.offsetX, cameraManager.offsetY);
 			msgBox.update(Gdx.graphics.getDeltaTime(), inputs);
-			notifications.update();
+			NotificationList.update();
 			Transition.update(map.bgm);
 			if (!Config.npcCommand){
 				menu.update(inputs, cameraManager.offsetX, cameraManager.offsetY, this);
@@ -197,7 +202,7 @@ public class Field implements Screen {
 		notifications = new NotificationList();
 		//notifications.add("Welcome to Heroes of Umbra!");
 
-		player = SaveHandler.loadPlayer(slot, notifications, this);
+		player = SaveHandler.loadPlayer(slot, this);
 		inventory = SaveHandler.loadItems(slot);
 		SaveHandler.loadFlags(slot);
 		
@@ -245,10 +250,13 @@ public class Field implements Screen {
 		
 		// launch our save thread
 		(new Thread(new SaveThread(this, slot))).start();
-		
-		GameClient.start();
+		(new Thread(new ClientThread(this, slot))).start();
+
+		GameServer.f = this;
+		GameServer.start();
 		
 		Transition.fadeIn(1.0f);
+		
 	}
 
 	@Override

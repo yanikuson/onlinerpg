@@ -15,7 +15,7 @@ public class SaveHandler {
 	public static void createPlayer(int slot, String name, int gender, int skin, int hair){
 
 
-		file = Gdx.files.local("player" + slot + ".dat");
+		file = Gdx.files.local("data/player" + slot + ".dat");
 
 		String playerData = new String();
 		playerData = playerData + 1 + ",";
@@ -58,7 +58,7 @@ public class SaveHandler {
 
 	public static void savePlayer(Player p, int slot){
 
-		file = Gdx.files.local("player" + slot + ".dat");
+		file = Gdx.files.local("data/player" + slot + ".dat");
 
 		String playerData = new String();
 		playerData = playerData + p.lvl + ",";
@@ -95,17 +95,17 @@ public class SaveHandler {
 	}
 
 
-	public static Player loadPlayer(int slot, NotificationList notifications, Field f){
+	public static Player loadPlayer(int slot, Field f){
 
-		Player p = new Player("sprites/player.png", "", 0, 0, 0, 160, 120, 14, 22, notifications, f);
+		Player p = new Player("", 0, 0, 0, 160, 120, 14, 22, f);
 
 		//return if a file doesnt exist
-		if(!Gdx.files.local("player" + slot + ".dat").exists()){
+		if(!Gdx.files.local("data/player" + slot + ".dat").exists()){
 			return p;
 		}
 
 		// get the length of the save data. if it's too short we also return
-		String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+		String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 		String[] subdata = savedata.split(",");
 		if (subdata.length < NUM_SAVE_ELEMS){
 			return p;
@@ -154,7 +154,7 @@ public class SaveHandler {
 
 	public static void saveItems(int slot, ItemManager items){
 
-		file = Gdx.files.local("item" + slot + ".dat");
+		file = Gdx.files.local("data/item" + slot + ".dat");
 
 		String itemData = new String();
 		itemData = itemData + items.money + ",";
@@ -167,7 +167,7 @@ public class SaveHandler {
 	public static void saveFlags(int slot){
 
 		// create a reference to the flagsN.dat file
-		file = Gdx.files.local("flags" + slot + ".dat");
+		file = Gdx.files.local("data/flags" + slot + ".dat");
 
 		// create string containing all the flags in this array
 		String flagData = new String();
@@ -182,10 +182,10 @@ public class SaveHandler {
 	public static void loadFlags(int slot){
 		GlobalFlags.init();
 
-		if(Gdx.files.local("flags" + slot + ".dat").exists()){
+		if(Gdx.files.local("data/flags" + slot + ".dat").exists()){
 
 			// create a string with the contents of the file and split it
-			String savedata = Gdx.files.local("flags" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/flags" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 
 			// update all flags
@@ -198,7 +198,7 @@ public class SaveHandler {
 	public static ItemManager loadItems(int slot) {
 
 		ItemManager items = new ItemManager();
-		if(!Gdx.files.local("item" + slot + ".dat").exists()){
+		if(!Gdx.files.local("data/item" + slot + ".dat").exists()){
 			items.add(Item.ID_POTION);
 			items.add(Item.ID_SPEED_PILL);
 			items.add(Item.ID_WOOD_SWORD);
@@ -207,7 +207,7 @@ public class SaveHandler {
 		}
 
 		// create a string with the contents of the file and split it
-		String savedata = Gdx.files.local("item" + slot + ".dat").readString();
+		String savedata = Gdx.files.local("data/item" + slot + ".dat").readString();
 		String[] subdata = savedata.split(",");
 
 		// add all items in our data file to the item manager
@@ -223,7 +223,7 @@ public class SaveHandler {
 
 	public static boolean fileExists(int slot){
 
-		return Gdx.files.local("player" + slot + ".dat").exists();
+		return Gdx.files.local("data/player" + slot + ".dat").exists();
 
 	}
 
@@ -232,7 +232,7 @@ public class SaveHandler {
 
 		if (fileExists(slot)){
 
-			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 			if (subdata.length < NUM_SAVE_ELEMS){
 				return "";
@@ -249,7 +249,7 @@ public class SaveHandler {
 	public static int getPlayerLevel(int slot) {
 		if (fileExists(slot)){
 
-			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 			if (subdata.length < NUM_SAVE_ELEMS){
 				return 0;
@@ -265,7 +265,7 @@ public class SaveHandler {
 	public static String getPlayerSkinFilename(int slot) {
 		
 		if (fileExists(slot)){
-			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 			if (subdata.length < NUM_SAVE_ELEMS){
 				return "sprites/equips/empty.png";
@@ -281,7 +281,7 @@ public class SaveHandler {
 	public static String getPlayerHairFilename(int slot) {
 		
 		if (fileExists(slot)){
-			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 			if (subdata.length < NUM_SAVE_ELEMS){
 				return "sprites/equips/empty.png";
@@ -296,7 +296,7 @@ public class SaveHandler {
 
 	public static String getPlayerArmorFilename(int slot) {
 		if (fileExists(slot)){
-			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 			if (subdata.length < NUM_SAVE_ELEMS){
 				return "sprites/equips/empty.png";
@@ -311,7 +311,7 @@ public class SaveHandler {
 
 	public static String getPlayerWeaponFilename(int slot) {
 		if (fileExists(slot)){
-			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 			if (subdata.length < NUM_SAVE_ELEMS){
 				return "sprites/equips/empty.png";
@@ -325,7 +325,7 @@ public class SaveHandler {
 
 	public static String getPlayerHelmetFilename(int slot) {
 		if (fileExists(slot)){
-			String savedata = Gdx.files.local("player" + slot + ".dat").readString();
+			String savedata = Gdx.files.local("data/player" + slot + ".dat").readString();
 			String[] subdata = savedata.split(",");
 			if (subdata.length < NUM_SAVE_ELEMS){
 				return "sprites/equips/empty.png";
