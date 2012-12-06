@@ -1,7 +1,5 @@
 package net.alcuria.online.common;
 
-import net.alcuria.online.client.Player;
-
 import com.badlogic.gdx.math.Rectangle;
 
 public class Packet {
@@ -25,14 +23,17 @@ public class Packet {
 	
 	public static class Packet3SendPosition
 	{
+		public int uid;
 		public Rectangle bounds;
 		public float xVel;
 		public float yVel;
 	}
 	
-	public static class Packet4SendPlayer
+	// CLIENT sends this to SERVER to request all players positions
+	public static class Packet4RequestPositions
 	{
-		public Player p;
+		public int uid;
 	}
+	
 
 }

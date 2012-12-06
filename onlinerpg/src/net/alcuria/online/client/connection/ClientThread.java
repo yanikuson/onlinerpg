@@ -19,6 +19,7 @@ public class ClientThread implements Runnable{
 		
 		while (true){
 			GameClient.sendPositionUpdate(f);
+			GameClient.requestPositions(f);
 			pause(50);
 		}
 	}

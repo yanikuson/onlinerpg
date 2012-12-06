@@ -21,7 +21,7 @@ public class GameServer {
 		
 		// here we initialize all objects the server needs to sync
 		ServerListener.f = f;
-		ServerListener.players = new Array<Player>(false, 10);
+		ServerListener.sPlayers = new Array<Player>(false, 10);
 		
 		// now we start up the server
 		server = new Server();
@@ -45,6 +45,7 @@ public class GameServer {
 		kryo.register(Packet1LoginAnswer.class);
 		kryo.register(Packet2Message.class);
 		kryo.register(Packet3SendPosition.class);
+		kryo.register(Packet4RequestPositions.class);
 	}
 	
 	public static void main(String[] args){

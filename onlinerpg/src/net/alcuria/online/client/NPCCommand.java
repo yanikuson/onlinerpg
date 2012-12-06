@@ -122,6 +122,7 @@ public class NPCCommand {
 				ItemManager items = new ItemManager();
 				items.add(Item.ID_POTION);
 				items.add(Item.ID_SPEED_PILL);
+				items.add(Item.ID_SWIFT_COAT);
 				f.shop = new ShopMenu(f, items);
 				f.map.pause = true;
 				startedCommand = true;

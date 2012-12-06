@@ -29,6 +29,7 @@ public class InputHandler {
 	float offsetY;
 	int touchPointX;
 	int touchPointY;
+	int padding = 20;
 
 	boolean readyForInput = false;
 	boolean touchedThisFrame = false;
@@ -76,13 +77,13 @@ public class InputHandler {
 			confirm = 	new TextureRegion(buttons, 84, 47, 38, 35);
 
 			// create the rectangles
-			virtualButtons[UP] = new Rectangle(-100, -100, 22, 27);
-			virtualButtons[DOWN] = new Rectangle(-100, -100, 22, 27);
-			virtualButtons[LEFT] = new Rectangle(-100, -100, 27, 22);
-			virtualButtons[RIGHT] = new Rectangle(-100, -100, 27, 22);
-			virtualButtons[JUMP] = new Rectangle(-100, -100, 38, 35);
-			virtualButtons[ATTACK] = new Rectangle(-100, -100, 38, 35);
-			virtualButtons[ESCAPE] = new Rectangle(-100, -100, 50, 30);
+			virtualButtons[UP] = new Rectangle(-100, -100, 22 + padding*2, 27 + padding*2);
+			virtualButtons[DOWN] = new Rectangle(-100, -100, 22 + padding*2, 27 + padding*2);
+			virtualButtons[LEFT] = new Rectangle(-100, -100, 27 + padding*2, 22 + padding*2);
+			virtualButtons[RIGHT] = new Rectangle(-100, -100, 27 + padding*2, 22 + padding*2);
+			virtualButtons[JUMP] = new Rectangle(-100, -100, 38 + padding*2, 35 + padding*2);
+			virtualButtons[ATTACK] = new Rectangle(-100, -100, 38 + padding*2, 35 + padding*2);
+			virtualButtons[ESCAPE] = new Rectangle(-100, -100, 50 + padding*2, 30 + padding*2);
 
 			camera = new OrthographicCamera();
 		}
@@ -172,8 +173,8 @@ public class InputHandler {
 		}
 
 		if(cameraManager != null){
-			offsetX = cameraManager.offsetX;
-			offsetY = cameraManager.offsetY;
+			offsetX = cameraManager.offsetX - padding;
+			offsetY = cameraManager.offsetY - padding;
 			joypadX = (int) (cameraManager.offsetX + 45);
 			joypadY = (int) (cameraManager.offsetY + Config.HEIGHT - 169);
 			keysX = (int) cameraManager.offsetX + Config.WIDTH - 48;

@@ -25,6 +25,9 @@ public class Main {
 			
 		}
 		
+		cfg.width = Config.WIDTH;
+		cfg.height = Config.HEIGHT;
+		
 		new LwjglApplication(new OnlineRPG(), cfg);
 	}
 }

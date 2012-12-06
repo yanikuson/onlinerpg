@@ -25,7 +25,7 @@ public class SaveHandler {
 		playerData = playerData + 5 + ",";
 		playerData = playerData + 5 + ",";
 		playerData = playerData + 0 + ",";
-		playerData = playerData + 0 + ",";
+		playerData = playerData + 2 + ",";
 		playerData = playerData + 0 + ",";
 		playerData = playerData + 0 + ",";
 		playerData = playerData + 100 + ",";
@@ -33,10 +33,10 @@ public class SaveHandler {
 		playerData = playerData + 100 + ",";
 		playerData = playerData + 0 + ",";
 
-		// weapon helm armor acc
+		// weapon armor helm acc
+		playerData = playerData + 0 + ",";
 		playerData = playerData + 0 + ",";
 		playerData = playerData + Item.ID_LEATHER_VEST + ",";
-		playerData = playerData + 0 + ",";
 		playerData = playerData + 0 + ",";
 
 		playerData = playerData + name + ",";

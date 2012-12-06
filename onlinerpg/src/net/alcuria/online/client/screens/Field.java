@@ -30,6 +30,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public class Field implements Screen {
 
@@ -63,6 +64,7 @@ public class Field implements Screen {
 			(float)VIRTUAL_WIDTH/(float)VIRTUAL_HEIGHT;
 	private Rectangle viewport;
 
+	public Array<Player> players;
 	
 	public Field(Game g, AssetManager assets, int loadedSlot)
 	{
@@ -89,6 +91,9 @@ public class Field implements Screen {
 			map.renderBG(batch, cameraManager);
 
 			map.render(batch, true, cameraManager);
+			for (int i = 0; i < players.size; i++){
+				players.get(i).render(batch);
+			}
 			player.render(batch);
 			map.render(batch, false, cameraManager);
 
@@ -247,6 +252,8 @@ public class Field implements Screen {
 		shop.active = false;
 		
 		player.resetVisualEquips();
+		
+		players = new Array<Player>();
 		
 		// launch our save thread
 		(new Thread(new SaveThread(this, slot))).start();

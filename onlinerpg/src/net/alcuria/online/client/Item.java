@@ -19,6 +19,7 @@ public class Item {
 	public static final int ID_WOOD_SWORD = 20;
 	public static final int ID_STARLESS_UMBRA = 39;
 	public static final int ID_LEATHER_VEST = 40;
+	public static final int ID_SWIFT_COAT = 41;
 	public static final int ID_WOOD_HELM = 60;
 	public static final int ID_WIZARD_HAT = 61;
 	public static final int ID_LEATHER_BOOTS = 80;
@@ -89,6 +90,16 @@ public class Item {
 			this.def = 2;
 			this.cost = 120;
 			this.visualName = "sprites/equips/armor/1.png";
+			break;
+			
+		case ID_SWIFT_COAT:
+			this.icon = 3;
+			this.type = TYPE_ARMOR;
+			this.name = "Swift Coat";
+			this.description = "Looks familiar. DEF+4";
+			this.def = 4;
+			this.cost = 130;
+			this.visualName = "sprites/equips/armor/2.png";
 			break;
 			
 		case ID_WOOD_HELM:

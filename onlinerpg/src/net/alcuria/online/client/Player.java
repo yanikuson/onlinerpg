@@ -52,6 +52,7 @@ public class Player extends Actor {
 
 	public float epCounter = 0;
 	public float epDelay = 4;
+	public int uid;
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
@@ -77,8 +78,8 @@ public class Player extends Actor {
 
 		// give our player some equipment
 		weapon = new Item(Item.ID_BLANK);
-		helmet = new Item(Item.ID_BLANK);
 		armor = new Item(Item.ID_BLANK);
+		helmet = new Item(Item.ID_BLANK);
 		accessory = new Item(Item.ID_BLANK);
 
 		this.power = 5;

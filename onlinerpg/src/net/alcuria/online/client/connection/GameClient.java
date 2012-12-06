@@ -8,7 +8,6 @@ import net.alcuria.online.common.Packet.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.minlog.Log;
 
 public class GameClient {
 	
@@ -22,7 +21,7 @@ public class GameClient {
 	
 		// create a listener to accept incoming packets from the server
 		ClientListener cl = new ClientListener();
-		cl.init(client);
+		cl.init(client, f);
 		client.addListener(cl);
 		
 		client.start();
@@ -35,14 +34,7 @@ public class GameClient {
 	}
 	
 	
-	public static void sendPositionUpdate(Field f){
-		
-		Packet3SendPosition pos = new Packet3SendPosition();
-		pos.bounds = f.player.bounds;
-		pos.xVel = f.player.xVel;
-		pos.yVel = f.player.yVel;
-		client.sendTCP(pos);
-	}
+
 	
 	private static void register(){
 		
@@ -52,6 +44,24 @@ public class GameClient {
 		kryo.register(Packet1LoginAnswer.class);
 		kryo.register(Packet2Message.class);
 		kryo.register(Packet3SendPosition.class);
+		kryo.register(Packet4RequestPositions.class);
+	}
+
+	public static void sendPositionUpdate(Field f){
+		
+		Packet3SendPosition pos = new Packet3SendPosition();
+		pos.uid = f.player.uid;
+		pos.bounds = f.player.bounds;
+		pos.xVel = f.player.xVel;
+		pos.yVel = f.player.yVel;
+		client.sendTCP(pos);
+	}
+	
+	public static void requestPositions(Field f) {
+		Packet4RequestPositions req = new Packet4RequestPositions();
+		req.uid = f.player.uid;
+		client.sendTCP(req);
+		
 	}
 
 }

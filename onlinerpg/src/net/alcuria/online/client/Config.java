@@ -47,7 +47,7 @@ public class Config {
 	}
 
 	public static int getMaxHP(int lvl, int vit){
-		return 20 + 2 * lvl + (vit * vit)/200 + vit * 2;
+		return 8 + 2 * lvl + (vit * vit)/200 + vit * 2;
 	}
 
 	public static int getDamageDone(int attackerAtk, int attackerPow, int defenderDef, int defenderStam) {
