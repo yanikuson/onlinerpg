@@ -60,9 +60,9 @@ public class ClientListener extends Listener {
 			for (int i = 0; i < f.players.size; i++){
 				if (f.players.get(i).uid == index){
 					f.players.get(i).desiredBounds = ((Packet3SendPosition) o).bounds;
-					f.players.get(i).moving = ((Packet3SendPosition) o).moving;
-					f.players.get(i).facingLeft = ((Packet3SendPosition) o).facingLeft;
-					f.players.get(i).onGround = ((Packet3SendPosition) o).onGround; 
+					f.players.get(i).networkCommand[Player.MOVE_LEFT] = ((Packet3SendPosition) o).MOVE_LEFT;
+					f.players.get(i).networkCommand[Player.MOVE_RIGHT] = ((Packet3SendPosition) o).MOVE_RIGHT;
+					f.players.get(i).networkCommand[Player.MOVE_JUMP] = ((Packet3SendPosition) o).MOVE_JUMP;
 					updated = true;
 				}
 			}

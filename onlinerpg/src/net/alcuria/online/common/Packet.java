@@ -25,9 +25,9 @@ public class Packet {
 	{
 		public int uid;
 		public Rectangle bounds;
-		public boolean facingLeft;
-		public boolean onGround;
-		public boolean moving;
+		public boolean MOVE_LEFT;
+		public boolean MOVE_RIGHT;
+		public boolean MOVE_JUMP;
 
 	}
 	

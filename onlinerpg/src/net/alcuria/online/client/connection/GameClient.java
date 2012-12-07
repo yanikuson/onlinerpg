@@ -3,6 +3,7 @@ package net.alcuria.online.client.connection;
 import java.io.IOException;
 
 import net.alcuria.online.client.Config;
+import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
 
@@ -53,9 +54,12 @@ public class GameClient {
 		Packet3SendPosition pos = new Packet3SendPosition();
 		pos.uid = f.player.uid;
 		pos.bounds = f.player.bounds;
-		pos.facingLeft = f.player.facingLeft;
-		pos.onGround = f.player.onGround;
-		pos.moving = f.player.moving;
+		pos.MOVE_LEFT = f.player.networkCommand[Player.MOVE_LEFT];
+		pos.MOVE_RIGHT = f.player.networkCommand[Player.MOVE_RIGHT];
+		pos.MOVE_JUMP = f.player.networkCommand[Player.MOVE_JUMP];
+		if (f.player.networkCommand[Player.MOVE_JUMP]) {
+			f.player.networkCommand[Player.MOVE_JUMP] = false; // STOP jumping if we are going to send the packet!!
+		}
 		client.sendTCP(pos);
 	}
 	

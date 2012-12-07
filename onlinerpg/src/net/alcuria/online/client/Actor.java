@@ -20,11 +20,11 @@ public class Actor {
 	final float TERMINAL_YVEL = -10f;
 	final float STAB_SPEED = 0.5f;
 
-	final static int MOVE_LEFT = 1;
-	final static int MOVE_RIGHT = 2;
-	final static int MOVE_JUMP = 3;
-	final static int MOVE_ATTACK = 4;
-	final static int MOVE_INSPECT = 5;
+	public final static int MOVE_LEFT = 1;
+	public final static int MOVE_RIGHT = 2;
+	public final static int MOVE_JUMP = 3;
+	public final static int MOVE_ATTACK = 4;
+	public final static int MOVE_INSPECT = 5;
 
 	public float invincibilityPeriod = 1;			// how many seconds the player is invincible after being damaged
 	public float hurtTimer = 0;		
@@ -72,6 +72,7 @@ public class Actor {
 	public int mdef = 0;
 
 	public boolean[] moveCommand;					// used for actor movement types
+	public boolean[] networkCommand;					// used for actor movement types
 	public float[] sensorX, sensorY;				// array of sensor points: 0 = bot left, 1 = top right, 2 = mid left, 3 = mid right, etc.
 	public float oldY;								// saving off the old Y prior to stepping Y to check for one-way platform collisions
 
@@ -109,8 +110,10 @@ public class Actor {
 
 		// create the movement array
 		moveCommand = new boolean[10];
+		networkCommand = new boolean[10];
 		for (int i=0; i<moveCommand.length; i++){
 			moveCommand[i] = false;
+			networkCommand[i] = false;
 		}
 
 		// load sound assets

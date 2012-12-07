@@ -1,5 +1,6 @@
 package net.alcuria.online.server;
 
+import net.alcuria.online.client.Actor;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
@@ -49,9 +50,10 @@ public class ServerListener extends Listener {
 			for (int i = 0; i < sPlayers.size; i++){
 				if (sPlayers.get(i).uid == index){
 					sPlayers.get(i).bounds =  ((Packet3SendPosition) o).bounds;
-					sPlayers.get(i).moving =  ((Packet3SendPosition) o).moving;
-					sPlayers.get(i).facingLeft =  ((Packet3SendPosition) o).facingLeft;
-					sPlayers.get(i).onGround =  ((Packet3SendPosition) o).onGround;
+					sPlayers.get(i).networkCommand[Actor.MOVE_LEFT] =  ((Packet3SendPosition) o).MOVE_LEFT;
+					sPlayers.get(i).networkCommand[Actor.MOVE_RIGHT] =  ((Packet3SendPosition) o).MOVE_RIGHT;
+					sPlayers.get(i).networkCommand[Actor.MOVE_JUMP] =  ((Packet3SendPosition) o).MOVE_JUMP;
+
 
 				}
 			}
@@ -67,9 +69,11 @@ public class ServerListener extends Listener {
 					Packet3SendPosition position = new Packet3SendPosition();
 					position.uid = i;
 					position.bounds = sPlayers.get(i).bounds;
-					position.moving = sPlayers.get(i).moving;
-					position.facingLeft = sPlayers.get(i).facingLeft;
-					position.onGround = sPlayers.get(i).onGround;
+					position.MOVE_LEFT = sPlayers.get(i).networkCommand[Player.MOVE_LEFT];
+					position.MOVE_RIGHT = sPlayers.get(i).networkCommand[Player.MOVE_RIGHT];
+					position.MOVE_JUMP = sPlayers.get(i).networkCommand[Player.MOVE_JUMP];
+
+
 					c.sendTCP(position);
 				}
 			}

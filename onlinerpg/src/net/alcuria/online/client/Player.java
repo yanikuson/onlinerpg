@@ -108,19 +108,23 @@ public class Player extends Actor {
 		if (!animation.castPose && !animation.stabPose && !animation.swingPose && !animation.itemPose){
 			if (inputs.pressing[InputHandler.LEFT]){
 				moveCommand[MOVE_LEFT] = true;
+				networkCommand[MOVE_LEFT] = true;
 			} else {
 				moveCommand[MOVE_LEFT] = false;
-
+				networkCommand[MOVE_LEFT] = false;
 			}
 
 			if (inputs.pressing[InputHandler.RIGHT]){
 				moveCommand[MOVE_RIGHT] = true;
+				networkCommand[MOVE_RIGHT] = true;
 			} else {
 				moveCommand[MOVE_RIGHT] = false;
+				networkCommand[MOVE_RIGHT] = false;
 			}
 
 			if (inputs.typed[InputHandler.JUMP]){
 				moveCommand[MOVE_JUMP] = true;
+				networkCommand[MOVE_JUMP] = true;
 				inputs.typed[InputHandler.JUMP] = false;
 			} else {
 				moveCommand[MOVE_JUMP] = false;
@@ -128,6 +132,10 @@ public class Player extends Actor {
 		} else {
 			moveCommand[MOVE_LEFT] = false;
 			moveCommand[MOVE_RIGHT] = false;
+			networkCommand[MOVE_RIGHT] = false;
+			networkCommand[MOVE_LEFT] = false;
+
+
 			moveCommand[MOVE_JUMP] = false;
 		}
 
@@ -418,32 +426,18 @@ public class Player extends Actor {
 
 
 		// set network player's moving and facing flag
-		if (Math.abs(desiredBounds.x - bounds.x) > 20 || (Math.abs(desiredBounds.x - bounds.x)) < 1){
+		if (Math.abs(desiredBounds.x - bounds.x) > 30){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
 			moving = false;
 			xVel = 0;
 			moveCommand[MOVE_RIGHT] = false;
 			moveCommand[MOVE_LEFT] = false;
-		} else {
-			if (desiredBounds.x - bounds.x < -0.5) {
-				facingLeft = true;
-				xVel = -2;
-				moveCommand[MOVE_LEFT] = true;
-				moveCommand[MOVE_RIGHT] = false;
-				moving = true;
-			} else if (desiredBounds.x - bounds.x > 0.5) {
-				facingLeft = false;
-				xVel = 2;
-				moveCommand[MOVE_RIGHT] = true;
-				moveCommand[MOVE_LEFT] = false;
-				moving = true;
-			} 
-
-			if (jumpSignal){
-				moveCommand[MOVE_JUMP] = true;
-			}
-		}
-
+		} 
+		
+		moveCommand[MOVE_LEFT] = networkCommand[MOVE_LEFT];
+		moveCommand[MOVE_RIGHT] = networkCommand[MOVE_RIGHT];
+		moveCommand[MOVE_JUMP] = networkCommand[MOVE_JUMP];
+		networkCommand[MOVE_JUMP] = false;
 	}
 }
