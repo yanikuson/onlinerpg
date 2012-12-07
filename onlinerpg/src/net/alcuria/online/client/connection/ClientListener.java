@@ -59,15 +59,16 @@ public class ClientListener extends Listener {
 			int index = ((Packet3SendPosition) o).uid;
 			for (int i = 0; i < f.players.size; i++){
 				if (f.players.get(i).uid == index){
-					f.players.get(i).bounds =  ((Packet3SendPosition) o).bounds;
-					f.players.get(i).xVel =  ((Packet3SendPosition) o).xVel;
-					f.players.get(i).yVel =  ((Packet3SendPosition) o).yVel;
+					f.players.get(i).desiredBounds = ((Packet3SendPosition) o).bounds;
+					f.players.get(i).moving = ((Packet3SendPosition) o).moving;
+					f.players.get(i).facingLeft = ((Packet3SendPosition) o).facingLeft;
+					f.players.get(i).onGround = ((Packet3SendPosition) o).onGround; 
 					updated = true;
 				}
 			}
 			// if we iterate thru the whole list and dont update a player element, we can safely add it now
 			if (!updated){
-				System.out.println("[CLIENT] creating new local player element");
+				Log.info("[CLIENT] creating new local player element");
 				Player p = new Player("New", Player.GENDER_MALE, Player.SKIN_DARK, 1, -20, -20, 14, 22, f);
 				p.uid = index;
 				f.players.add(p);

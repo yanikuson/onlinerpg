@@ -16,7 +16,8 @@ public class Config {
 	// gameplay-related
 	public static final float lowHPFlashFrequency = 0.6F;
 	public static final float androidControlsOpacity = 0.8f;
-
+	public static String IP;
+	
 	// monster types -- see Monster.java's constructor
 	public static final int MON_NPC = 0;
 	public static final int MON_SLIME = 1;
@@ -40,6 +41,7 @@ public class Config {
 
 	// is an NPC command in progress
 	public static boolean npcCommand = false;
+
 
 	// all formulae are here so they can be changed with ease without screwing with several references scattered about
 	public static int getNextLvl(int lvl){

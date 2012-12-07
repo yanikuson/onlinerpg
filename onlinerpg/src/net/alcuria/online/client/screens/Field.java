@@ -65,7 +65,7 @@ public class Field implements Screen {
 	private Rectangle viewport;
 
 	public Array<Player> players;
-	
+
 	public Field(Game g, AssetManager assets, int loadedSlot)
 	{
 		this.slot = loadedSlot;
@@ -73,7 +73,7 @@ public class Field implements Screen {
 		this.g = g;
 	}
 	public Field(){
-		
+
 	}
 
 	@Override
@@ -158,6 +158,11 @@ public class Field implements Screen {
 					player.update(map);
 				}
 
+				for (int i = 0; i < players.size; i++){
+					players.get(i).networkUpdate();
+					players.get(i).update(map);
+				}
+
 
 			}
 			player.updateEquips();
@@ -197,20 +202,20 @@ public class Field implements Screen {
 	@Override
 	public void show() {
 
-		
+
 		// create all the particles
 		explosions = new ParticleList("sprites/kill.png",32, 32, 10, 2, false, assets);
 		slices = new ParticleList("sprites/slice.png", 32, 32, 4, 2, false, assets);
 		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
 		freezes = new ParticleList("sprites/ice.png", 24, 24, 21, 2, false, assets);
-		
+
 		notifications = new NotificationList();
 		//notifications.add("Welcome to Heroes of Umbra!");
 
 		player = SaveHandler.loadPlayer(slot, this);
 		inventory = SaveHandler.loadItems(slot);
 		SaveHandler.loadFlags(slot);
-		
+
 		player.animation.assignPlayer(player);
 		player.resetVisualEquips();
 
@@ -250,20 +255,22 @@ public class Field implements Screen {
 		// create a default shop
 		shop = new ShopMenu(this, new ItemManager());
 		shop.active = false;
-		
+
 		player.resetVisualEquips();
-		
+
 		players = new Array<Player>();
-		
+
 		// launch our save thread
 		(new Thread(new SaveThread(this, slot))).start();
 		(new Thread(new ClientThread(this, slot))).start();
 
-		GameServer.f = this;
-		GameServer.start();
-		
+		if (Config.IP.equals("127.0.0.1")){
+			GameServer.f = this;
+			GameServer.start();
+		}
+
 		Transition.fadeIn(1.0f);
-		
+
 	}
 
 	@Override

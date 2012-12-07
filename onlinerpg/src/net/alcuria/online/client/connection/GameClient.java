@@ -2,6 +2,7 @@ package net.alcuria.online.client.connection;
 
 import java.io.IOException;
 
+import net.alcuria.online.client.Config;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
 
@@ -26,7 +27,7 @@ public class GameClient {
 		
 		client.start();
 		try {
-			client.connect(10000, "127.0.0.1", 54555, 54555);			
+			client.connect(10000, Config.IP, 54555, 54555);			
 		} catch (IOException e) {
 			e.printStackTrace();
 			client.stop();
@@ -52,8 +53,9 @@ public class GameClient {
 		Packet3SendPosition pos = new Packet3SendPosition();
 		pos.uid = f.player.uid;
 		pos.bounds = f.player.bounds;
-		pos.xVel = f.player.xVel;
-		pos.yVel = f.player.yVel;
+		pos.facingLeft = f.player.facingLeft;
+		pos.onGround = f.player.onGround;
+		pos.moving = f.player.moving;
 		client.sendTCP(pos);
 	}
 	

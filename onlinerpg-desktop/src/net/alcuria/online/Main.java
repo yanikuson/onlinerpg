@@ -8,6 +8,14 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class Main {
 	public static void main(String[] args) {
+		
+		// command-line ip hack
+		if (args.length > 0){
+			Config.IP = args[0];
+		} else {
+			Config.IP = "127.0.0.1";
+		}
+		
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "onlinerpg";
 		cfg.useGL20 = true;
@@ -25,8 +33,8 @@ public class Main {
 			
 		}
 		
-		cfg.width = Config.WIDTH;
-		cfg.height = Config.HEIGHT;
+		cfg.width = Config.WIDTH*2;
+		cfg.height = Config.HEIGHT*2;
 		
 		new LwjglApplication(new OnlineRPG(), cfg);
 	}

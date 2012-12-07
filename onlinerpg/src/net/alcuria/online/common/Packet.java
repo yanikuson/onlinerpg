@@ -25,8 +25,10 @@ public class Packet {
 	{
 		public int uid;
 		public Rectangle bounds;
-		public float xVel;
-		public float yVel;
+		public boolean facingLeft;
+		public boolean onGround;
+		public boolean moving;
+
 	}
 	
 	// CLIENT sends this to SERVER to request all players positions

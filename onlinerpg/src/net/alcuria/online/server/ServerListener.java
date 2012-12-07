@@ -49,8 +49,10 @@ public class ServerListener extends Listener {
 			for (int i = 0; i < sPlayers.size; i++){
 				if (sPlayers.get(i).uid == index){
 					sPlayers.get(i).bounds =  ((Packet3SendPosition) o).bounds;
-					sPlayers.get(i).xVel =  ((Packet3SendPosition) o).xVel;
-					sPlayers.get(i).yVel =  ((Packet3SendPosition) o).yVel;
+					sPlayers.get(i).moving =  ((Packet3SendPosition) o).moving;
+					sPlayers.get(i).facingLeft =  ((Packet3SendPosition) o).facingLeft;
+					sPlayers.get(i).onGround =  ((Packet3SendPosition) o).onGround;
+
 				}
 			}
 		}
@@ -65,8 +67,9 @@ public class ServerListener extends Listener {
 					Packet3SendPosition position = new Packet3SendPosition();
 					position.uid = i;
 					position.bounds = sPlayers.get(i).bounds;
-					position.xVel = sPlayers.get(i).xVel;
-					position.yVel = sPlayers.get(i).yVel;
+					position.moving = sPlayers.get(i).moving;
+					position.facingLeft = sPlayers.get(i).facingLeft;
+					position.onGround = sPlayers.get(i).onGround;
 					c.sendTCP(position);
 				}
 			}

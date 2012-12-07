@@ -8,6 +8,9 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Player extends Actor {
 
+	public Rectangle desiredBounds;
+	public boolean jumpSignal = false;
+
 	// visual equip static values
 	public static int GENDER_MALE = 0;
 	public static int GENDER_FEMALE = 1;
@@ -40,11 +43,11 @@ public class Player extends Actor {
 	public float knockback;
 
 	public Item weapon, helmet, armor, accessory;
-	
+
 	public int gender;
 	public int skin;
 	public int hair;
-	
+
 	VisualEquip visualHair;
 	VisualEquip visualHelm;
 	VisualEquip visualWeapon;
@@ -56,6 +59,8 @@ public class Player extends Actor {
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
+
+		this.desiredBounds = bounds;
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);
 		this.HP = this.maxHP;
@@ -198,7 +203,7 @@ public class Player extends Actor {
 		animation.castPose = true;
 		cast.playAnimation = true;
 		castSound.play(Config.sfxVol);
-		
+
 		EP--;
 		epCounter = 0;
 
@@ -378,9 +383,9 @@ public class Player extends Actor {
 	// resets all the equips (when a player changes gear)
 	public void resetVisualEquips(){
 
-		
+
 		visualHair = new VisualEquip("sprites/equips/hair/" + (hair+1) + ".png", f.assets);
-		
+
 		visualWeapon.changeTexture(weapon.visualName);
 		visualArmor.changeTexture(armor.visualName);
 
@@ -406,5 +411,39 @@ public class Player extends Actor {
 				EP++;
 			}
 		}
+	}
+
+	public void networkUpdate() {
+
+
+
+		// set network player's moving and facing flag
+		if (Math.abs(desiredBounds.x - bounds.x) > 20 || (Math.abs(desiredBounds.x - bounds.x)) < 1){
+			bounds.x = desiredBounds.x;
+			bounds.y = desiredBounds.y;
+			moving = false;
+			xVel = 0;
+			moveCommand[MOVE_RIGHT] = false;
+			moveCommand[MOVE_LEFT] = false;
+		} else {
+			if (desiredBounds.x - bounds.x < -0.5) {
+				facingLeft = true;
+				xVel = -2;
+				moveCommand[MOVE_LEFT] = true;
+				moveCommand[MOVE_RIGHT] = false;
+				moving = true;
+			} else if (desiredBounds.x - bounds.x > 0.5) {
+				facingLeft = false;
+				xVel = 2;
+				moveCommand[MOVE_RIGHT] = true;
+				moveCommand[MOVE_LEFT] = false;
+				moving = true;
+			} 
+
+			if (jumpSignal){
+				moveCommand[MOVE_JUMP] = true;
+			}
+		}
+
 	}
 }
