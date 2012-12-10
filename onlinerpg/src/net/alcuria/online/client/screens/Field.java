@@ -19,7 +19,7 @@ import net.alcuria.online.client.ui.HUD;
 import net.alcuria.online.client.ui.Message;
 import net.alcuria.online.client.ui.Menu;
 import net.alcuria.online.client.ui.ShopMenu;
-import net.alcuria.online.server.GameServer;
+import net.alcuria.online.server.ServerThread;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -92,6 +92,7 @@ public class Field implements Screen {
 
 			map.render(batch, true, cameraManager);
 			for (int i = 0; i < players.size; i++){
+				// TODO: only render if players are on same map
 				players.get(i).render(batch);
 			}
 			player.render(batch);
@@ -161,6 +162,7 @@ public class Field implements Screen {
 				for (int i = 0; i < players.size; i++){
 					players.get(i).networkUpdate();
 					players.get(i).update(map);
+					players.get(i).updateEquips();
 				}
 
 
@@ -262,12 +264,9 @@ public class Field implements Screen {
 
 		// launch our save thread
 		(new Thread(new SaveThread(this, slot))).start();
-		(new Thread(new ClientThread(this, slot))).start();
-
-		if (Config.IP.equals("127.0.0.1")){
-			GameServer.f = this;
-			GameServer.start();
-		}
+		(new Thread(new ClientThread(this))).start();
+		(new Thread(new ServerThread(this))).start();
+		
 
 		Transition.fadeIn(1.0f);
 

@@ -1,5 +1,6 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.connection.GameClient;
 import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.Gdx;
@@ -231,7 +232,10 @@ public class Map {
 	public void create(String mapfile){
 
 		f.player.currentMap = mapfile;
-
+		if (GameClient.client != null && GameClient.client.isConnected()){
+			GameClient.sendMapChange(f);
+		}
+		
 		// read in the map file into an array of strings
 		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
 		String fileContent = handle.readString();

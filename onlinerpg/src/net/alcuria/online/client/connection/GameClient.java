@@ -35,9 +35,6 @@ public class GameClient {
 		}
 	}
 	
-	
-
-	
 	private static void register(){
 		
 		Kryo kryo = client.getKryo();
@@ -47,8 +44,19 @@ public class GameClient {
 		kryo.register(Packet2Message.class);
 		kryo.register(Packet3SendPosition.class);
 		kryo.register(Packet4RequestPositions.class);
+		kryo.register(Packet5SendMap.class);
 	}
 
+	public static void sendMapChange(Field f){
+		
+		Packet5SendMap map = new Packet5SendMap();
+		map.uid = f.player.uid;
+		map.currentMap = f.player.currentMap;
+		
+		client.sendTCP(map);
+		
+	}
+	
 	public static void sendPositionUpdate(Field f){
 		
 		Packet3SendPosition pos = new Packet3SendPosition();
@@ -57,15 +65,27 @@ public class GameClient {
 		pos.MOVE_LEFT = f.player.networkCommand[Player.MOVE_LEFT];
 		pos.MOVE_RIGHT = f.player.networkCommand[Player.MOVE_RIGHT];
 		pos.MOVE_JUMP = f.player.networkCommand[Player.MOVE_JUMP];
+		pos.MOVE_ATTACK = f.player.networkCommand[Player.MOVE_ATTACK];
 		if (f.player.networkCommand[Player.MOVE_JUMP]) {
 			f.player.networkCommand[Player.MOVE_JUMP] = false; // STOP jumping if we are going to send the packet!!
 		}
+		if (f.player.networkCommand[Player.MOVE_ATTACK]) {
+			f.player.networkCommand[Player.MOVE_ATTACK] = false; // STOP jumping if we are going to send the packet!!
+		}
+		
+		pos.wep = (byte) f.player.weapon.id;
+		pos.armor = (byte) f.player.armor.id;
+		pos.helm = (byte) f.player.helmet.id;
+		
+		pos.currentMap = f.player.currentMap;
+		
 		client.sendTCP(pos);
 	}
 	
 	public static void requestPositions(Field f) {
 		Packet4RequestPositions req = new Packet4RequestPositions();
 		req.uid = f.player.uid;
+		req.currentMap = f.player.currentMap;
 		client.sendTCP(req);
 		
 	}

@@ -1,6 +1,7 @@
 package net.alcuria.online.server;
 
 import net.alcuria.online.client.Actor;
+import net.alcuria.online.client.Item;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
@@ -13,7 +14,7 @@ import com.esotericsoftware.minlog.Log;
 public class ServerListener extends Listener {
 	
 	static Field f;
-	static int nextID = 0;
+	static byte nextID = 0;
 	static Array<Player> sPlayers;
 	
 	public void connected(Connection arg0) {
@@ -35,8 +36,19 @@ public class ServerListener extends Listener {
 			// create a server copy of the player that connected
 			Player p = new Player("Name", Player.GENDER_MALE, Player.SKIN_PALE, 1, -20, -20, 14, 22, f);
 			p.uid = loginAnswer.uid;
+			p.skin = ((Packet0LoginRequest) o).skin;
+			p.hair = ((Packet0LoginRequest) o).hair;
+			p.gender = ((Packet0LoginRequest) o).gender;
+
+			p.weapon = new Item(((Packet0LoginRequest) o).wep);
+			p.armor = new Item(((Packet0LoginRequest) o).armor);
+			p.accessory = new Item(((Packet0LoginRequest) o).acc);
+			p.helmet = new Item(((Packet0LoginRequest) o).helm);
+			
+			p.currentMap = ((Packet0LoginRequest) o).currentMap;
+
 			sPlayers.add(p);
-			System.out.println("[SERVER] creating player object for newly-connected client");
+			Log.info("[SERVER] creating player object for newly-connected client. Has skin: " + p.skin);
 		}
 		
 		if (o instanceof Packet2Message) {
@@ -53,7 +65,21 @@ public class ServerListener extends Listener {
 					sPlayers.get(i).networkCommand[Actor.MOVE_LEFT] =  ((Packet3SendPosition) o).MOVE_LEFT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_RIGHT] =  ((Packet3SendPosition) o).MOVE_RIGHT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_JUMP] =  ((Packet3SendPosition) o).MOVE_JUMP;
+					sPlayers.get(i).networkCommand[Actor.MOVE_ATTACK] =  ((Packet3SendPosition) o).MOVE_ATTACK;
+					
+					if(sPlayers.get(i).weapon.id != ((Packet3SendPosition) o).wep){
+						sPlayers.get(i).weapon = new Item(((Packet3SendPosition) o).wep);
+					}
+					if(sPlayers.get(i).armor.id != ((Packet3SendPosition) o).armor){
+						sPlayers.get(i).armor = new Item(((Packet3SendPosition) o).armor);
+					}
+					if(sPlayers.get(i).helmet.id != ((Packet3SendPosition) o).helm){
+						sPlayers.get(i).helmet = new Item(((Packet3SendPosition) o).helm);
+					}
+					
+					sPlayers.get(i).currentMap =  ((Packet3SendPosition) o).currentMap;
 
+					break;
 
 				}
 			}
@@ -62,26 +88,43 @@ public class ServerListener extends Listener {
 		// Server gets a request for all relevant positions. Send back to client!
 		if (o instanceof Packet4RequestPositions) {
 			int requestersUid = ((Packet4RequestPositions) o).uid;
+			String requestersMap = ((Packet4RequestPositions) o).currentMap;
 			for (int i = 0; i < sPlayers.size; i++){
 				
-				// only send this position if the uid isnt the requested users uid
-				if (sPlayers.get(i).uid != requestersUid){
+				// only send this position if the uid isnt the requested users uid & maps are same
+				if (sPlayers.get(i).uid != requestersUid && sPlayers.get(i).currentMap != null && sPlayers.get(i).currentMap.equals(requestersMap)){
 					Packet3SendPosition position = new Packet3SendPosition();
-					position.uid = i;
+					position.uid = (byte) i;
 					position.bounds = sPlayers.get(i).bounds;
 					position.MOVE_LEFT = sPlayers.get(i).networkCommand[Player.MOVE_LEFT];
 					position.MOVE_RIGHT = sPlayers.get(i).networkCommand[Player.MOVE_RIGHT];
 					position.MOVE_JUMP = sPlayers.get(i).networkCommand[Player.MOVE_JUMP];
+					position.MOVE_ATTACK = sPlayers.get(i).networkCommand[Player.MOVE_ATTACK];
 
+					position.wep = (byte) sPlayers.get(i).weapon.id;
+					position.armor = (byte) sPlayers.get(i).armor.id;
+					position.helm = (byte) sPlayers.get(i).helmet.id;
 
 					c.sendTCP(position);
 				}
 			}
 		}
 		
+		// server receives a packet containing a map change. update server's player list element's current map
+		if (o instanceof Packet5SendMap) {
+			Log.info("server received map change request \"" + ((Packet5SendMap) o).currentMap + "\" from client.");
+
+			int index = ((Packet5SendMap) o).uid;
+			for (int i = 0; i < sPlayers.size; i++){
+				if (sPlayers.get(i).uid == index){
+					sPlayers.get(i).currentMap =  ((Packet5SendMap) o).currentMap;
+					break;
+				}
+			}
+		}
 	}
 
-	private int getNextInt() {
+	private byte getNextInt() {
 		return nextID++;
 	}
 

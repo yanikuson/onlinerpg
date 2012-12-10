@@ -12,11 +12,11 @@ public class Player extends Actor {
 	public boolean jumpSignal = false;
 
 	// visual equip static values
-	public static int GENDER_MALE = 0;
-	public static int GENDER_FEMALE = 1;
-	public static int SKIN_PALE = 0;
-	public static int SKIN_TAN = 1;
-	public static int SKIN_DARK = 2;
+	public static byte GENDER_MALE = 0;
+	public static byte GENDER_FEMALE = 1;
+	public static byte SKIN_PALE = 0;
+	public static byte SKIN_TAN = 1;
+	public static byte SKIN_DARK = 2;
 
 	// a counter to calculate how long the player is invincible
 	public float swingTimer = 0;						// time since last swing
@@ -44,9 +44,9 @@ public class Player extends Actor {
 
 	public Item weapon, helmet, armor, accessory;
 
-	public int gender;
-	public int skin;
-	public int hair;
+	public byte gender;
+	public byte skin;
+	public byte hair;
 
 	VisualEquip visualHair;
 	VisualEquip visualHelm;
@@ -55,11 +55,11 @@ public class Player extends Actor {
 
 	public float epCounter = 0;
 	public float epDelay = 4;
-	public int uid;
+	public byte uid;
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
-
+		System.out.println("skin for new player obj = " + skin);
 		this.desiredBounds = bounds;
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);
@@ -142,6 +142,7 @@ public class Player extends Actor {
 		// check if the player is trying to attack
 		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod && !animation.castPose && !animation.itemPose){
 			moveCommand[MOVE_ATTACK] = true;
+			networkCommand[MOVE_ATTACK] = true;
 			inputs.typed[InputHandler.ATTACK] = false;
 			startSwing();
 			if (this.animation.stabPose){
@@ -153,6 +154,8 @@ public class Player extends Actor {
 			moveCommand[MOVE_ATTACK] = false;
 			swingTimer += Gdx.graphics.getDeltaTime();
 		}
+
+		updateSwing();
 
 		// check if the player pressed a skill button
 		if (!animation.itemPose && !animation.swingPose && !animation.stabPose && !animation.castPose && !skills.visible && EP > 0){
@@ -166,29 +169,6 @@ public class Player extends Actor {
 				inputs.typed[InputHandler.SKILL_3] = false;
 				startSkill(2);
 			}
-		}
-
-		// update the swing bounds (collision rectangle) while the animation is being played.
-		if (swing.playAnimation){
-			swingBounds.x += xVel;
-			if (facingLeft) {
-				swing.update(bounds.x - 45, bounds.y - 20, true);
-				swingBounds.x += -230 * Gdx.graphics.getDeltaTime();
-			} else {
-				swing.update(bounds.x - 25, bounds.y - 20, true);
-				swingBounds.x += 230 * Gdx.graphics.getDeltaTime();
-			}
-			swingBounds.y = bounds.y;
-		}
-		// check to stop pushing out the collision swing rectangle thing
-		if (this.animation.stabPose && swingTimer > -0.3f){
-			swing.row = 1;
-			swingBounds.x = - 100;
-			swingBounds.y = - 100;
-		} else if (swingTimer > 0.2f) {
-			swing.row = 0;
-			swingBounds.x = - 100;
-			swingBounds.y = - 100;
 		}
 
 		// update our player-specific particle effects
@@ -401,6 +381,7 @@ public class Player extends Actor {
 
 	}
 
+	// updates the sub equips position, etc
 	public void updateEquips() {
 
 		// update the visual equips
@@ -424,20 +405,60 @@ public class Player extends Actor {
 	public void networkUpdate() {
 
 
-
 		// set network player's moving and facing flag
-		if (Math.abs(desiredBounds.x - bounds.x) > 30){
+		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 20){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
-			moving = false;
-			xVel = 0;
-			moveCommand[MOVE_RIGHT] = false;
-			moveCommand[MOVE_LEFT] = false;
 		} 
-		
+
 		moveCommand[MOVE_LEFT] = networkCommand[MOVE_LEFT];
 		moveCommand[MOVE_RIGHT] = networkCommand[MOVE_RIGHT];
 		moveCommand[MOVE_JUMP] = networkCommand[MOVE_JUMP];
 		networkCommand[MOVE_JUMP] = false;
+
+		// check if the player is trying to attack
+		if (networkCommand[MOVE_ATTACK] && swingTimer >= swingPeriod && !animation.castPose && !animation.itemPose){
+			moveCommand[MOVE_ATTACK] = true;
+			networkCommand[MOVE_ATTACK] = true;
+			startSwing();
+			if (this.animation.stabPose){
+				swingTimer = -0.5f;
+			} else {
+				swingTimer = 0;
+			}			
+		} else {
+			networkCommand[MOVE_ATTACK] = false;
+			moveCommand[MOVE_ATTACK] = false;
+			swingTimer += Gdx.graphics.getDeltaTime();
+		}
+
+		updateSwing();
+
+	}
+
+	private void updateSwing() {
+		// update the swing bounds (collision rectangle) while the animation is being played.
+		if (swing.playAnimation){
+			swingBounds.x += xVel;
+			if (facingLeft) {
+				swing.update(bounds.x - 45, bounds.y - 20, true);
+				swingBounds.x += -230 * Gdx.graphics.getDeltaTime();
+			} else {
+				swing.update(bounds.x - 25, bounds.y - 20, true);
+				swingBounds.x += 230 * Gdx.graphics.getDeltaTime();
+			}
+			swingBounds.y = bounds.y;
+		}
+		// check to stop pushing out the collision swing rectangle thing
+		if (this.animation.stabPose && swingTimer > -0.3f){
+			swing.row = 1;
+			swingBounds.x = - 100;
+			swingBounds.y = - 100;
+		} else if (swingTimer > 0.2f) {
+			swing.row = 0;
+			swingBounds.x = - 100;
+			swingBounds.y = - 100;
+		}
+
 	}
 }

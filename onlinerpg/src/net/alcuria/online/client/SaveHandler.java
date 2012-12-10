@@ -138,9 +138,9 @@ public class SaveHandler {
 		p.bounds.x = Float.parseFloat(subdata[20]) * 16;
 		p.bounds.y = Float.parseFloat(subdata[21]) * 16;
 
-		p.gender = Integer.parseInt(subdata[22]);
-		p.skin = Integer.parseInt(subdata[23]);
-		p.hair = Integer.parseInt(subdata[24]);
+		p.gender = Byte.parseByte(subdata[22]);
+		p.skin = Byte.parseByte(subdata[23]);
+		p.hair = Byte.parseByte(subdata[24]);
 
 		// ---------
 

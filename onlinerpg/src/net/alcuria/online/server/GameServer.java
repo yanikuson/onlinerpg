@@ -30,11 +30,16 @@ public class GameServer {
 		try {
 			server.bind(54555, 54555);
 			server.start();
+
 		} catch (IOException e) {
 			Log.error("error binding server to port");
 			server.stop();
 		}
 		
+	}
+	
+	public static void update() {
+		// TODO: update the server every frame, do things like update monsters etc
 	}
 	
 
@@ -46,6 +51,8 @@ public class GameServer {
 		kryo.register(Packet2Message.class);
 		kryo.register(Packet3SendPosition.class);
 		kryo.register(Packet4RequestPositions.class);
+		kryo.register(Packet5SendMap.class);
+
 	}
 	
 	public static void main(String[] args){

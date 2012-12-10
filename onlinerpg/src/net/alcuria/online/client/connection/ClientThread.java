@@ -5,11 +5,11 @@ import net.alcuria.online.client.screens.Field;
 public class ClientThread implements Runnable{
 
 	private Field f;
-	private int slot;
 
-	public ClientThread(Field f, int slot){
+
+	public ClientThread(Field f){
 		this.f = f;
-		this.slot = slot;
+
 	}
 
 	public void run() {
