@@ -160,11 +160,15 @@ public class Field implements Screen {
 				}
 
 				for (int i = 0; i < players.size; i++){
-					players.get(i).networkUpdate();
-					players.get(i).update(map);
-					players.get(i).updateEquips();
+					players.get(i).lastPing++;
+					if (players.get(i).lastPing > 30){
+						players.removeIndex(i);
+					} else {
+						players.get(i).networkUpdate();
+						players.get(i).update(map);
+						players.get(i).updateEquips();
+					}
 				}
-
 
 			}
 			player.updateEquips();
@@ -266,7 +270,7 @@ public class Field implements Screen {
 		(new Thread(new SaveThread(this, slot))).start();
 		(new Thread(new ClientThread(this))).start();
 		(new Thread(new ServerThread(this))).start();
-		
+
 
 		Transition.fadeIn(1.0f);
 

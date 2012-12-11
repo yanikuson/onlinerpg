@@ -11,20 +11,33 @@ public class Monster extends Actor {
 	float commandTimer = 0;
 	float commandFrequency = 2;
 	int rndCommand = 0;
-	int expVal;						// value awarded for killing
-	
-	int money;						// money the enemy has
-	Item commonDrop;				// item the enemy drops
-	Item rareDrop;					// rare item the enemy drops
-	
-	int type=0;						// type of monster as defined in Config.java (e.g., slime = 1)
-	float dropRoll;					// dice roll for enemy lootz
-	
+	int expVal;								// value awarded for killing
+
+	int money;								// money the enemy has
+	Item commonDrop;						// item the enemy drops
+	Item rareDrop;							// rare item the enemy drops
+
+	int type=0;								// type of monster as defined in Config.java (e.g., slime = 1)
+	float dropRoll;							// dice roll for enemy lootz
+
 	public Projectile projectile;			// monster's projectile
 
-	public Monster(String filename, int width, int height, int type, Field f) {
-		super(filename, -60, -60, width, height, f);
+	// client monster constructor
+	public Monster(int type, int width, int height, Field f) {
+		super("sprites/monsters/" + type + ".png", -60, -60, width, height, f);
 
+		setStats(type);
+
+	}
+	
+	// server monster construct
+	public Monster(int type){
+		super("sprites/equips/empty.png", -60, -60, 0, 0, null);
+		
+		setStats(type);
+	}
+
+	public void setStats(int type){
 		// monster-specific updates
 		switch (type){
 		case Config.MON_EYE:
@@ -50,7 +63,7 @@ public class Monster extends Actor {
 			this.commonDrop = new Item(Item.ID_POTION);
 			this.rareDrop = new Item(Item.ID_LEATHER_BOOTS);
 			this.money = 20;
-			
+
 			break;
 
 		case Config.MON_SLIME:
@@ -70,13 +83,13 @@ public class Monster extends Actor {
 			this.walkSpeed = 50;
 			this.jumpPower = 80;
 			this.commandFrequency = 1;
-			
+
 			this.commonDrop = new Item(Item.ID_SPEED_PILL);
 			this.rareDrop = new Item(Item.ID_LEATHER_VEST);
 			this.money = 20;
 
 			break;
-			
+
 		case Config.MON_CRAB:
 
 			this.maxHP = 10;
@@ -101,7 +114,7 @@ public class Monster extends Actor {
 		default:
 
 		}
-
+		
 		this.invincibilityPeriod = 0.3f;
 		this.type = type;
 		this.HP = maxHP;
@@ -111,6 +124,10 @@ public class Monster extends Actor {
 		super.render(batch);
 	}
 
+	public void serverUpdate() {
+		
+	}
+	
 	// monster AI, since it will probably be big, is going here
 	public void command(Map map, Player player){
 
@@ -124,7 +141,7 @@ public class Monster extends Actor {
 			if (commandTimer > commandFrequency){
 
 				clearCommands();
-				
+
 				// determine WHICH TYPE OF ENEMY
 				switch (type) {
 				case Config.MON_EYE:
@@ -230,15 +247,15 @@ public class Monster extends Actor {
 				damage *= 1.3;
 			} 			
 			yVel = player.knockback/50;
-			
+
 			// do all animations
 			flash(1, 0, 0, 1, 5);
 			battleEffect.start(bounds.x + (bounds.width - battleEffect.width)/2, bounds.y - bounds.height, !player.facingLeft);
-			
+
 			damageList.start(damage, bounds.x, bounds.y, player.facingLeft, Damage.TYPE_DAMAGE);
 			hurtTimer = 0;
 			hurtEnemy.play(Config.sfxVol);
-			
+
 			// handle hp reduction
 			HP -= damage;
 			if (HP <= 0){
@@ -260,7 +277,7 @@ public class Monster extends Actor {
 				if (dropRoll < 0.01f){
 					drops.add(this, rareDrop);
 				}
-				
+
 			}
 		}
 
@@ -270,7 +287,7 @@ public class Monster extends Actor {
 
 	// spawns a monster at location TILE COORDS X, Y
 	public void spawn(int x, int y) {
-		
+
 		timeSinceSpawn = 0;
 		bounds.x = x * Config.TILE_WIDTH;
 		bounds.y = y * Config.TILE_WIDTH;
@@ -281,5 +298,7 @@ public class Monster extends Actor {
 		flash(1, 0, 1, 0, 3);
 
 	}
+
+
 
 }

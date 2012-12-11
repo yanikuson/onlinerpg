@@ -85,8 +85,11 @@ public class Actor {
 	public float curFlash = 0;						// current flash time
 	public float[] targetRGBA = {1f,1f,1f,1f};
 	public float[] currentRGBA = {1f,1f,1f,1f};
-
+	
 	public Actor(String filename, int x, int y, int width, int height, Field f){
+		if (f == null){
+			return;
+		}
 		this.f = f;
 				
 		celWidth = width;

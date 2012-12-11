@@ -16,13 +16,13 @@ public class GameServer {
 
 	private static Server server;
 	public static Field f;
-	
+
 	public static void start() {
-		
+
 		// here we initialize all objects the server needs to sync
 		ServerListener.f = f;
-		ServerListener.sPlayers = new Array<Player>(false, 10);
-		
+		ServerListener.init();
+
 		// now we start up the server
 		server = new Server();
 		registerPackets();
@@ -35,13 +35,15 @@ public class GameServer {
 			Log.error("error binding server to port");
 			server.stop();
 		}
-		
+
 	}
-	
+
 	public static void update() {
-		// TODO: update the server every frame, do things like update monsters etc
+
+		ServerListener.update();
+
 	}
-	
+
 
 	private static void registerPackets(){
 		Kryo kryo = server.getKryo();
@@ -54,11 +56,11 @@ public class GameServer {
 		kryo.register(Packet5SendMap.class);
 
 	}
-	
+
 	public static void main(String[] args){
 
 		Log.set(Log.LEVEL_DEBUG);
 		start();
-		
+
 	}
 }

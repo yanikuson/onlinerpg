@@ -2,21 +2,66 @@ package net.alcuria.online.server;
 
 import net.alcuria.online.client.Actor;
 import net.alcuria.online.client.Item;
+import net.alcuria.online.client.MonsterSpawner;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.minlog.Log;
 
+
 public class ServerListener extends Listener {
-	
+
 	static Field f;
 	static byte nextID = 0;
 	static Array<Player> sPlayers;
-	
+	static ObjectMap<String, ServerMonsters> sMonsters;
+
+	public static void init() {
+
+		sPlayers = new Array<Player>(false, 10);
+		sMonsters = new ObjectMap<String, ServerMonsters>();
+
+	}
+
+	public static void update() {
+				
+		// update monsters
+		if (sPlayers != null) {
+			// first set all the updated flags to false
+			for (int i = 0; i < sPlayers.size; i++ ){
+				if (sMonsters.containsKey(sPlayers.get(i).currentMap)){
+					sMonsters.get(sPlayers.get(i).currentMap).updated = false;
+				} else {
+					// add a new elem to sMonsters hash
+					Log.info("[SERVER] adding new spawner elem");
+					ServerMonsters spawner = new ServerMonsters();
+					sMonsters.put(sPlayers.get(i).currentMap, spawner);
+				}
+				
+				// check for a disconnect
+				sPlayers.get(i).lastPing++;
+				if (sPlayers.get(i).lastPing > 30) {
+					sPlayers.get(i).connected = false;
+					Log.info("[SERVER] Player has disconnected: " + sPlayers.get(i).name);
+					sPlayers.removeIndex(i);
+				}
+			}
+			
+			// now update
+			for (int i = 0; i < sPlayers.size; i++ ){		
+				sMonsters.get(sPlayers.get(i).currentMap).update(sPlayers.get(i).currentMap);
+			}
+		}
+
+	}
+
+
 	public void connected(Connection arg0) {
 		Log.info("[SERVER] Client has connected.");
 	}
@@ -26,13 +71,13 @@ public class ServerListener extends Listener {
 	}
 
 	public void received(Connection c, Object o) {
-		
+
 		if (o instanceof Packet0LoginRequest){
 			Packet1LoginAnswer loginAnswer = new Packet1LoginAnswer();
 			loginAnswer.accepted = true;
 			loginAnswer.uid = getNextInt();
 			c.sendTCP(loginAnswer);
-			
+
 			// create a server copy of the player that connected
 			Player p = new Player("Name", Player.GENDER_MALE, Player.SKIN_PALE, 1, -20, -20, 14, 22, f);
 			p.uid = loginAnswer.uid;
@@ -44,18 +89,18 @@ public class ServerListener extends Listener {
 			p.armor = new Item(((Packet0LoginRequest) o).armor);
 			p.accessory = new Item(((Packet0LoginRequest) o).acc);
 			p.helmet = new Item(((Packet0LoginRequest) o).helm);
-			
+
 			p.currentMap = ((Packet0LoginRequest) o).currentMap;
 
 			sPlayers.add(p);
-			Log.info("[SERVER] creating player object for newly-connected client. Has skin: " + p.skin);
+			Log.info("[SERVER] creating player object for newly-connected client.");
 		}
-		
+
 		if (o instanceof Packet2Message) {
 			String message = ((Packet2Message) o).message;
 			Log.info(message);
 		}
-		
+
 		// server receives a position update from the client... we need to update the SERVER players array
 		if (o instanceof Packet3SendPosition) {
 			int index = ((Packet3SendPosition) o).uid;
@@ -66,7 +111,7 @@ public class ServerListener extends Listener {
 					sPlayers.get(i).networkCommand[Actor.MOVE_RIGHT] =  ((Packet3SendPosition) o).MOVE_RIGHT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_JUMP] =  ((Packet3SendPosition) o).MOVE_JUMP;
 					sPlayers.get(i).networkCommand[Actor.MOVE_ATTACK] =  ((Packet3SendPosition) o).MOVE_ATTACK;
-					
+
 					if(sPlayers.get(i).weapon.id != ((Packet3SendPosition) o).wep){
 						sPlayers.get(i).weapon = new Item(((Packet3SendPosition) o).wep);
 					}
@@ -76,21 +121,23 @@ public class ServerListener extends Listener {
 					if(sPlayers.get(i).helmet.id != ((Packet3SendPosition) o).helm){
 						sPlayers.get(i).helmet = new Item(((Packet3SendPosition) o).helm);
 					}
-					
+
 					sPlayers.get(i).currentMap =  ((Packet3SendPosition) o).currentMap;
+					sPlayers.get(i).lastPing = 0;
+
 
 					break;
 
 				}
 			}
 		}
-		
+
 		// Server gets a request for all relevant positions. Send back to client!
 		if (o instanceof Packet4RequestPositions) {
 			int requestersUid = ((Packet4RequestPositions) o).uid;
 			String requestersMap = ((Packet4RequestPositions) o).currentMap;
 			for (int i = 0; i < sPlayers.size; i++){
-				
+
 				// only send this position if the uid isnt the requested users uid & maps are same
 				if (sPlayers.get(i).uid != requestersUid && sPlayers.get(i).currentMap != null && sPlayers.get(i).currentMap.equals(requestersMap)){
 					Packet3SendPosition position = new Packet3SendPosition();
@@ -105,11 +152,14 @@ public class ServerListener extends Listener {
 					position.armor = (byte) sPlayers.get(i).armor.id;
 					position.helm = (byte) sPlayers.get(i).helmet.id;
 
+					//position.currentMap = sPlayers.get(i).currentMap;
+					position.connected = sPlayers.get(i).connected;
+					
 					c.sendTCP(position);
 				}
 			}
 		}
-		
+
 		// server receives a packet containing a map change. update server's player list element's current map
 		if (o instanceof Packet5SendMap) {
 			Log.info("server received map change request \"" + ((Packet5SendMap) o).currentMap + "\" from client.");
@@ -127,5 +177,6 @@ public class ServerListener extends Listener {
 	private byte getNextInt() {
 		return nextID++;
 	}
+
 
 }

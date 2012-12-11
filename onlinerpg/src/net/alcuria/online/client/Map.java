@@ -333,15 +333,15 @@ public class Map {
 				if (mapfile.equals("beachroad")){
 
 					// BEACH
-					this.spawner.addMonster(new Monster("sprites/monsters/crab.png", 16, 16, Config.MON_CRAB, f));
+					this.spawner.addMonster(new Monster(Config.MON_CRAB, 16, 16, f));
 
 				} else {
 
 					// DEFAULT SLIMES/EYES
 					if (Math.random() > 0.3){
-						this.spawner.addMonster(new Monster("sprites/monsters/slime.png", 14, 16, Config.MON_SLIME, f));
+						this.spawner.addMonster(new Monster(Config.MON_SLIME, 14, 16, f));
 					} else {
-						this.spawner.addMonster(new Monster("sprites/monsters/eye.png", 14, 18, Config.MON_EYE, f));
+						this.spawner.addMonster(new Monster(Config.MON_EYE, 14, 18, f));
 					}
 				}
 			}

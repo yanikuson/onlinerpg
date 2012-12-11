@@ -144,9 +144,9 @@ public class Loading implements Screen
 		assets.load("sprites/platform.png", Texture.class);
 		
 		// MONSTERS
-		assets.load("sprites/monsters/slime.png", Texture.class);
-		assets.load("sprites/monsters/eye.png", Texture.class);
-		assets.load("sprites/monsters/crab.png", Texture.class);
+		assets.load("sprites/monsters/1.png", Texture.class);
+		assets.load("sprites/monsters/2.png", Texture.class);
+		assets.load("sprites/monsters/3.png", Texture.class);
 		
 		// EQUIPS
 		assets.load("sprites/equips/hair/1.png", Texture.class);

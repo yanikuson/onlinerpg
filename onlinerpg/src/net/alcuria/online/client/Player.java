@@ -55,7 +55,11 @@ public class Player extends Actor {
 
 	public float epCounter = 0;
 	public float epDelay = 4;
+	
+	// for networking
 	public byte uid;
+	public byte lastPing = 0;
+	public boolean connected = false;
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
@@ -104,7 +108,7 @@ public class Player extends Actor {
 
 	// the player's command must override the default command method, because it needs to poll the inputhandler to do proper (read: not random) input
 	public void command(InputHandler inputs){
-
+		
 		if (!animation.castPose && !animation.stabPose && !animation.swingPose && !animation.itemPose){
 			if (inputs.pressing[InputHandler.LEFT]){
 				moveCommand[MOVE_LEFT] = true;

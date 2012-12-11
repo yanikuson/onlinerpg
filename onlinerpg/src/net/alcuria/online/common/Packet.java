@@ -46,6 +46,7 @@ public class Packet {
 		public byte helm;
 		
 		public String currentMap;
+		public boolean connected;
 
 	}
 	

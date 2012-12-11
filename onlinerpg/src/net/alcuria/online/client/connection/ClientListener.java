@@ -39,7 +39,6 @@ public class ClientListener extends Listener {
 		req.skin = f.player.skin;
 		req.gender = f.player.gender;
 
-		System.out.println("login request has skin: " + req.skin);
 		client.sendTCP(req);
 	}
 
@@ -58,7 +57,8 @@ public class ClientListener extends Listener {
 
 				// assign the client a unique user ID
 				f.player.uid = ((Packet1LoginAnswer) o).uid;
-
+				f.player.connected = true;
+				
 				// send off a response to the server... perhaps a player obj
 				Packet2Message mpacket = new Packet2Message();
 				mpacket.message = "thanks for assigning me id " + f.player.uid;
@@ -99,7 +99,9 @@ public class ClientListener extends Listener {
 					}
 
 					f.players.get(i).currentMap = ((Packet3SendPosition) o).currentMap;
-
+					f.players.get(i).connected = ((Packet3SendPosition) o).connected;
+					f.players.get(i).lastPing = 0;
+					
 					updated = true;
 					break;
 				}
