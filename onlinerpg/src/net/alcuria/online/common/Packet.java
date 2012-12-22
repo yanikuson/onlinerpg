@@ -63,5 +63,17 @@ public class Packet {
 		public byte uid;
 		public String currentMap;
 	}
+	
+	// Server sends MANY of these to client when a monster is visible!
+	public static class Packet6SendMonsterPosition
+	{
+		public byte id;
+		public Rectangle bounds;
+		public boolean MOVE_LEFT;
+		public boolean MOVE_RIGHT;
+		public boolean MOVE_JUMP;
+		public boolean MOVE_ATTACK;
+		public short HP;
+	}
 
 }

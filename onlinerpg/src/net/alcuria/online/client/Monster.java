@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Monster extends Actor {
 
-	float timeSinceSpawn = 0;
+	public float timeSinceSpawn = 0;
 	float commandTimer = 0;
 	float commandFrequency = 2;
 	int rndCommand = 0;
@@ -123,19 +123,15 @@ public class Monster extends Actor {
 	public void render(SpriteBatch batch){
 		super.render(batch);
 	}
-
-	public void serverUpdate() {
-		
-	}
 	
 	// monster AI, since it will probably be big, is going here
-	public void command(Map map, Player player){
+	public void command(){
 
 		if (HP > 0 && effects.timer[StatusEffects.FREEZE] <= 0){
 
 			// UPDATE AI or something here
-			commandTimer += Gdx.graphics.getDeltaTime();
-			timeSinceSpawn += Gdx.graphics.getDeltaTime();
+			commandTimer += Gdx.graphics.getDeltaTime() * 100;
+			timeSinceSpawn += Gdx.graphics.getDeltaTime() * 100;
 
 			// check if we can issue a new command
 			if (commandTimer > commandFrequency){
@@ -146,14 +142,10 @@ public class Monster extends Actor {
 				switch (type) {
 				case Config.MON_EYE:
 
-					// always face the hero
-					if (player.bounds.x > bounds.x){
-						facingLeft = false;
-					} else {
-						facingLeft = true;
-					}
+					// TODO: face a hero... and attack
 
 					// if player is in line-of sight, attack
+					/*
 					if (Math.abs(player.bounds.x - bounds.x) < 200 && Math.abs(player.bounds.y - bounds.y) < 25)  {
 						moveCommand[MOVE_ATTACK] = true;
 						shoot.play(Config.sfxVol);
@@ -163,6 +155,7 @@ public class Monster extends Actor {
 							projectile.shoot(bounds.x + 10, bounds.y + 5, 2);
 						}
 					}
+					*/
 					break;
 
 				default:
@@ -184,13 +177,15 @@ public class Monster extends Actor {
 		}
 
 		// update projectiles
+		/*
 		if (projectile != null){
 			projectile.update(map);
-		}
+		}*/
 
 		// also check if anything can change the command (for instance, enemy walks to a cliff or bumps a wall)
 
 		// if we're moving right and we bump a wall on the right, let's turn the enemy around
+		/*
 		if (moveCommand[MOVE_RIGHT] && sensorTouchesRightSide(map)){
 			moveCommand[MOVE_LEFT] = true;
 			moveCommand[MOVE_RIGHT] = false;
@@ -213,6 +208,7 @@ public class Monster extends Actor {
 			moveCommand[MOVE_LEFT] = true;
 			moveCommand[MOVE_RIGHT] = false;
 		}
+		*/
 
 
 	}
@@ -298,7 +294,5 @@ public class Monster extends Actor {
 		flash(1, 0, 1, 0, 3);
 
 	}
-
-
 
 }

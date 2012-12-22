@@ -1,5 +1,6 @@
 package net.alcuria.online.client.connection;
 import net.alcuria.online.client.Item;
+import net.alcuria.online.client.Monster;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
@@ -14,9 +15,12 @@ public class ClientListener extends Listener {
 	public boolean updated = false;
 	public boolean connected = false;
 	public boolean updateVisual = false;
+	public byte index;
 
 	public Field f;
 	private Client client;
+
+
 
 	public void init(Client client, Field f) {
 		this.client = client;
@@ -58,7 +62,7 @@ public class ClientListener extends Listener {
 				// assign the client a unique user ID
 				f.player.uid = ((Packet1LoginAnswer) o).uid;
 				f.player.connected = true;
-				
+
 				// send off a response to the server... perhaps a player obj
 				Packet2Message mpacket = new Packet2Message();
 				mpacket.message = "thanks for assigning me id " + f.player.uid;
@@ -69,11 +73,29 @@ public class ClientListener extends Listener {
 			}
 		}
 
+		// if client receives a enemy position update, we need to update that index of the monster array
+		if (o instanceof Packet6SendMonsterPosition){
+			if (f.map.spawner != null && f.map.spawner.monsterList != null){
+				index = ((Packet6SendMonsterPosition) o).id;
+				f.map.spawner.monsterList[index].bounds = ((Packet6SendMonsterPosition) o).bounds; 
+				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_LEFT; 
+				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
+				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
+				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
+				f.map.spawner.monsterList[index].HP = ((Packet6SendMonsterPosition) o).HP; 
+				if (f.map.spawner.monsterList[index].HP > 0 && !f.map.spawner.monsterList[index].visible){
+					f.map.spawner.monsterList[index].visible = true;
+					f.map.spawner.monsterList[index].timeSinceSpawn = 10;
+				}
+			}
+
+		}
+
 		// if client receives a position update, we know it came from the server
 		// so we update that UID in the players array with the position and velocity from the packet
 		if (o instanceof Packet3SendPosition){
 			updated = false;
-			byte index = ((Packet3SendPosition) o).uid;
+			index = ((Packet3SendPosition) o).uid;
 			for (int i = 0; i < f.players.size; i++){
 				if (f.players.get(i).uid == index){
 					f.players.get(i).desiredBounds = ((Packet3SendPosition) o).bounds;
@@ -88,12 +110,12 @@ public class ClientListener extends Listener {
 
 					// check to see if this player object will need a visual equip refresh
 					if(f.players.get(i).weapon.id != ((Packet3SendPosition) o).wep || f.players.get(i).armor.id != ((Packet3SendPosition) o).armor || f.players.get(i).helmet.id != ((Packet3SendPosition) o).helm){
-						
+
 						// assign latest weps/armors to client player element
 						f.players.get(i).weapon = new Item(((Packet3SendPosition) o).wep);
 						f.players.get(i).armor = new Item(((Packet3SendPosition) o).armor);
 						f.players.get(i).helmet = new Item(((Packet3SendPosition) o).helm);
-						
+
 						f.players.get(i).resetVisualEquips();
 						Log.info("updating equips.");
 					}
@@ -101,7 +123,7 @@ public class ClientListener extends Listener {
 					f.players.get(i).currentMap = ((Packet3SendPosition) o).currentMap;
 					f.players.get(i).connected = ((Packet3SendPosition) o).connected;
 					f.players.get(i).lastPing = 0;
-					
+
 					updated = true;
 					break;
 				}

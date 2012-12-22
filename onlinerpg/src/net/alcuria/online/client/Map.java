@@ -58,14 +58,16 @@ public class Map {
 
 
 
-	int sheetWidth;							// width of the tileset (in tiles) (NOTE: must also be equal to the height)
+	public int sheetWidth;					// width of the tileset (in tiles) (NOTE: must also be equal to the height)
 	public int tileWidth;					// width of an individual tile (in px)
 	public int width;						// width of map (in tiles)
 	public int height; 						// height of map (in tiles)
 	public boolean pause = false;			// do we pause the map updates (for NPC commands)?
 	public String name = "";				// the name of the map tileset, with the file extension
-	int mapIndex;			
-	String[] line;
+	public int mapIndex;			
+	public String[] line;
+	public String loadedName;
+	public String fileContent;
 
 	public MonsterSpawner spawner;
 	public NPC[] npcs;
@@ -88,6 +90,14 @@ public class Map {
 	public Foreground fg;
 	public boolean containsEnemies = false;
 
+
+	// server's map create constructor
+	public Map(String mapfile){
+		
+		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
+		readMapFile(handle);
+	}
+	
 	public Map(String mapfile, AssetManager assets, DamageList damageList, Field f){
 		this.f = f;
 		this.damageList = damageList;
@@ -235,69 +245,20 @@ public class Map {
 		if (GameClient.client != null && GameClient.client.isConnected()){
 			GameClient.sendMapChange(f);
 		}
-		
-		// read in the map file into an array of strings
+
 		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
-		String fileContent = handle.readString();
-		String[] lines = fileContent.split("\\r?\\n");
+		readMapFile(handle);
 
-		// Line 1: Tile Sheet Width (in tiles)
-		sheetWidth = Integer.parseInt(lines[0]);
-
-		// Line 2: Tile Width (in px)
-		tileWidth = Integer.parseInt(lines[1]);
-
-		// Line 3: Width (in tiles)
-		width = Integer.parseInt(lines[2]);
-
-		// Line 4: Height (in tiles)
-		height = Integer.parseInt(lines[3]);
-
-		// Line 5: Lower Data
-		mapIndex = 0;
-		lowerLayer = new int[width][height];
-		String[] lineData = lines[4].split("\\s");
-		for(int j = 0; j < height; j++){
-			for(int k = 0; k < width; k++){
-				lowerLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
-				mapIndex++;
-			}
-		}
-
-		// Line 6: Upper Data
-		mapIndex = 0;
-		upperLayer = new int[width][height];
-		lineData = lines[5].split("\\s");
-		for(int j = 0; j < height; j++){
-			for(int k = 0; k < width; k++){
-				upperLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
-				mapIndex++;
-			}
-		}
-
-		// Line 7: Collision Data
-		mapIndex = 0;
-		collisionLayer = new int[width][height];
-		lineData = lines[6].split("\\s");
-		for(int j = 0; j < height; j++){
-			for(int k = 0; k < width; k++){
-				collisionLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
-				mapIndex++;
-			}
-		}
-
-		// Line 8: tileset name
-		// load the map tileset (with file ext)
-		tileset = new Texture(Gdx.files.internal("tiles/" + lines[7]));
+		tileset = new Texture(Gdx.files.internal("tiles/" + loadedName));
 
 		// if the map tileset name is different, we need to change the bgm to play a new one
-		if (!name.equalsIgnoreCase(lines[7])){
+		if (!name.equalsIgnoreCase(loadedName)){
 
 			// first, stop the bgm if it's already initialized
 			if (bgm != null) bgm.stop(); 
 
 			// update the map's tileset name and determine the bgm to play based on that
-			name = lines[7];
+			name = loadedName;
 			if (name.equalsIgnoreCase("forest.png")){
 				bgm = assets.get("music/forest.ogg", Music.class);
 			} else if (name.equalsIgnoreCase("beach.png")){
@@ -324,33 +285,22 @@ public class Map {
 		}
 
 		// CREATE the monster spawner
+		boolean toggler = false;
 		if(Gdx.files.internal("maps/" + mapfile + ".spawn").exists()){
 			containsEnemies = true;
-			this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn", damageList);
+			this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn");
 			for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
 
-				// WHICH MONSTER?
-				if (mapfile.equals("beachroad")){
+				spawner.addInitialMonsters(mapfile, toggler, f);
+				toggler = !toggler;
 
-					// BEACH
-					this.spawner.addMonster(new Monster(Config.MON_CRAB, 16, 16, f));
-
-				} else {
-
-					// DEFAULT SLIMES/EYES
-					if (Math.random() > 0.3){
-						this.spawner.addMonster(new Monster(Config.MON_SLIME, 14, 16, f));
-					} else {
-						this.spawner.addMonster(new Monster(Config.MON_EYE, 14, 18, f));
-					}
-				}
 			}
-			this.spawner.doInitialSpawn();
 
 		} else {
 			containsEnemies = false;
 			this.spawner = null;
 		}
+		// END MONSTER SPAWNER CREATION
 
 		// CREATE Teleporter!
 		this.teleports = new TeleportManager(mapfile);
@@ -421,6 +371,62 @@ public class Map {
 
 	}
 
+	private void readMapFile(FileHandle handle) {
+		// read in the map file into an array of strings
+		fileContent = handle.readString();
+		String[] lines = fileContent.split("\\r?\\n");
+
+		// Line 1: Tile Sheet Width (in tiles)
+		sheetWidth = Integer.parseInt(lines[0]);
+
+		// Line 2: Tile Width (in px)
+		tileWidth = Integer.parseInt(lines[1]);
+
+		// Line 3: Width (in tiles)
+		width = Integer.parseInt(lines[2]);
+
+		// Line 4: Height (in tiles)
+		height = Integer.parseInt(lines[3]);
+
+		// Line 5: Lower Data
+		mapIndex = 0;
+		lowerLayer = new int[width][height];
+		String[] lineData = lines[4].split("\\s");
+		for(int j = 0; j < height; j++){
+			for(int k = 0; k < width; k++){
+				lowerLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
+				mapIndex++;
+			}
+		}
+
+		// Line 6: Upper Data
+		mapIndex = 0;
+		upperLayer = new int[width][height];
+		lineData = lines[5].split("\\s");
+		for(int j = 0; j < height; j++){
+			for(int k = 0; k < width; k++){
+				upperLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
+				mapIndex++;
+			}
+		}
+
+		// Line 7: Collision Data
+		mapIndex = 0;
+		collisionLayer = new int[width][height];
+		lineData = lines[6].split("\\s");
+		for(int j = 0; j < height; j++){
+			for(int k = 0; k < width; k++){
+				collisionLayer[k][j] = Integer.parseInt(lineData[mapIndex]);
+				mapIndex++;
+			}
+		}
+
+		// Line 8: tileset name
+		// load the map tileset (with file ext)
+		loadedName = lines[7];
+
+	}
+
 	public void update(){
 
 		pause = false;
@@ -441,7 +447,7 @@ public class Map {
 			}
 		}
 		teleports.update(f.player, this, f.inputs);
-		if (spawner != null && containsEnemies) spawner.update();
+		if (spawner != null && containsEnemies) spawner.clientUpdate();
 		fg.update(Gdx.graphics.getDeltaTime());
 		collisions.update(this, damageList, f.explosions, f.inventory);
 

@@ -47,7 +47,6 @@ public class CollisionManager {
 
 				if (enemies != null && enemies[i] != null) {
 
-					enemies[i].command(map, player);
 					enemies[i].update(map);
 
 					// hurt a player

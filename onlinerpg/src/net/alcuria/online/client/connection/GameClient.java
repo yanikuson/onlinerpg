@@ -45,6 +45,8 @@ public class GameClient {
 		kryo.register(Packet3SendPosition.class);
 		kryo.register(Packet4RequestPositions.class);
 		kryo.register(Packet5SendMap.class);
+		kryo.register(Packet6SendMonsterPosition.class);
+
 	}
 
 	public static void sendMapChange(Field f){

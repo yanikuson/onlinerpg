@@ -14,9 +14,8 @@ public class DropManager {
 
 	public Sound drop;
 	public Sound pickup;
-	public NotificationList notifications;
 
-	public DropManager(Field f, NotificationList notifications){
+	public DropManager(Field f){
 
 		dropList = new Drop[MAX_DROPS];
 		for (int i = 0; i < MAX_DROPS; i++){
@@ -25,7 +24,6 @@ public class DropManager {
 
 		pickup = f.assets.get("sounds/pickup.wav", Sound.class);
 		drop = f.assets.get("sounds/drop.wav", Sound.class);
-		this.notifications = notifications;
 
 	}
 

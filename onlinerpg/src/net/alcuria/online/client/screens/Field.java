@@ -56,7 +56,6 @@ public class Field implements Screen {
 	public Menu menu;
 	public ItemManager inventory;
 	public AssetManager assets;
-	public NotificationList notifications;
 
 	private static final int VIRTUAL_WIDTH = Config.WIDTH;
 	private static final int VIRTUAL_HEIGHT = Config.HEIGHT;
@@ -215,7 +214,6 @@ public class Field implements Screen {
 		burns = new ParticleList("sprites/burn.png", 20, 20, 5, 3, false, assets);
 		freezes = new ParticleList("sprites/ice.png", 24, 24, 21, 2, false, assets);
 
-		notifications = new NotificationList();
 		//notifications.add("Welcome to Heroes of Umbra!");
 
 		player = SaveHandler.loadPlayer(slot, this);
@@ -234,13 +232,12 @@ public class Field implements Screen {
 		damageList = new DamageList();
 
 		player.playJump = true;
-		player.effects.assignDamageList(damageList);
 
 		inputs = new InputHandler(assets);
 
 
 		// create our item manager
-		drops = new DropManager(this, notifications);
+		drops = new DropManager(this);
 
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, inventory, drops);

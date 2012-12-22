@@ -2,11 +2,9 @@ package net.alcuria.online.server;
 import java.io.IOException;
 
 import net.alcuria.online.common.Packet.*;
-import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Server;
 import com.esotericsoftware.minlog.Log;
@@ -54,6 +52,7 @@ public class GameServer {
 		kryo.register(Packet3SendPosition.class);
 		kryo.register(Packet4RequestPositions.class);
 		kryo.register(Packet5SendMap.class);
+		kryo.register(Packet6SendMonsterPosition.class);
 
 	}
 

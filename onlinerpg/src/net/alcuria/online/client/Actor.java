@@ -114,10 +114,7 @@ public class Actor {
 		// create the movement array
 		moveCommand = new boolean[10];
 		networkCommand = new boolean[10];
-		for (int i=0; i<moveCommand.length; i++){
-			moveCommand[i] = false;
-			networkCommand[i] = false;
-		}
+		clearMoveCommands();
 
 		// load sound assets
 		hurt = f.assets.get("sounds/hurt.wav", Sound.class);
@@ -127,8 +124,18 @@ public class Actor {
 		shoot = f.assets.get("sounds/shoot.wav", Sound.class);
 
 		// status effects handler
-		effects = new StatusEffects(this, f.assets);
+		effects = new StatusEffects(this, f);
 
+	}
+
+	// clears all of the move command arrays
+	public void clearMoveCommands() {
+		
+		for (int i=0; i<moveCommand.length; i++){
+			moveCommand[i] = false;
+			networkCommand[i] = false;
+		}
+		
 	}
 
 	public void checkIfOnMovingPlatform(Map map){
@@ -385,10 +392,6 @@ public class Actor {
 
 	}
 
-	public void command() {
-
-
-	}
 
 	public void flash(float r, float g, float b, float a, float duration) {
 

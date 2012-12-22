@@ -70,5 +70,10 @@ public class ServerPanel extends JPanel {
 		
 		return panel;
 	}
+
+	public static void update() {
+		
+		
+	}
 	
 }

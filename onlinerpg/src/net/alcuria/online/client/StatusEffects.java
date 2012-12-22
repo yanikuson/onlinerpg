@@ -1,7 +1,8 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.screens.Field;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -29,7 +30,7 @@ public class StatusEffects {
 
 	public Actor actor;
 
-	public StatusEffects(Actor actor, AssetManager assets) {
+	public StatusEffects(Actor actor, Field f) {
 
 		this.actor = actor;
 
@@ -48,13 +49,13 @@ public class StatusEffects {
 		frequency[SPEED] = 1.0f;
 		frequency[FREEZE] = 0.0f;
 
-		healSparkle = new Particle("sprites/sparkle.png", 0, 0, 25, 25, 5, 5, false, assets);
-		heal = assets.get("sounds/heal.wav", Sound.class);
+		healSparkle = new Particle("sprites/sparkle.png", 0, 0, 25, 25, 5, 5, false, f.assets);
+		heal = f.assets.get("sounds/heal.wav", Sound.class);
+		
+		this.damageList = f.damageList;
+
 	}
 
-	public void assignDamageList(DamageList damageList){
-		this.damageList = damageList;
-	}
 
 	public void update(Actor actor){
 		for (int i = 0; i < MAX_EFFECTS; i++) {

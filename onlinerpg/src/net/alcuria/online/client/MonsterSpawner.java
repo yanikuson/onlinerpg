@@ -1,5 +1,7 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.screens.Field;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,17 +29,14 @@ public class MonsterSpawner {
 
 	public float spawnCounter = 0;
 
-	public DamageList damageList;
 
-	public MonsterSpawner(String spawnfile, DamageList damageList){
+	public MonsterSpawner(String spawnfile){
 
 		activeMonsters = 0;
 		monsterList = new Monster[MAX_MONSTERS];
 		spawnPointX = new int[MAX_SPAWN_PTS];
 		spawnPointY = new int[MAX_SPAWN_PTS];
 		removeAllSpawnPoints();
-
-		this.damageList = damageList;
 
 		// read in the spawn file into an array of strings
 		if (Gdx.files.internal(spawnfile).exists()){
@@ -52,16 +51,13 @@ public class MonsterSpawner {
 		}
 
 	}
-
-	public MonsterSpawner(String spawnfile){
-		
-	}
 	
-	public void update(){
+	public void serverUpdate(String currentMap) {
 
 		if (activeSpawnPoints > 0){
-			spawnCounter += Gdx.graphics.getDeltaTime();
+			spawnCounter += 2*Gdx.graphics.getDeltaTime();
 			if ((spawnCounter > SPAWN_TIMER || initialSpawn)){
+				
 
 				// look for the next available (inactive) monster in the monster list	
 				monsterListIndex = 0;
@@ -87,13 +83,37 @@ public class MonsterSpawner {
 				spawnCounter = 0;
 			}
 		}
+		
+		// command all enemies
+		for (int i = 0; i < monsterList.length; i++){
+			if (monsterList[i] != null && monsterList[i].visible){
+				
+				monsterList[i].command();
+			
+			}
+				
+		}
 	}
 
+
+	public void clientUpdate(){
+
+		
+	} 
+
 	// spawns a set number of monsters on map load
-	public void doInitialSpawn(){
+	public void doInitialServerSpawn(String map){
 		initialSpawn = true;
 		for (int i = 0; i < INITIAL_SPAWN_NUM; i++){
-			update();
+			serverUpdate(map);
+		}
+		initialSpawn = false;		
+	}
+	
+	public void doInitialClientSpawn(String map){
+		initialSpawn = true;
+		for (int i = 0; i < INITIAL_SPAWN_NUM; i++){
+			clientUpdate();
 		}
 		initialSpawn = false;		
 	}
@@ -101,7 +121,7 @@ public class MonsterSpawner {
 	// renders all enabled monsters on the field. (TODO: this could be optimized to only call render if they are on the visible screen!!)
 	public void render(SpriteBatch batch) {
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
-			if (monsterList[i] != null) {
+			if (monsterList[i] != null && monsterList[i].visible) {
 				monsterList[i].render(batch);
 				if (monsterList[i].projectile != null){
 					monsterList[i].projectile.render(batch);	
@@ -122,9 +142,9 @@ public class MonsterSpawner {
 	}
 
 	public void addMonster(Monster m){
-		monsterList[activeMonsters] = m;
 		m.visible = false;
-		m.effects.assignDamageList(damageList);
+		m.clearMoveCommands();
+		monsterList[activeMonsters] = m;
 		activeMonsters++;
 
 	}
@@ -145,6 +165,28 @@ public class MonsterSpawner {
 		activeMonsters = 0;
 		monsterListIndex = 0;
 	}
+
+	public void addInitialMonsters(String currentMap, boolean toggler, Field f) {
+		// WHICH MONSTER?
+		if (currentMap.equals("beachroad")){
+
+			// BEACH
+			addMonster(new Monster(Config.MON_CRAB, 16, 16, f));
+
+		} else {
+
+			// DEFAULT SLIMES/EYES
+			if (toggler){
+				addMonster(new Monster(Config.MON_SLIME, 14, 16, f));
+			} else {
+				addMonster(new Monster(Config.MON_EYE, 14, 18, f));
+			}
+			
+		}
+		
+	}
+
+
 
 
 
