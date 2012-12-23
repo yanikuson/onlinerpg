@@ -4,6 +4,7 @@ import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Monster extends Actor {
 
@@ -21,11 +22,12 @@ public class Monster extends Actor {
 	float dropRoll;							// dice roll for enemy lootz
 
 	public Projectile projectile;			// monster's projectile
+	public Rectangle desiredBounds;
 
 	// client monster constructor
 	public Monster(int type, int width, int height, Field f) {
 		super("sprites/monsters/" + type + ".png", -60, -60, width, height, f);
-
+		desiredBounds = new Rectangle();
 		setStats(type);
 
 	}
@@ -124,20 +126,37 @@ public class Monster extends Actor {
 		super.render(batch);
 	}
 	
-	// monster AI, since it will probably be big, is going here
-	public void command(){
+	// client commands the local monster copies
+	public void clientCommand(Map map){
+		// set network player's moving and facing flag
+		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 40){
+			bounds.x = desiredBounds.x;
+			bounds.y = desiredBounds.y;
+		} 
+		
+		moveCommand[MOVE_ATTACK] = networkCommand[MOVE_ATTACK];
+		moveCommand[MOVE_LEFT] = networkCommand[MOVE_LEFT];
+		moveCommand[MOVE_RIGHT] = networkCommand[MOVE_RIGHT];
+		moveCommand[MOVE_JUMP] = networkCommand[MOVE_JUMP];
+		if (moveCommand[MOVE_JUMP]){
+			networkCommand[MOVE_JUMP] = false;
+		}
+		
+		checkForEdgesAndWalls(map);
+	}
+	
+	// monster AI, since it will probably be big, is going here (SERVER-SIDE)
+	public void serverCommand(Map map){
 
 		if (HP > 0 && effects.timer[StatusEffects.FREEZE] <= 0){
-
+						
 			// UPDATE AI or something here
-			commandTimer += Gdx.graphics.getDeltaTime() * 100;
-			timeSinceSpawn += Gdx.graphics.getDeltaTime() * 100;
+			commandTimer += Gdx.graphics.getDeltaTime();
+			timeSinceSpawn += Gdx.graphics.getDeltaTime();
 
 			// check if we can issue a new command
 			if (commandTimer > commandFrequency){
-
 				clearCommands();
-
 				// determine WHICH TYPE OF ENEMY
 				switch (type) {
 				case Config.MON_EYE:
@@ -162,7 +181,9 @@ public class Monster extends Actor {
 
 					// randomly choose a new command
 					rndCommand = (int) (Math.random()*4);
-					moveCommand[rndCommand] = true;			
+
+					moveCommand[rndCommand] = true;	
+					networkCommand[rndCommand] = true;	
 					commandFrequency *= 1 + Math.random()/4;
 					break;
 				}
@@ -182,21 +203,30 @@ public class Monster extends Actor {
 			projectile.update(map);
 		}*/
 
-		// also check if anything can change the command (for instance, enemy walks to a cliff or bumps a wall)
-
+		// also check if anything can change the command (for instance, enemy walks to a cliff or bumps a wall)	
+		checkForEdgesAndWalls(map);
+		
+	}
+	
+	private void checkForEdgesAndWalls(Map map) {
+		
 		// if we're moving right and we bump a wall on the right, let's turn the enemy around
-		/*
 		if (moveCommand[MOVE_RIGHT] && sensorTouchesRightSide(map)){
 			moveCommand[MOVE_LEFT] = true;
+			networkCommand[MOVE_LEFT] = true;
 			moveCommand[MOVE_RIGHT] = false;
+			networkCommand[MOVE_RIGHT] = false;
 		}
 
 		// if we're moving left and we bump a wall on the left, let's turn the enemy around
 		if (moveCommand[MOVE_LEFT] && sensorTouchesLeftSide(map)){
 			moveCommand[MOVE_LEFT] = false;
+			networkCommand[MOVE_LEFT] = false;
 			moveCommand[MOVE_RIGHT] = true;
+			networkCommand[MOVE_RIGHT] = true;
 		}
 
+		/*
 		// if the bottom left sensor is off the ground and we're moving left, turn around so we don't suicide!	
 		if (moveCommand[MOVE_LEFT] && !bottomSensorTouchesGround(0, map)){
 			moveCommand[MOVE_LEFT] = false;
@@ -207,16 +237,15 @@ public class Monster extends Actor {
 		if (moveCommand[MOVE_RIGHT] && !bottomSensorTouchesGround(1, map)){
 			moveCommand[MOVE_LEFT] = true;
 			moveCommand[MOVE_RIGHT] = false;
-		}
-		*/
-
-
+		}*/
+		
 	}
 
 	private void clearCommands() {
 		// clear all previous commands
 		for (int i = 0; i < moveCommand.length; i++) {
 			moveCommand[i] = false;
+			networkCommand[i] = false;
 		}
 
 	}

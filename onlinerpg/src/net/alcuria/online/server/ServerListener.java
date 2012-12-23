@@ -5,6 +5,7 @@ import net.alcuria.online.client.Config;
 import net.alcuria.online.client.Map;
 import net.alcuria.online.client.Actor;
 import net.alcuria.online.client.Item;
+import net.alcuria.online.client.Monster;
 import net.alcuria.online.client.MonsterSpawner;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
@@ -36,13 +37,15 @@ public class ServerListener extends Listener {
 		sPlayers = new Array<Player>(false, 10);
 		sMonsters = new ObjectMap<String, MonsterSpawner>();
 		sMaps = new ObjectMap<String, Map>();
+		curPlayerRange = new Rectangle();
+		
 	}
 
 	public static void update() {
 
 		// update monsters
 		if (sPlayers != null) {
-
+			
 			// first set all the updated flags to false
 			for (int i = 0; i < sPlayers.size; i++ ){
 				if (Gdx.files.internal("maps/" + sPlayers.get(i).currentMap + ".spawn").exists()){
@@ -63,7 +66,7 @@ public class ServerListener extends Listener {
 							spawner.addInitialMonsters(sPlayers.get(i).currentMap, toggler, f);
 							toggler = !toggler;
 						}
-						spawner.doInitialServerSpawn(sPlayers.get(i).currentMap);
+						spawner.doInitialServerSpawn(sPlayers.get(i).currentMap, sMaps.get(sPlayers.get(i).currentMap));
 						sMonsters.put(sPlayers.get(i).currentMap, spawner);
 
 						// END MONSTER SPAWNER CREATION
@@ -84,7 +87,7 @@ public class ServerListener extends Listener {
 			for (int i = 0; i < sPlayers.size; i++ ){	
 				if (sMonsters.containsKey(sPlayers.get(i).currentMap)){
 					if (!sMonsters.get(sPlayers.get(i).currentMap).updated){
-						sMonsters.get(sPlayers.get(i).currentMap).serverUpdate(sPlayers.get(i).currentMap);
+						sMonsters.get(sPlayers.get(i).currentMap).serverUpdate(sPlayers.get(i).currentMap, sMaps.get(sPlayers.get(i).currentMap));
 					}
 				}
 			}
@@ -138,7 +141,6 @@ public class ServerListener extends Listener {
 			for (int i = 0; i < sPlayers.size; i++){
 				if (sPlayers.get(i).uid == index){
 					sPlayers.get(i).bounds =  ((Packet3SendPosition) o).bounds;
-					System.out.println("server received bounds from client "+  i + ": " + sPlayers.get(i).bounds.x + ", " +sPlayers.get(i).bounds.y);
 					sPlayers.get(i).networkCommand[Actor.MOVE_LEFT] =  ((Packet3SendPosition) o).MOVE_LEFT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_RIGHT] =  ((Packet3SendPosition) o).MOVE_RIGHT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_JUMP] =  ((Packet3SendPosition) o).MOVE_JUMP;
@@ -174,9 +176,8 @@ public class ServerListener extends Listener {
 				// only send this position if the uid isnt the requested users uid & maps are same
 				if (sPlayers.get(i).uid == requestersUid) {
 					// save off a copy of the player's bounds for later sending the enemy positions
-					curPlayerRange = sPlayers.get(i).bounds;
-					curPlayerRange.x -= Config.WIDTH;
-					curPlayerRange.y -= Config.HEIGHT;
+					curPlayerRange.x = sPlayers.get(i).bounds.x - Config.WIDTH;
+					curPlayerRange.y = sPlayers.get(i).bounds.y - Config.HEIGHT;
 					curPlayerRange.width = Config.WIDTH * 2;
 					curPlayerRange.height = Config.HEIGHT * 2;
 					
@@ -186,7 +187,6 @@ public class ServerListener extends Listener {
 					Packet3SendPosition position = new Packet3SendPosition();
 					position.uid = (byte) i;
 					position.bounds = sPlayers.get(i).bounds;
-					System.out.println("Server is sending the following bounds to client "+  i + ": " + position.bounds.x + " " + position.bounds.y);
 					
 					position.MOVE_LEFT = sPlayers.get(i).networkCommand[Player.MOVE_LEFT];
 					position.MOVE_RIGHT = sPlayers.get(i).networkCommand[Player.MOVE_RIGHT];
@@ -213,12 +213,13 @@ public class ServerListener extends Listener {
 						Packet6SendMonsterPosition monPosition = new Packet6SendMonsterPosition();
 						monPosition.id = (byte) i;
 						monPosition.bounds = curMonSpawner.monsterList[i].bounds;
-						monPosition.MOVE_LEFT = false;
-						monPosition.MOVE_RIGHT = false;
-						monPosition.MOVE_JUMP = false;
-						monPosition.MOVE_ATTACK = false;
+						monPosition.MOVE_LEFT = curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_LEFT];
+						monPosition.MOVE_RIGHT = curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_RIGHT];
+						monPosition.MOVE_JUMP =  curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP];
+						monPosition.MOVE_ATTACK =  curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_ATTACK];
 						monPosition.HP = (short) curMonSpawner.monsterList[i].HP;
 						c.sendTCP(monPosition);
+						//curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
 	
 					}
 				}

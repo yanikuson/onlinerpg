@@ -77,11 +77,11 @@ public class ClientListener extends Listener {
 		if (o instanceof Packet6SendMonsterPosition){
 			if (f.map.spawner != null && f.map.spawner.monsterList != null){
 				index = ((Packet6SendMonsterPosition) o).id;
-				f.map.spawner.monsterList[index].bounds = ((Packet6SendMonsterPosition) o).bounds; 
-				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_LEFT; 
-				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
-				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
-				f.map.spawner.monsterList[index].moveCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
+				f.map.spawner.monsterList[index].desiredBounds = ((Packet6SendMonsterPosition) o).bounds; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_LEFT; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_RIGHT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_JUMP] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_ATTACK] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
 				f.map.spawner.monsterList[index].HP = ((Packet6SendMonsterPosition) o).HP; 
 				if (f.map.spawner.monsterList[index].HP > 0 && !f.map.spawner.monsterList[index].visible){
 					f.map.spawner.monsterList[index].visible = true;

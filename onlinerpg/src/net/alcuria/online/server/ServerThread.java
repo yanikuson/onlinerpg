@@ -27,7 +27,7 @@ public class ServerThread implements Runnable{
 		
 		while (true){
 			GameServer.update();
-			pause(100);
+			pause(16);
 		}
 
 	}

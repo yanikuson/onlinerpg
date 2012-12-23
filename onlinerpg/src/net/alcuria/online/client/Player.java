@@ -406,6 +406,7 @@ public class Player extends Actor {
 		}
 	}
 
+	// the update method for OTHER players on the client
 	public void networkUpdate() {
 
 

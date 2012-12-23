@@ -447,7 +447,7 @@ public class Map {
 			}
 		}
 		teleports.update(f.player, this, f.inputs);
-		if (spawner != null && containsEnemies) spawner.clientUpdate();
+		if (spawner != null && containsEnemies) spawner.clientUpdate(this);
 		fg.update(Gdx.graphics.getDeltaTime());
 		collisions.update(this, damageList, f.explosions, f.inventory);
 

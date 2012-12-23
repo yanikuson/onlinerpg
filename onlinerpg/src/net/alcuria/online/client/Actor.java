@@ -342,7 +342,6 @@ public class Actor {
 
 		// check for a JUMP
 		if (onGround && moveCommand[MOVE_JUMP] && !animation.swingPose && !animation.stabPose){
-
 			moveCommand[MOVE_JUMP] = false;
 			onGround = false;
 			yVel = jumpPower/17;
