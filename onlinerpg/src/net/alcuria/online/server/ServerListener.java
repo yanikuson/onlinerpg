@@ -219,7 +219,7 @@ public class ServerListener extends Listener {
 						monPosition.MOVE_ATTACK =  curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_ATTACK];
 						monPosition.HP = (short) curMonSpawner.monsterList[i].HP;
 						c.sendTCP(monPosition);
-						//curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
+						curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
 	
 					}
 				}

@@ -14,6 +14,7 @@ public class GameServer {
 
 	private static Server server;
 	public static Field f;
+	public static boolean running = false;
 
 	public static void start() {
 
@@ -26,12 +27,14 @@ public class GameServer {
 		registerPackets();
 		server.addListener(new ServerListener());
 		try {
+			running = true;
 			server.bind(54555, 54555);
 			server.start();
 
 		} catch (IOException e) {
 			Log.error("error binding server to port");
 			server.stop();
+			running = false;
 		}
 
 	}

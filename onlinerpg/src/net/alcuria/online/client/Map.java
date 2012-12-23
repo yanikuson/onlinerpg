@@ -69,6 +69,7 @@ public class Map {
 	public String loadedName;
 	public String fileContent;
 
+	public boolean serverMode;
 	public MonsterSpawner spawner;
 	public NPC[] npcs;
 	public TeleportManager teleports;
@@ -93,16 +94,18 @@ public class Map {
 
 	// server's map create constructor
 	public Map(String mapfile){
-		
+
 		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
 		readMapFile(handle);
+		serverMode = true;
 	}
-	
+
 	public Map(String mapfile, AssetManager assets, DamageList damageList, Field f){
 		this.f = f;
 		this.damageList = damageList;
 		this.assets = assets;
-		create(mapfile);		
+		create(mapfile);
+		serverMode = false;
 	}
 
 	public void render(SpriteBatch batch, boolean below, CameraManager camera) {
@@ -428,37 +431,43 @@ public class Map {
 	}
 
 	public void update(){
+		if (!serverMode){
+			pause = false;
+			if (npcs != null){
+				for (int i = 0; i < npcs.length; i++){
+					if (npcs[i] != null) {
 
-		pause = false;
-		if (npcs != null){
-			for (int i = 0; i < npcs.length; i++){
-				if (npcs[i] != null) {
+						npcs[i].update(this, f.msgBox, f.cameraManager, f.player);
+						if (npcs[i].startCommands) {
+							f.inputs.typed[InputHandler.ATTACK] = false;
+							pause = true;
+						} else {
 
-					npcs[i].update(this, f.msgBox, f.cameraManager, f.player);
-					if (npcs[i].startCommands) {
-						f.inputs.typed[InputHandler.ATTACK] = false;
-						pause = true;
-					} else {
-
-						// we only command the npc to move if there is no NPC Commands being executed
-						npcs[i].command(this, p);
+							// we only command the npc to move if there is no NPC Commands being executed
+							npcs[i].command(this, p);
+						}
 					}
 				}
 			}
-		}
-		teleports.update(f.player, this, f.inputs);
-		if (spawner != null && containsEnemies) spawner.clientUpdate(this);
-		fg.update(Gdx.graphics.getDeltaTime());
-		collisions.update(this, damageList, f.explosions, f.inventory);
+			teleports.update(f.player, this, f.inputs);
 
-		// update platforms
-		if (platforms != null) {
-			for (int i = 0; i < platforms.length; i++){
-				if (platforms[i] != null){
-					platforms[i].update(f);
+			if (spawner != null && containsEnemies) spawner.clientUpdate(this);
+			
+			fg.update(Gdx.graphics.getDeltaTime());
+			collisions.update(this, damageList, f.explosions, f.inventory);
+
+			// update platforms
+			if (platforms != null) {
+				for (int i = 0; i < platforms.length; i++){
+					if (platforms[i] != null){
+						platforms[i].update(f);
+					}
 				}
 			}
+		} else {
+			System.out.println("Server map update");
 		}
+
 
 
 	}

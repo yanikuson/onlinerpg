@@ -54,7 +54,7 @@ public class MonsterSpawner {
 	
 	public void serverUpdate(String currentMap, Map m) {
 
-		if (activeSpawnPoints > 0){
+		if (activeSpawnPoints > 0 && m.serverMode){
 			spawnCounter += 2*Gdx.graphics.getDeltaTime();
 			if ((spawnCounter > SPAWN_TIMER || initialSpawn)){
 				
@@ -82,17 +82,19 @@ public class MonsterSpawner {
 				}
 				spawnCounter = 0;
 			}
-		}
-		
-		// command all enemies
-		for (int i = 0; i < monsterList.length; i++){
-			if (monsterList[i] != null && monsterList[i].visible){
-				monsterList[i].serverCommand(m);
-				monsterList[i].update(m);
 			
-			}
+			// command all enemies
+			for (int i = 0; i < monsterList.length; i++){
+				if (monsterList[i] != null && monsterList[i].visible){
+					monsterList[i].serverCommand(m);
+					monsterList[i].update(m);
 				
+				}
+					
+			}
 		}
+		updated = true;
+
 	}
 
 

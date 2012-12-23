@@ -11,7 +11,6 @@ public class ServerThread implements Runnable{
 	public ServerThread(Field f){
 				
 		if (Config.IP.equals("127.0.0.1")){
-
 			
 			GameServer.f = f;
 			GameServer.start();
@@ -25,7 +24,7 @@ public class ServerThread implements Runnable{
 		//sp = new ServerPanel();
 		//sp.create();
 		
-		while (true){
+		while (GameServer.running){
 			GameServer.update();
 			pause(16);
 		}
