@@ -1,5 +1,6 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.connection.GameClient;
 import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.Gdx;
@@ -23,19 +24,21 @@ public class Monster extends Actor {
 
 	public Projectile projectile;			// monster's projectile
 	public Rectangle desiredBounds;
+	public byte id;							// id in the array of monsters
 
 	// client monster constructor
-	public Monster(int type, int width, int height, Field f) {
+	public Monster(byte id, int type, int width, int height, Field f) {
 		super("sprites/monsters/" + type + ".png", -60, -60, width, height, f);
+		this.id = id;
 		desiredBounds = new Rectangle();
 		setStats(type);
 
 	}
 	
 	// server monster construct
-	public Monster(int type){
+	public Monster(byte id, int type){
 		super("sprites/equips/empty.png", -60, -60, 0, 0, null);
-		
+		this.id = id;
 		setStats(type);
 	}
 
@@ -250,7 +253,7 @@ public class Monster extends Actor {
 
 	}
 
-	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList battleEffect, DropManager drops){
+	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList battleEffect, DropManager drops, boolean facingLeft, boolean sourceDamage){
 		if (hurtTimer >= invincibilityPeriod && timeSinceSpawn > 0.5){
 
 			// boost damage for lightning
@@ -261,7 +264,7 @@ public class Monster extends Actor {
 				kill.play(Config.sfxVol);
 			}
 			// calculate KB
-			if (player.bounds.x > bounds.x){
+			if (facingLeft){
 				xVel = player.knockback/50 * -1;
 			} else {
 				xVel = player.knockback/50;
@@ -275,9 +278,9 @@ public class Monster extends Actor {
 
 			// do all animations
 			flash(1, 0, 0, 1, 5);
-			battleEffect.start(bounds.x + (bounds.width - battleEffect.width)/2, bounds.y - bounds.height, !player.facingLeft);
+			battleEffect.start(bounds.x + (bounds.width - battleEffect.width)/2, bounds.y - bounds.height, !facingLeft);
 
-			damageList.start(damage, bounds.x, bounds.y, player.facingLeft, Damage.TYPE_DAMAGE);
+			damageList.start(damage, bounds.x, bounds.y, facingLeft, Damage.TYPE_DAMAGE);
 			hurtTimer = 0;
 			hurtEnemy.play(Config.sfxVol);
 
@@ -306,6 +309,10 @@ public class Monster extends Actor {
 			}
 		}
 
+		// if this was the source damage, we can send off this to the other clients
+		if (sourceDamage){
+			GameClient.sendDamage(player, this, (short) damage);
+		}
 
 
 	}

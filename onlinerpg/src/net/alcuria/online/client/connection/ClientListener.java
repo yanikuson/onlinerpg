@@ -82,13 +82,21 @@ public class ClientListener extends Listener {
 				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_RIGHT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
 				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_JUMP] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
 				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_ATTACK] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
-				f.map.spawner.monsterList[index].HP = ((Packet6SendMonsterPosition) o).HP; 
 				if (f.map.spawner.monsterList[index].HP > 0 && !f.map.spawner.monsterList[index].visible){
 					f.map.spawner.monsterList[index].visible = true;
 					f.map.spawner.monsterList[index].timeSinceSpawn = 10;
 				}
 			}
-
+		}
+		
+		// if client receives a damage update packet, we need to damage the monster accordingly
+		if (o instanceof Packet7SendDamageNotification){
+			if (f.map.spawner != null && f.map.spawner.monsterList != null){
+				
+				//TODO: dynamically determine which type of animation to show instead of putting in f.slices. Use the packet data properly.
+				System.out.println("HHH damage!");
+				f.map.spawner.monsterList[((Packet7SendDamageNotification) o).defenderID].damage(f.player, (((Packet7SendDamageNotification) o).damage), f.damageList, f.explosions, f.slices, f.drops, (((Packet7SendDamageNotification) o).facingLeft), false); 
+			}
 		}
 
 		// if client receives a position update, we know it came from the server

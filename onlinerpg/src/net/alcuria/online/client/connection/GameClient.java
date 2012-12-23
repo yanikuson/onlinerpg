@@ -3,6 +3,7 @@ package net.alcuria.online.client.connection;
 import java.io.IOException;
 
 import net.alcuria.online.client.Config;
+import net.alcuria.online.client.Monster;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
@@ -89,6 +90,17 @@ public class GameClient {
 		req.uid = f.player.uid;
 		req.currentMap = f.player.currentMap;
 		client.sendTCP(req);
+		
+	}
+
+	public static void sendDamage(Player p, Monster m, short damage) {
+		Packet7SendDamageNotification dmg = new Packet7SendDamageNotification();
+		dmg.attackerID = p.uid;
+		dmg.defenderID = m.id;
+		dmg.damage = damage;
+		dmg.facingLeft = p.facingLeft;
+		dmg.animationID = 0;
+		dmg.currentMap = p.currentMap;
 		
 	}
 

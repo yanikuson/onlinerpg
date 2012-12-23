@@ -1,10 +1,13 @@
 package net.alcuria.online.client;
 
 import net.alcuria.online.client.screens.Field;
+import net.alcuria.online.common.Packet.Packet7SendDamageNotification;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 
 public class Player extends Actor {
 
@@ -60,10 +63,12 @@ public class Player extends Actor {
 	public byte uid;
 	public byte lastPing = 0;
 	public boolean connected = false;
+	public Array<Packet7SendDamageNotification> damageQueue;
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
-		System.out.println("skin for new player obj = " + skin);
+
+		this.damageQueue = new Array<Packet7SendDamageNotification>();
 		this.desiredBounds = bounds;
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);

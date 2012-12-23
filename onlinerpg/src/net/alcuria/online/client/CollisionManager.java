@@ -60,24 +60,24 @@ public class CollisionManager {
 
 					// hurt an enemy
 					if (enemies[i].bounds.overlaps(player.swingBounds) && enemies[i].HP > 0){
-						enemies[i].damage(player, Config.getDamageDone(player.atk, player.power, enemies[i].def, enemies[i].stamina), damageList, explosions, slices, drops);
+						enemies[i].damage(player, Config.getDamageDone(player.atk, player.power, enemies[i].def, enemies[i].stamina), damageList, explosions, slices, drops, player.facingLeft, true);
 					}
 					if (player.skills.visible && player.skills.harmful && player.skills.area.overlaps(enemies[i].bounds)){
 
 						// switch to handle all different types of damage
 						switch (player.skills.id) {
 						case SkillManager.WOUND:
-							enemies[i].damage(player, Config.getDamageDone((int)(player.atk*1.2), player.power, enemies[i].def, enemies[i].stamina), damageList, explosions, slices, drops);
+							enemies[i].damage(player, Config.getDamageDone((int)(player.atk*1.2), player.power, enemies[i].def, enemies[i].stamina), damageList, explosions, slices, drops, player.facingLeft, true);
 							break;
 						case SkillManager.FIREBALL:
-							enemies[i].damage(player, Config.getDamageDone(player.matk + 10, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
+							enemies[i].damage(player, Config.getDamageDone(player.matk + 10, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops, player.facingLeft, true);
 							break;
 						case SkillManager.FREEZE:
-							enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, freezes, drops);
+							enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, freezes, drops, player.facingLeft, true);
 							enemies[i].effects.add(StatusEffects.FREEZE, 10, 5);
 							break;
 						case SkillManager.BOLT:
-							enemies[i].damage(player, Config.getDamageDone(player.matk + 25, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops);
+							enemies[i].damage(player, Config.getDamageDone(player.matk + 25, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops, player.facingLeft, true);
 							break;
 						case SkillManager.POISON:
 							enemies[i].effects.add(StatusEffects.POISON, player.wisdom/4 + 1, 10);

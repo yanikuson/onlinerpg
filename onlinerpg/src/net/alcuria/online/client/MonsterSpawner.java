@@ -174,20 +174,20 @@ public class MonsterSpawner {
 		monsterListIndex = 0;
 	}
 
-	public void addInitialMonsters(String currentMap, boolean toggler, Field f) {
+	public void addInitialMonsters(byte id, String currentMap, boolean toggler, Field f) {
 		// WHICH MONSTER?
 		if (currentMap.equals("beachroad")){
 
 			// BEACH
-			addMonster(new Monster(Config.MON_CRAB, 16, 16, f));
+			addMonster(new Monster(id, Config.MON_CRAB, 16, 16, f));
 
 		} else {
 
 			// DEFAULT SLIMES/EYES
 			if (toggler){
-				addMonster(new Monster(Config.MON_SLIME, 14, 16, f));
+				addMonster(new Monster(id, Config.MON_SLIME, 14, 16, f));
 			} else {
-				addMonster(new Monster(Config.MON_EYE, 14, 18, f));
+				addMonster(new Monster(id, Config.MON_EYE, 14, 18, f));
 			}
 			
 		}

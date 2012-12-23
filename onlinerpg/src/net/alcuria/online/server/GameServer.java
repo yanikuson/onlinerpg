@@ -12,7 +12,7 @@ import com.esotericsoftware.minlog.Log;
 
 public class GameServer {
 
-	private static Server server;
+	public static Server server;
 	public static Field f;
 	public static boolean running = false;
 

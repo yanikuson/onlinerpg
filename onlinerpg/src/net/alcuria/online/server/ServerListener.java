@@ -63,7 +63,7 @@ public class ServerListener extends Listener {
 						MonsterSpawner spawner = new MonsterSpawner("maps/" + sPlayers.get(i).currentMap + ".spawn");
 						for (int j = 0; j < MonsterSpawner.MAX_MONSTERS; j++) {
 
-							spawner.addInitialMonsters(sPlayers.get(i).currentMap, toggler, f);
+							spawner.addInitialMonsters((byte)j, sPlayers.get(i).currentMap, toggler, f);
 							toggler = !toggler;
 						}
 						spawner.doInitialServerSpawn(sPlayers.get(i).currentMap, sMaps.get(sPlayers.get(i).currentMap));
@@ -105,7 +105,6 @@ public class ServerListener extends Listener {
 	}
 
 	public void received(Connection c, Object o) {
-
 		if (o instanceof Packet0LoginRequest){
 			Packet1LoginAnswer loginAnswer = new Packet1LoginAnswer();
 			loginAnswer.accepted = true;
@@ -181,6 +180,11 @@ public class ServerListener extends Listener {
 					curPlayerRange.width = Config.WIDTH * 2;
 					curPlayerRange.height = Config.HEIGHT * 2;
 					
+					// send off any possible damage queues for this player
+					while(sPlayers.get(i).damageQueue.size > 0){
+						c.sendTCP(sPlayers.get(i).damageQueue.pop());
+					}
+					
 				} else if (sPlayers.get(i).currentMap != null){
 				
 					// send off all players that are on the current map and of course not equal to the requesting player
@@ -217,13 +221,13 @@ public class ServerListener extends Listener {
 						monPosition.MOVE_RIGHT = curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_RIGHT];
 						monPosition.MOVE_JUMP =  curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP];
 						monPosition.MOVE_ATTACK =  curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_ATTACK];
-						monPosition.HP = (short) curMonSpawner.monsterList[i].HP;
 						c.sendTCP(monPosition);
 						curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
 	
 					}
 				}
 			}
+			
 		}
 
 		// server receives a packet containing a map change. update server's player list element's current map
@@ -237,6 +241,27 @@ public class ServerListener extends Listener {
 					break;
 				}
 			}
+		}
+		
+		// Server gets a request for all relevant positions. Send back to client!
+		if (o instanceof Packet7SendDamageNotification) {
+			
+			int requestersUid = ((Packet7SendDamageNotification) o).attackerID;
+			String requestersMap = ((Packet7SendDamageNotification) o).currentMap;
+			
+			// iterate through the sPlayers array and add to a queue of damages to display
+			for (int i = 0; i < sPlayers.size; i++){
+				// only send this position if the uid isnt the requested users uid & maps are same
+				// TODO: we can optimize this by only adding it to the queue if the players are near each other
+				if (sPlayers.get(i).uid != requestersUid && sPlayers.get(i).currentMap.equals(requestersMap)) {
+					sPlayers.get(i).damageQueue.add((Packet7SendDamageNotification) o);
+				} 
+			}
+			
+			// update the server's copy of the enemy's HP
+			sMonsters.get(requestersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].HP -=  ((Packet7SendDamageNotification) o).damage;
+			
+			//TODO: if the enemy has <= 0 HP, hand out some loot
 		}
 	}
 

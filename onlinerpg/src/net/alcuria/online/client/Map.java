@@ -294,7 +294,7 @@ public class Map {
 			this.spawner = new MonsterSpawner("maps/" + mapfile + ".spawn");
 			for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
 
-				spawner.addInitialMonsters(mapfile, toggler, f);
+				spawner.addInitialMonsters((byte)i, mapfile, toggler, f);
 				toggler = !toggler;
 
 			}
