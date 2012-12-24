@@ -232,7 +232,15 @@ public class ServerListener extends Listener {
 						monPosition.HP = (short) curMonSpawner.monsterList[i].HP;
 						c.sendTCP(monPosition);
 						curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
-
+						
+						// send a refresh notice if a monster was just spawned
+						if (!curMonSpawner.monsterList[i].refreshedHP){
+							Packet8SendEnemySpawnNotification ref = new Packet8SendEnemySpawnNotification();
+							ref.enemyID = (byte) i;
+							c.sendTCP(ref);
+							curMonSpawner.monsterList[i].refreshedHP = true;
+							Log.info("server is sending client an enemy hp refresh notice");
+						}
 					}
 				}
 			}

@@ -73,45 +73,7 @@ public class ClientListener extends Listener {
 			}
 		}
 
-		// if client receives a enemy position update, we need to update that index of the monster array
-		if (o instanceof Packet6SendMonsterPosition){
-			if (f.map.spawner != null && f.map.spawner.monsterList != null){
-				index = ((Packet6SendMonsterPosition) o).id;
-				f.map.spawner.monsterList[index].desiredBounds = ((Packet6SendMonsterPosition) o).bounds; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_LEFT; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_RIGHT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_JUMP] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_ATTACK] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
-				if (!f.map.spawner.monsterList[index].refreshedHP){
-					f.map.spawner.monsterList[index].HP = ((Packet6SendMonsterPosition) o).HP; 
-					f.map.spawner.monsterList[index].refreshedHP = true;
-				}
-				if (f.map.spawner.monsterList[index].HP > 0 && !f.map.spawner.monsterList[index].visible){
-					f.map.spawner.monsterList[index].visible = true;
-					f.map.spawner.monsterList[index].timeSinceSpawn = 10;
-				}
-			}
-		}
-
-		// if client receives a damage update packet, we need to damage the monster accordingly
-		if (o instanceof Packet7SendDamageNotification){
-
-			if (((Packet7SendDamageNotification) o).hittingEnemy){
-				if (f.map.spawner != null && f.map.spawner.monsterList != null){	
-					//TODO: dynamically determine which type of animation to show instead of putting in f.slices. Use the packet data properly.
-					f.map.spawner.monsterList[((Packet7SendDamageNotification) o).defenderID].damage(f.player, (((Packet7SendDamageNotification) o).damage), f.damageList, f.explosions, f.slices, f.drops, (((Packet7SendDamageNotification) o).facingLeft), false); 
-				}
-			} else {
-				index = ((Packet7SendDamageNotification) o).defenderID;
-				for (int i = 0; i < f.players.size; i++){
-					if (f.players.get(i).uid == index){
-						f.players.get(i).damage(0, (((Packet7SendDamageNotification) o).damage), f.damageList);
-						break;
-					}
-				}
-			}
-		}
-
+		
 		// if client receives a position update, we know it came from the server
 		// so we update that UID in the players array with the position and velocity from the packet
 		if (o instanceof Packet3SendPosition){
@@ -160,6 +122,53 @@ public class ClientListener extends Listener {
 			}
 
 		}
+		
+		
+		// if client receives a enemy position update, we need to update that index of the monster array
+		if (o instanceof Packet6SendMonsterPosition){
+			if (f.map.spawner != null && f.map.spawner.monsterList != null){
+				index = ((Packet6SendMonsterPosition) o).id;
+				f.map.spawner.monsterList[index].desiredBounds = ((Packet6SendMonsterPosition) o).bounds; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_LEFT; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_RIGHT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_JUMP] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
+				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_ATTACK] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
+				if (!f.map.spawner.monsterList[index].refreshedHP){
+					f.map.spawner.monsterList[index].HP = ((Packet6SendMonsterPosition) o).HP; 
+					f.map.spawner.monsterList[index].refreshedHP = true;
+				}
+				if (f.map.spawner.monsterList[index].HP > 0 && !f.map.spawner.monsterList[index].visible){
+					f.map.spawner.monsterList[index].visible = true;
+					f.map.spawner.monsterList[index].timeSinceSpawn = 10;
+				}
+			}
+		}
+
+		// if client receives a damage update packet, we need to damage the monster accordingly
+		if (o instanceof Packet7SendDamageNotification){
+
+			if (((Packet7SendDamageNotification) o).hittingEnemy){
+				if (f.map.spawner != null && f.map.spawner.monsterList != null){	
+					//TODO: dynamically determine which type of animation to show instead of putting in f.slices. Use the packet data properly.
+					f.map.spawner.monsterList[((Packet7SendDamageNotification) o).defenderID].damage(f.player, (((Packet7SendDamageNotification) o).damage), f.damageList, f.explosions, f.slices, f.drops, (((Packet7SendDamageNotification) o).facingLeft), false); 
+				}
+			} else {
+				index = ((Packet7SendDamageNotification) o).defenderID;
+				for (int i = 0; i < f.players.size; i++){
+					if (f.players.get(i).uid == index){
+						f.players.get(i).damage(0, (((Packet7SendDamageNotification) o).damage), f.damageList);
+						break;
+					}
+				}
+			}
+		}
+		
+		// if client receives a hp refresh notice from the server, let's tag that enemy for a refresh
+		if (o instanceof Packet8SendEnemySpawnNotification){
+			f.map.spawner.monsterList[((Packet8SendEnemySpawnNotification) o).enemyID].HP = ((Packet8SendEnemySpawnNotification) o).HP;
+		}
+
+
 	}
 }
 

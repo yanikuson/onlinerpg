@@ -87,4 +87,12 @@ public class Packet {
 		public byte animationID;
 		public String currentMap;
 	}
+	
+	// SERVER sends to relevant CLIENT to refresh HP with servers copy (send this out when the server spawns a new enemy after init spawn)
+	public static class Packet8SendEnemySpawnNotification
+	{
+		public byte enemyID;
+		public int HP;
+	}
+	
 }

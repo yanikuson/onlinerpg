@@ -57,7 +57,7 @@ public class GameServer {
 		kryo.register(Packet5SendMap.class);
 		kryo.register(Packet6SendMonsterPosition.class);
 		kryo.register(Packet7SendDamageNotification.class);
-
+		kryo.register(Packet8SendEnemySpawnNotification.class);
 	}
 
 	public static void main(String[] args){
