@@ -128,6 +128,11 @@ public class Monster extends Actor {
 
 	public void render(SpriteBatch batch){
 		super.render(batch);
+		
+		if (showHP){
+			drawHP(batch);
+		}
+		
 	}
 	
 	// client commands the local monster copies
@@ -254,6 +259,15 @@ public class Monster extends Actor {
 
 	}
 
+	public void knockback(boolean facingLeft, float kb){
+		// calculate KB
+		if (facingLeft){
+			xVel = kb * -1;
+		} else {
+			xVel = kb;
+		}
+		yVel = kb;
+	}
 	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList battleEffect, DropManager drops, boolean facingLeft, boolean sourceDamage){
 		if (hurtTimer >= invincibilityPeriod && timeSinceSpawn > 0.5){
 
@@ -264,19 +278,14 @@ public class Monster extends Actor {
 				player.lightningToggler = 0;
 				kill.play(Config.sfxVol);
 			}
-			// calculate KB
-			if (facingLeft){
-				xVel = player.knockback/50 * -1;
-			} else {
-				xVel = player.knockback/50;
-			}
-			// boost kb for stab
-			if (player.animation.stabPose){
-				xVel *= 2;
-				damage *= 1.3;
-			} 			
-			yVel = player.knockback/50;
 
+			knockback(player.facingLeft, player.knockback/50);
+
+			// boost damage for stab
+			if (player.animation.stabPose){
+				damage *= 1.3;
+			} 	
+			
 			// do all animations
 			flash(1, 0, 0, 1, 5);
 			battleEffect.start(bounds.x + (bounds.width - battleEffect.width)/2, bounds.y - bounds.height, !facingLeft);
@@ -331,6 +340,7 @@ public class Monster extends Actor {
 		effects.removeAll();
 		HP = maxHP;
 		visible = true;
+		refreshedHP = false;
 		flash(1, 0, 1, 0, 3);
 
 	}

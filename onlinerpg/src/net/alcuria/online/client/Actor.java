@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Actor {
@@ -36,7 +37,12 @@ public class Actor {
 	protected Texture debugPoint;					// a small point to display for the sensor points
 	public StatusEffects effects;					// all of the actor's status effects
 	public Platform curPlatform;					// current platform player is touching
-
+	
+	public Texture hudCopy;
+	public TextureRegion hpBack;
+	public TextureRegion hpFront;					// front and back of the hp bar
+	public boolean showHP = true;
+	
 	public Sound jump;
 	public Sound shoot;
 	public Sound hurt;
@@ -57,8 +63,8 @@ public class Actor {
 	public float walkSpeed = 50f;					// players max walking speed
 	public float attackSpeed = 9f;					// player's attack speed (more is faster)
 	public int lvl = 1;
-	public int maxHP;
-	public int HP = 300;
+	public int maxHP = 100;
+	public int HP = 100;
 	public int maxEP = 10;
 	public int EP = 10;
 	public int curEXP = 0;
@@ -125,6 +131,11 @@ public class Actor {
 
 		// status effects handler
 		effects = new StatusEffects(this, f);
+		
+		// HP bar variables
+		hudCopy = f.assets.get("ui/hud-player.png", Texture.class);
+		hpBack = new TextureRegion(hudCopy, 26, 11, 1, 1);
+		hpFront = new TextureRegion(hudCopy, 0, 32, 1, 1);
 
 	}
 
@@ -506,9 +517,16 @@ public class Actor {
 
 			effects.render(batch);
 
+
 		}
 
 
+	}
+	
+	// draw the hp bar below the char
+	public void drawHP(SpriteBatch batch){
+		batch.draw(hpBack, bounds.x, bounds.y - 5, bounds.width+2, 4);
+		batch.draw(hpFront, bounds.x + 1, bounds.y - 4, ((HP * (bounds.width)) / maxHP), 2);
 	}
 
 	// dispose of all assets related to the player object

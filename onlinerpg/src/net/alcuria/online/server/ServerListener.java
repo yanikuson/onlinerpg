@@ -31,6 +31,7 @@ public class ServerListener extends Listener {
 
 	static MonsterSpawner curMonSpawner;
 	static Rectangle curPlayerRange;
+	static boolean facingLeft;				// is the hero facing left? (for enemy kb)
 
 	public static void init() {
 
@@ -140,6 +141,13 @@ public class ServerListener extends Listener {
 			for (int i = 0; i < sPlayers.size; i++){
 				if (sPlayers.get(i).uid == index){
 					sPlayers.get(i).bounds =  ((Packet3SendPosition) o).bounds;
+					
+					// update FACING flag
+					if (((Packet3SendPosition) o).MOVE_LEFT){
+						sPlayers.get(i).facingLeft = true;
+					} else if (((Packet3SendPosition) o).MOVE_RIGHT){
+						sPlayers.get(i).facingLeft = false;
+					}
 					sPlayers.get(i).networkCommand[Actor.MOVE_LEFT] =  ((Packet3SendPosition) o).MOVE_LEFT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_RIGHT] =  ((Packet3SendPosition) o).MOVE_RIGHT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_JUMP] =  ((Packet3SendPosition) o).MOVE_JUMP;
@@ -263,6 +271,9 @@ public class ServerListener extends Listener {
 					// reduce the server-side HP value
 					if (!((Packet7SendDamageNotification) o).hittingEnemy){
 						sPlayers.get(i).HP -= ((Packet7SendDamageNotification) o).damage;
+					} else {
+						
+						facingLeft = sPlayers.get(i).facingLeft;
 					}
 				} else if (sPlayers.get(i).currentMap.equals(sendersMap)){
 					// add to the damage queue...
@@ -273,6 +284,7 @@ public class ServerListener extends Listener {
 			// update the server's copy of the enemy's/player's HP
 			if (((Packet7SendDamageNotification) o).hittingEnemy){
 				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].HP -=  ((Packet7SendDamageNotification) o).damage;
+				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].knockback(facingLeft, 2);
 			} 
 			//TODO: if the enemy has <= 0 HP, hand out some loot
 		}

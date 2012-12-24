@@ -111,7 +111,6 @@ public class GameClient {
 		dmg.currentMap = p.currentMap;
 		dmg.hittingEnemy = hittingEnemy;
 		client.sendTCP(dmg);
-		Log.info("Sending a damage packet");
 		
 	}
 

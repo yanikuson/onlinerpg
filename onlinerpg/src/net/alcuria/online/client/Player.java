@@ -289,6 +289,11 @@ public class Player extends Actor {
 		skills.render(batch);
 		cast.render(batch);
 		effects.render(batch);
+		
+		if (showHP){
+			drawHP(batch);
+		}
+		
 		levelup.render(batch);
 
 
