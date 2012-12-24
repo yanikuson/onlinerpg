@@ -464,11 +464,7 @@ public class Map {
 					}
 				}
 			}
-		} else {
-			System.out.println("Server map update");
-		}
-
-
+		} 
 
 	}
 

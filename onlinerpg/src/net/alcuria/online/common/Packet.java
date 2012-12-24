@@ -73,11 +73,13 @@ public class Packet {
 		public boolean MOVE_RIGHT;
 		public boolean MOVE_JUMP;
 		public boolean MOVE_ATTACK;
+		public short HP;
 	}
 
 	// these are passed around to show on-screen damage and update enemy HP
 	public static class Packet7SendDamageNotification
 	{
+		public boolean hittingEnemy;
 		public byte attackerID;
 		public byte defenderID;
 		public short damage;

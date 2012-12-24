@@ -11,6 +11,7 @@ import net.alcuria.online.common.Packet.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.minlog.Log;
 
 public class GameClient {
 	
@@ -47,6 +48,7 @@ public class GameClient {
 		kryo.register(Packet4RequestPositions.class);
 		kryo.register(Packet5SendMap.class);
 		kryo.register(Packet6SendMonsterPosition.class);
+		kryo.register(Packet7SendDamageNotification.class);
 
 	}
 
@@ -93,14 +95,23 @@ public class GameClient {
 		
 	}
 
-	public static void sendDamage(Player p, Monster m, short damage) {
+	public static void sendDamage(Player p, Monster m, short damage, boolean hittingEnemy) {
 		Packet7SendDamageNotification dmg = new Packet7SendDamageNotification();
-		dmg.attackerID = p.uid;
-		dmg.defenderID = m.id;
+		
+		if (hittingEnemy){
+			dmg.attackerID = p.uid;
+			if (m != null) dmg.defenderID = m.id;
+		} else {
+			dmg.attackerID = 0;
+			dmg.defenderID = p.uid;
+		}
 		dmg.damage = damage;
 		dmg.facingLeft = p.facingLeft;
 		dmg.animationID = 0;
 		dmg.currentMap = p.currentMap;
+		dmg.hittingEnemy = hittingEnemy;
+		client.sendTCP(dmg);
+		Log.info("Sending a damage packet");
 		
 	}
 

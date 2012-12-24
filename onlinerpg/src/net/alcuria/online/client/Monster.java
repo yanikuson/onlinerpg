@@ -25,6 +25,7 @@ public class Monster extends Actor {
 	public Projectile projectile;			// monster's projectile
 	public Rectangle desiredBounds;
 	public byte id;							// id in the array of monsters
+	public boolean refreshedHP = false;
 
 	// client monster constructor
 	public Monster(byte id, int type, int width, int height, Field f) {
@@ -307,12 +308,15 @@ public class Monster extends Actor {
 				}
 
 			}
+			
+
+			// if this was the source damage, we can send off this to the other clients
+			if (sourceDamage){
+				GameClient.sendDamage(player, this, (short) damage, true);
+			}
+			
 		}
 
-		// if this was the source damage, we can send off this to the other clients
-		if (sourceDamage){
-			GameClient.sendDamage(player, this, (short) damage);
-		}
 
 
 	}

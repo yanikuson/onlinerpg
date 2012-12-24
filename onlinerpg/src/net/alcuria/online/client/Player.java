@@ -1,5 +1,6 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.connection.GameClient;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.Packet7SendDamageNotification;
 
@@ -320,9 +321,9 @@ public class Player extends Actor {
 				facingLeft = false;
 				visible = true;
 			}
+			GameClient.sendDamage(this, null, (short) damage, false);
 
 		} 
-
 
 	}
 
@@ -416,7 +417,7 @@ public class Player extends Actor {
 
 
 		// set network player's moving and facing flag
-		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 20){
+		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 30){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
 		} 
