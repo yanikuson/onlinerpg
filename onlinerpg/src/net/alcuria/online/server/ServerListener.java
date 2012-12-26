@@ -207,6 +207,7 @@ public class ServerListener extends Listener {
 					position.MOVE_JUMP = sPlayers.get(i).networkCommand[Player.MOVE_JUMP];
 					position.MOVE_ATTACK = sPlayers.get(i).networkCommand[Player.MOVE_ATTACK];
 
+					// TODO: take all this junk out of this packet and put them in one that sends out infrequently (eg on a gear change)
 					position.wep = (byte) sPlayers.get(i).weapon.id;
 					position.armor = (byte) sPlayers.get(i).armor.id;
 					position.helm = (byte) sPlayers.get(i).helmet.id;

@@ -226,6 +226,7 @@ public class Field implements Screen {
 
 		player.animation.assignPlayer(player);
 		player.resetVisualEquips();
+		player.networkingPlayer = false;
 
 		cameraManager = new CameraManager();		
 

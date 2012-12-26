@@ -422,7 +422,7 @@ public class Player extends Actor {
 
 
 		// set network player's moving and facing flag
-		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 30){
+		if (onGround && Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 30){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
 		} 
@@ -432,6 +432,16 @@ public class Player extends Actor {
 		moveCommand[MOVE_JUMP] = networkCommand[MOVE_JUMP];
 		networkCommand[MOVE_JUMP] = false;
 
+		// do manual movement
+		if (desiredBounds.x - bounds.x > 10){
+			moveCommand[MOVE_RIGHT] = true;
+			moveCommand[MOVE_LEFT] = false;
+		}
+		if (bounds.x - desiredBounds.x > 10){
+			moveCommand[MOVE_RIGHT] = false;
+			moveCommand[MOVE_LEFT] = true;
+		}
+		
 		// check if the player is trying to attack
 		if (networkCommand[MOVE_ATTACK] && swingTimer >= swingPeriod && !animation.castPose && !animation.itemPose){
 			moveCommand[MOVE_ATTACK] = true;

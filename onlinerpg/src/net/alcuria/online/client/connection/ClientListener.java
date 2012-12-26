@@ -106,6 +106,9 @@ public class ClientListener extends Listener {
 					f.players.get(i).currentMap = ((Packet3SendPosition) o).currentMap;
 					f.players.get(i).connected = ((Packet3SendPosition) o).connected;
 					f.players.get(i).lastPing = 0;
+					
+					f.players.get(i).HP = ((Packet3SendPosition) o).HP;
+					f.players.get(i).maxHP = ((Packet3SendPosition) o).maxHP;
 
 					updated = true;
 					break;
@@ -117,6 +120,7 @@ public class ClientListener extends Listener {
 				Player p = new Player("New", ((Packet3SendPosition) o).gender, ((Packet3SendPosition) o).skin, ((Packet3SendPosition) o).hair, -20, -20, 14, 22, f);
 				p.uid = index;
 				p.resetVisualEquips();
+				p.networkingPlayer = true;
 				f.players.add(p);
 
 			}

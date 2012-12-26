@@ -92,6 +92,8 @@ public class Actor {
 	public float[] targetRGBA = {1f,1f,1f,1f};
 	public float[] currentRGBA = {1f,1f,1f,1f};
 	
+	// for networking
+	public boolean networkingPlayer = false;
 	public Actor(String filename, int x, int y, int width, int height, Field f){
 		if (f == null){
 			return;
@@ -363,7 +365,7 @@ public class Actor {
 			bounds.y = bounds.y + yVel;
 			setAllSensors(bounds.x, bounds.y);
 		}
-
+		
 		// check for an ATTACK
 		if (moveCommand[MOVE_ATTACK] && !animation.swingPose && !animation.stabPose){
 			moveCommand[MOVE_ATTACK] = false;			
