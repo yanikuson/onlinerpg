@@ -101,7 +101,7 @@ public class MonsterSpawner {
 	public void clientUpdate(Map map){
 		// command all enemies
 		for (int i = 0; i < monsterList.length; i++){
-			if (monsterList[i] != null && monsterList[i].visible){
+			if (monsterList[i] != null){
 				monsterList[i].clientCommand(map);	
 			}
 				
@@ -129,7 +129,7 @@ public class MonsterSpawner {
 	// renders all enabled monsters on the field. (TODO: this could be optimized to only call render if they are on the visible screen!!)
 	public void render(SpriteBatch batch) {
 		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
-			if (monsterList[i] != null && monsterList[i].visible) {
+			if (monsterList[i] != null && monsterList[i].visible && monsterList[i].HP > 0 && (Math.abs(monsterList[i].desiredBounds.x - monsterList[i].bounds.x) + Math.abs(monsterList[i].desiredBounds.y - monsterList[i].bounds.y) < 50)) {
 				monsterList[i].render(batch);
 				if (monsterList[i].projectile != null){
 					monsterList[i].projectile.render(batch);	

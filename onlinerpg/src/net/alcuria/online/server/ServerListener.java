@@ -164,6 +164,8 @@ public class ServerListener extends Listener {
 					}
 
 					sPlayers.get(i).currentMap =  ((Packet3SendPosition) o).currentMap;
+					sPlayers.get(i).HP = ((Packet3SendPosition) o).HP;
+					sPlayers.get(i).maxHP = ((Packet3SendPosition) o).maxHP;
 					sPlayers.get(i).lastPing = 0;
 
 
@@ -193,7 +195,7 @@ public class ServerListener extends Listener {
 						c.sendTCP(sPlayers.get(i).damageQueue.pop());
 					}
 
-				} else if (sPlayers.get(i).currentMap != null){
+				} else if (sPlayers.get(i).currentMap != null && sPlayers.get(i).currentMap.equals(requestersMap)){
 
 					// send off all players that are on the current map and of course not equal to the requesting player
 					Packet3SendPosition position = new Packet3SendPosition();
@@ -209,7 +211,10 @@ public class ServerListener extends Listener {
 					position.armor = (byte) sPlayers.get(i).armor.id;
 					position.helm = (byte) sPlayers.get(i).helmet.id;
 
-					//position.currentMap = sPlayers.get(i).currentMap;
+					position.currentMap = sPlayers.get(i).currentMap;
+					position.HP = (short) sPlayers.get(i).HP;
+					position.maxHP = (short) sPlayers.get(i).maxHP;
+					
 					position.connected = sPlayers.get(i).connected;
 
 					c.sendTCP(position);
@@ -234,13 +239,16 @@ public class ServerListener extends Listener {
 						curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
 						
 						// send a refresh notice if a monster was just spawned
+						/*
 						if (!curMonSpawner.monsterList[i].refreshedHP){
 							Packet8SendEnemySpawnNotification ref = new Packet8SendEnemySpawnNotification();
 							ref.enemyID = (byte) i;
+							ref.HP = (byte) curMonSpawner.monsterList[i].HP;
 							c.sendTCP(ref);
 							curMonSpawner.monsterList[i].refreshedHP = true;
 							Log.info("server is sending client an enemy hp refresh notice");
 						}
+						*/
 					}
 				}
 			}

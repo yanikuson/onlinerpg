@@ -133,7 +133,7 @@ public class ClientListener extends Listener {
 				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_RIGHT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
 				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_JUMP] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
 				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_ATTACK] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
-				if (!f.map.spawner.monsterList[index].refreshedHP){
+				if (f.map.spawner.monsterList[index].ignoreHPupdateTimer <= 0){
 					f.map.spawner.monsterList[index].HP = ((Packet6SendMonsterPosition) o).HP; 
 					f.map.spawner.monsterList[index].refreshedHP = true;
 				}

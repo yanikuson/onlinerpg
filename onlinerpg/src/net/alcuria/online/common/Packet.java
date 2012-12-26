@@ -45,6 +45,8 @@ public class Packet {
 		public byte armor;
 		public byte helm;
 		
+		public short HP;
+		public short maxHP;
 		public String currentMap;
 		public boolean connected;
 

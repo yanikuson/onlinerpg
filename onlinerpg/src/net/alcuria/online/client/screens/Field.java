@@ -90,9 +90,12 @@ public class Field implements Screen {
 			map.renderBG(batch, cameraManager);
 
 			map.render(batch, true, cameraManager);
+			
+			// render all online players that are the also on the same map as the hero
 			for (int i = 0; i < players.size; i++){
-				// TODO: only render if players are on same map
-				players.get(i).render(batch);
+				if (player.currentMap != null && players.get(i).currentMap != null && player.currentMap.equals(players.get(i).currentMap)){
+					players.get(i).render(batch);
+				}
 			}
 			player.render(batch);
 			map.render(batch, false, cameraManager);
@@ -163,6 +166,7 @@ public class Field implements Screen {
 					if (players.get(i).lastPing > 30){
 						players.removeIndex(i);
 					} else {
+						players.get(i).checkIfOnMovingPlatform(map);
 						players.get(i).networkUpdate();
 						players.get(i).update(map);
 						players.get(i).updateEquips();

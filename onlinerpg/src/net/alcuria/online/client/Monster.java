@@ -27,6 +27,8 @@ public class Monster extends Actor {
 	public byte id;							// id in the array of monsters
 	public boolean refreshedHP = false;
 
+	public float ignoreHPupdateTimer = 0;
+
 	// client monster constructor
 	public Monster(byte id, int type, int width, int height, Field f) {
 		super("sprites/monsters/" + type + ".png", -60, -60, width, height, f);
@@ -35,7 +37,7 @@ public class Monster extends Actor {
 		setStats(type);
 
 	}
-	
+
 	// server monster construct
 	public Monster(byte id, int type){
 		super("sprites/equips/empty.png", -60, -60, 0, 0, null);
@@ -120,7 +122,7 @@ public class Monster extends Actor {
 		default:
 
 		}
-		
+
 		this.invincibilityPeriod = 0.3f;
 		this.type = type;
 		this.HP = maxHP;
@@ -128,37 +130,46 @@ public class Monster extends Actor {
 
 	public void render(SpriteBatch batch){
 		super.render(batch);
-		
+
 		if (showHP){
 			drawHP(batch);
 		}
-		
+
 	}
-	
+
 	// client commands the local monster copies
 	public void clientCommand(Map map){
+
+		// update the ignore server flag
+		if (ignoreHPupdateTimer > 0){
+			ignoreHPupdateTimer -= Gdx.graphics.getDeltaTime();
+		}
+
+
 		// set network player's moving and facing flag
-		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 40){
+		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 50){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
 		} 
 		
-		moveCommand[MOVE_ATTACK] = networkCommand[MOVE_ATTACK];
-		moveCommand[MOVE_LEFT] = networkCommand[MOVE_LEFT];
-		moveCommand[MOVE_RIGHT] = networkCommand[MOVE_RIGHT];
-		moveCommand[MOVE_JUMP] = networkCommand[MOVE_JUMP];
-		if (moveCommand[MOVE_JUMP]){
-			networkCommand[MOVE_JUMP] = false;
+				
+		if (visible){
+			moveCommand[MOVE_ATTACK] = networkCommand[MOVE_ATTACK];
+			moveCommand[MOVE_LEFT] = networkCommand[MOVE_LEFT];
+			moveCommand[MOVE_RIGHT] = networkCommand[MOVE_RIGHT];
+			moveCommand[MOVE_JUMP] = networkCommand[MOVE_JUMP];
+			if (moveCommand[MOVE_JUMP]){
+				networkCommand[MOVE_JUMP] = false;
+			}
+			checkForEdgesAndWalls(map);
 		}
-		
-		checkForEdgesAndWalls(map);
 	}
-	
+
 	// monster AI, since it will probably be big, is going here (SERVER-SIDE)
 	public void serverCommand(Map map){
 
 		if (HP > 0 && effects.timer[StatusEffects.FREEZE] <= 0){
-						
+
 			// UPDATE AI or something here
 			commandTimer += Gdx.graphics.getDeltaTime();
 			timeSinceSpawn += Gdx.graphics.getDeltaTime();
@@ -183,7 +194,7 @@ public class Monster extends Actor {
 							projectile.shoot(bounds.x + 10, bounds.y + 5, 2);
 						}
 					}
-					*/
+					 */
 					break;
 
 				default:
@@ -214,11 +225,11 @@ public class Monster extends Actor {
 
 		// also check if anything can change the command (for instance, enemy walks to a cliff or bumps a wall)	
 		checkForEdgesAndWalls(map);
-		
+
 	}
-	
+
 	private void checkForEdgesAndWalls(Map map) {
-		
+
 		// if we're moving right and we bump a wall on the right, let's turn the enemy around
 		if (moveCommand[MOVE_RIGHT] && sensorTouchesRightSide(map)){
 			moveCommand[MOVE_LEFT] = true;
@@ -247,7 +258,7 @@ public class Monster extends Actor {
 			moveCommand[MOVE_LEFT] = true;
 			moveCommand[MOVE_RIGHT] = false;
 		}*/
-		
+
 	}
 
 	private void clearCommands() {
@@ -269,7 +280,10 @@ public class Monster extends Actor {
 		yVel = kb;
 	}
 	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList battleEffect, DropManager drops, boolean facingLeft, boolean sourceDamage){
+
 		if (hurtTimer >= invincibilityPeriod && timeSinceSpawn > 0.5){
+
+			ignoreHPupdateTimer = 0.5f;
 
 			// boost damage for lightning
 			if (player.lightningWep){
@@ -285,7 +299,7 @@ public class Monster extends Actor {
 			if (player.animation.stabPose){
 				damage *= 1.3;
 			} 	
-			
+
 			// do all animations
 			flash(1, 0, 0, 1, 5);
 			battleEffect.start(bounds.x + (bounds.width - battleEffect.width)/2, bounds.y - bounds.height, !facingLeft);
@@ -317,13 +331,13 @@ public class Monster extends Actor {
 				}
 
 			}
-			
+
 
 			// if this was the source damage, we can send off this to the other clients
 			if (sourceDamage){
 				GameClient.sendDamage(player, this, (short) damage, true);
 			}
-			
+
 		}
 
 

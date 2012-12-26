@@ -24,7 +24,7 @@ public class StatusEffects {
 	public int[] severity;
 	public float[] frequency;
 
-	public DamageList damageList;
+	public Field f;
 	public Particle healSparkle;
 	public Sound heal;
 
@@ -52,7 +52,7 @@ public class StatusEffects {
 		healSparkle = new Particle("sprites/sparkle.png", 0, 0, 25, 25, 5, 5, false, f.assets);
 		heal = f.assets.get("sounds/heal.wav", Sound.class);
 		
-		this.damageList = f.damageList;
+		this.f = f;
 
 	}
 
@@ -65,7 +65,7 @@ public class StatusEffects {
 				timer[i] -= Gdx.graphics.getDeltaTime();
 				subTimer[i]+= Gdx.graphics.getDeltaTime();
 				if (subTimer[i] > frequency[i]) {
-					doEffect(i, actor, this.damageList);
+					doEffect(i, actor, this.f.damageList);
 					subTimer[i] = 0;
 				}
 
@@ -153,7 +153,7 @@ public class StatusEffects {
 			if (actor.HP > actor.maxHP) {
 				actor.HP = actor.maxHP;
 			}
-			damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
+			f.damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
 			this.timer[effect] = 0;
 			break;
 

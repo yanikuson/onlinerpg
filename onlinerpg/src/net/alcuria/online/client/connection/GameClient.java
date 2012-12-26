@@ -82,6 +82,8 @@ public class GameClient {
 		pos.helm = (byte) f.player.helmet.id;
 		
 		pos.currentMap = f.player.currentMap;
+		pos.HP = (short) f.player.HP;
+		pos.maxHP = (short) f.player.maxHP;
 		
 		client.sendTCP(pos);
 	}
