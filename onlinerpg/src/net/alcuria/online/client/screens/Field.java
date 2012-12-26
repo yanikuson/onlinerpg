@@ -227,7 +227,8 @@ public class Field implements Screen {
 		player.animation.assignPlayer(player);
 		player.resetVisualEquips();
 		player.networkingPlayer = false;
-
+		player.playJump = true;
+		
 		cameraManager = new CameraManager();		
 
 		batch = new SpriteBatch();
@@ -236,7 +237,6 @@ public class Field implements Screen {
 
 		damageList = new DamageList();
 
-		player.playJump = true;
 
 		inputs = new InputHandler(assets);
 

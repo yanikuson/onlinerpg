@@ -77,6 +77,11 @@ public class GameClient {
 			f.player.networkCommand[Player.MOVE_ATTACK] = false; // STOP jumping if we are going to send the packet!!
 		}
 		
+		// assign the skill id
+		pos.skillID = f.player.networkSkillID;
+		f.player.networkSkillID = -1;			// we set this to -1 so the skill id doesn't register twice. only need to send the first one.
+		
+		
 		pos.wep = (byte) f.player.weapon.id;
 		pos.armor = (byte) f.player.armor.id;
 		pos.helm = (byte) f.player.helmet.id;

@@ -147,7 +147,7 @@ public class Monster extends Actor {
 
 
 		// set network player's moving and facing flag
-		if (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 50){
+		if (onGround && (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 40)){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
 		} 

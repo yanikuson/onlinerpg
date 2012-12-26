@@ -37,6 +37,7 @@ public class Actor {
 	protected Texture debugPoint;					// a small point to display for the sensor points
 	public StatusEffects effects;					// all of the actor's status effects
 	public Platform curPlatform;					// current platform player is touching
+	public SkillManager skills;
 	
 	public Texture hudCopy;
 	public TextureRegion hpBack;
@@ -374,7 +375,7 @@ public class Actor {
 
 		// ALL OTHER PROCESSING 
 		if (effects.timer[StatusEffects.FREEZE] <= 0) {
-			animation.update(facingLeft, onGround, moving, Gdx.graphics.getDeltaTime(), attackSpeed);
+			animation.update(this);
 		}
 
 		if (hurtTimer < invincibilityPeriod){

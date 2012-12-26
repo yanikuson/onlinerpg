@@ -38,7 +38,7 @@ public class Player extends Actor {
 	public Sound levelupSound;
 	public Sound castSound;
 	private Particle levelup;
-	public SkillManager skills;
+
 	private boolean levelSoundPlayed = false;
 
 	public int statPts = 0;
@@ -64,6 +64,7 @@ public class Player extends Actor {
 	public byte uid;
 	public byte lastPing = 0;
 	public boolean connected = false;
+	public byte networkSkillID = -1;
 	public Array<Packet7SendDamageNotification> damageQueue;
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
@@ -172,12 +173,15 @@ public class Player extends Actor {
 			if (inputs.typed[InputHandler.SKILL_1]){
 				inputs.typed[InputHandler.SKILL_1] = false;
 				startSkill(0);
+				networkSkillID = 0;
 			} else if (inputs.typed[InputHandler.SKILL_2]){
 				inputs.typed[InputHandler.SKILL_2] = false;
 				startSkill(1);
+				networkSkillID = 1;
 			} else if (inputs.typed[InputHandler.SKILL_3]){
 				inputs.typed[InputHandler.SKILL_3] = false;
 				startSkill(2);
+				networkSkillID = 2;
 			}
 		}
 
@@ -459,6 +463,23 @@ public class Player extends Actor {
 		}
 
 		updateSwing();
+		
+
+		// check if the player pressed a skill button
+		if (networkSkillID > -1){
+			startSkill(networkSkillID);
+			networkSkillID = -1;
+			System.out.println("client starting skill");
+		}
+
+		// update our player-specific particle effects
+		levelup.update(bounds.x - 8, bounds.y, true);
+		if (facingLeft) {
+			cast.update(bounds.x - 8, bounds.y, true);
+		} else {
+			cast.update(bounds.x - 1, bounds.y, true);
+		}
+		skills.update();
 
 	}
 

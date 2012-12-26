@@ -37,6 +37,9 @@ public class Packet {
 		public boolean MOVE_RIGHT;
 		public boolean MOVE_JUMP;
 		public boolean MOVE_ATTACK;
+		
+		public byte skillID;
+		
 		public byte skin;
 		public byte hair;
 		public byte gender;
@@ -49,6 +52,7 @@ public class Packet {
 		public short maxHP;
 		public String currentMap;
 		public boolean connected;
+		
 
 	}
 	

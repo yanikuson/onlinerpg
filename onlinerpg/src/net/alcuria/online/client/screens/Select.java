@@ -1,5 +1,6 @@
 package net.alcuria.online.client.screens;
 
+import net.alcuria.online.client.Actor;
 import net.alcuria.online.client.Animator;
 import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
@@ -28,7 +29,8 @@ public class Select implements Screen {
 	private Texture title;
 	private TextureRegion titleRegion;
 	private Music bgm;
-
+	private Actor a;
+	
 	float x, y;
 
 	String[] names;
@@ -46,6 +48,12 @@ public class Select implements Screen {
 
 	public Select(Game g, AssetManager assets)
 	{
+		a = new Actor("sprites/player.png", 0, 0, 16, 22, null);
+		a.facingLeft = false;
+		a.onGround = true;
+		a.moving = true;
+		a.attackSpeed = 0.1f;
+		
 		this.assets = assets;
 		myGame = g;
 
@@ -104,11 +112,11 @@ public class Select implements Screen {
 		for (int i = 0; i < 3; i++){
 			// update to walk or run pose
 			if (menu.selection[0] == i){
-				skins[i].update(false, true, true, Gdx.graphics.getDeltaTime(), 1f);
+				a.moving = true;
 			} else {
-				skins[i].update(false, true, false, Gdx.graphics.getDeltaTime(), 1f);
-
+				a.moving = false;
 			}
+			skins[i].update(a);
 			hairs[i].update(skins[i].frame);
 			weapons[i].update(skins[i].frame);
 			armors[i].update(skins[i].frame);

@@ -1,5 +1,6 @@
 package net.alcuria.online.client.screens;
 
+import net.alcuria.online.client.Actor;
 import net.alcuria.online.client.Animator;
 import net.alcuria.online.client.Config;
 import net.alcuria.online.client.InputHandler;
@@ -38,12 +39,19 @@ public class Create implements Screen {
 	public int gender = 0;
 	public int hair = 0;
 	
+	public Actor a;
 	public Animator[] sprites;
 	public VisualEquip hairVisual;
 	public VisualEquip armorVisual;
 
 	public Create(Game g, AssetManager assets, int id)
 	{
+		a = new Actor("sprites/player.png", 0, 0, 16, 22, null);
+		a.facingLeft = false;
+		a.onGround = true;
+		a.moving = true;
+		a.attackSpeed = 0.1f;
+		
 		this.id = id;
 		this.assets = assets;
 		myGame = g;
@@ -90,7 +98,7 @@ public class Create implements Screen {
 			hairVisual.changeTexture("sprites/equips/hair/" + (menu.hair+1) + ".png");
 		}
 		
-		sprites[skin].update(false, true, true, Gdx.graphics.getDeltaTime(), 0.1f);
+		sprites[skin].update(a);
 		hairVisual.update(sprites[skin].frame);
 		armorVisual.update(sprites[skin].frame);
 

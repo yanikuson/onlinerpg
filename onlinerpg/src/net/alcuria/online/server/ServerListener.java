@@ -153,6 +153,8 @@ public class ServerListener extends Listener {
 					sPlayers.get(i).networkCommand[Actor.MOVE_JUMP] =  ((Packet3SendPosition) o).MOVE_JUMP;
 					sPlayers.get(i).networkCommand[Actor.MOVE_ATTACK] =  ((Packet3SendPosition) o).MOVE_ATTACK;
 
+					sPlayers.get(i).networkSkillID =  ((Packet3SendPosition) o).skillID;
+					
 					if(sPlayers.get(i).weapon.id != ((Packet3SendPosition) o).wep){
 						sPlayers.get(i).weapon = new Item(((Packet3SendPosition) o).wep);
 					}
@@ -206,6 +208,7 @@ public class ServerListener extends Listener {
 					position.MOVE_RIGHT = sPlayers.get(i).networkCommand[Player.MOVE_RIGHT];
 					position.MOVE_JUMP = sPlayers.get(i).networkCommand[Player.MOVE_JUMP];
 					position.MOVE_ATTACK = sPlayers.get(i).networkCommand[Player.MOVE_ATTACK];
+					position.skillID = sPlayers.get(i).networkSkillID;
 
 					// TODO: take all this junk out of this packet and put them in one that sends out infrequently (eg on a gear change)
 					position.wep = (byte) sPlayers.get(i).weapon.id;

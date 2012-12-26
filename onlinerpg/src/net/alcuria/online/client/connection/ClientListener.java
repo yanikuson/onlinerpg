@@ -86,6 +86,8 @@ public class ClientListener extends Listener {
 					f.players.get(i).networkCommand[Player.MOVE_RIGHT] = ((Packet3SendPosition) o).MOVE_RIGHT;
 					f.players.get(i).networkCommand[Player.MOVE_JUMP] = ((Packet3SendPosition) o).MOVE_JUMP;
 					f.players.get(i).networkCommand[Player.MOVE_ATTACK] = ((Packet3SendPosition) o).MOVE_ATTACK;
+					f.players.get(i).networkSkillID = ((Packet3SendPosition) o).skillID;
+
 
 					f.players.get(i).hair = ((Packet3SendPosition) o).hair;
 					f.players.get(i).skin = ((Packet3SendPosition) o).skin;

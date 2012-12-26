@@ -1,5 +1,6 @@
 package net.alcuria.online.client;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -116,13 +117,13 @@ public class Animator {
 
 	}
 
-	public void update(boolean isFacingLeft, boolean onGround, boolean moving, float timestep, float attackSpeed){
+	public void update(Actor a){
 
-		flipX = isFacingLeft;
+		flipX = a.facingLeft;
 
 		if (!swingPose && !stabPose){
 			if (castComplete) {
-				castTimer+= timestep;
+				castTimer+= Gdx.graphics.getDeltaTime();
 				
 				if (castTimer*40 > stabbing.length){
 					castComplete = false;
@@ -135,7 +136,7 @@ public class Animator {
 				frame = casting;
 				
 				// start cast particle
-				castTimer+= timestep;
+				castTimer+= Gdx.graphics.getDeltaTime();
 				if (castTimer > CAST_TIME){
 					castTimer = 0;
 					castPose = false;
@@ -143,13 +144,13 @@ public class Animator {
 					// do cast
 					switch(whichSkill){
 					case 0:
-						p.skills.start(SkillManager.hotkey1);
+						a.skills.start(SkillManager.hotkey1);
 						break;
 					case 1:
-						p.skills.start(SkillManager.hotkey2);
+						a.skills.start(SkillManager.hotkey2);
 						break;
 					case 2:
-						p.skills.start(SkillManager.hotkey3);
+						a.skills.start(SkillManager.hotkey3);
 						break;
 					}
 					
@@ -159,25 +160,25 @@ public class Animator {
 				
 			} else if(itemPose) {
 				frame = victory;
-				itemTimer += timestep;
+				itemTimer += Gdx.graphics.getDeltaTime();
 				if (itemTimer > 0.5){
 					itemTimer = 0;
 					itemPose = false;
 				}
 			} else {
-				if (onGround){
-					if (moving){
+				if (a.onGround){
+					if (a.moving){
 						framesSinceAttack = 100;
-						animationTimer += timestep;
+						animationTimer += Gdx.graphics.getDeltaTime();
 						frame = walking[(int) ((animationTimer*10 + 1) % walking.length)];
 					} else {
 						animationTimer = 0;
 						if (!readyPose){
-							idleTimer += timestep;
+							idleTimer += Gdx.graphics.getDeltaTime();
 							frame = idle[(int) ((idleTimer*3) % idle.length)];
 
 						} else {
-							readyTimer += timestep;
+							readyTimer += Gdx.graphics.getDeltaTime();
 							frame = ready[(int) ((readyTimer*4) % ready.length)];
 						}
 					}
@@ -191,7 +192,7 @@ public class Animator {
 			}
 		} else {
 			// process an attack animation
-			attackIndex = (int) ((attackTimer*attackSpeed));
+			attackIndex = (int) ((attackTimer*a.attackSpeed));
 			if (swingPose) {
 				framesSinceAttack = 0;
 				if (attackIndex >= attacking.length){
@@ -201,7 +202,7 @@ public class Animator {
 					frame = attacking[attacking.length-1];
 
 				} else {
-					attackTimer += timestep;
+					attackTimer += Gdx.graphics.getDeltaTime();
 					frame = attacking[attackIndex];
 				}
 
@@ -212,7 +213,7 @@ public class Animator {
 					readyPose = true;
 					frame = stabbing[attacking.length-1];
 				} else {
-					attackTimer += timestep;
+					attackTimer += Gdx.graphics.getDeltaTime();
 					frame = stabbing[attackIndex];
 				}
 			}
