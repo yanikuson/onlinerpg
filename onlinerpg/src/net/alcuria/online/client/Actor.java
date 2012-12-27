@@ -152,6 +152,16 @@ public class Actor {
 		
 	}
 
+	public void knockback(boolean facingLeft, float kb){
+		// calculate KB
+		if (facingLeft){
+			xVel = kb * -1;
+		} else {
+			xVel = kb;
+		}
+		yVel = kb;
+	}
+	
 	public void checkIfOnMovingPlatform(Map map){
 
 		curPlatform = null;
@@ -183,7 +193,7 @@ public class Actor {
 	public void update(Map map){
 
 		// do not update if actor is dead
-		if (HP <= 0 || !visible){
+		if (HP <= 0){
 			visible = false;
 			return;
 		}

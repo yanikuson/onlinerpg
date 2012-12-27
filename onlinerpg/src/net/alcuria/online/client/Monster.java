@@ -270,15 +270,7 @@ public class Monster extends Actor {
 
 	}
 
-	public void knockback(boolean facingLeft, float kb){
-		// calculate KB
-		if (facingLeft){
-			xVel = kb * -1;
-		} else {
-			xVel = kb;
-		}
-		yVel = kb;
-	}
+
 	public void damage(Player player, int damage, DamageList damageList, ParticleList explosions, ParticleList battleEffect, DropManager drops, boolean facingLeft, boolean sourceDamage){
 
 		if (hurtTimer >= invincibilityPeriod && timeSinceSpawn > 0.5){

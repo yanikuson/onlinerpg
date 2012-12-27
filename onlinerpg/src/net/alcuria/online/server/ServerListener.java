@@ -291,8 +291,9 @@ public class ServerListener extends Listener {
 					// reduce the server-side HP value
 					if (!((Packet7SendDamageNotification) o).hittingEnemy){
 						sPlayers.get(i).HP -= ((Packet7SendDamageNotification) o).damage;
-					} else {
+						sPlayers.get(i).damageQueue.add((Packet7SendDamageNotification) o);
 						
+					} else {				
 						facingLeft = sPlayers.get(i).facingLeft;
 					}
 				} else if (sPlayers.get(i).currentMap.equals(sendersMap)){
@@ -306,6 +307,7 @@ public class ServerListener extends Listener {
 				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].HP -=  ((Packet7SendDamageNotification) o).damage;
 				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].knockback(facingLeft, 2);
 			} 
+			
 			//TODO: if the enemy has <= 0 HP, hand out some loot
 		}
 	}

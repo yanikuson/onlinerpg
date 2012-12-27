@@ -2,6 +2,9 @@ package net.alcuria.online.client;
 
 public class Config {
 
+	// Server settings
+	public static boolean PvpEnabled = false;
+	
 	// graphics settings
 	public static int WIDTH = 416;
 	public static int HEIGHT = 240;

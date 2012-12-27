@@ -66,7 +66,7 @@ public class MonsterSpawner {
 					// if we iterate through the whole array, the map is full
 					if (monsterListIndex >= activeMonsters){
 						spawnCounter = 0;
-						System.out.println("map is full");
+						//System.out.println("map is full");
 						return;
 					}
 				}

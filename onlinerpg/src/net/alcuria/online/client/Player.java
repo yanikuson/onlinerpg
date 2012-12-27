@@ -329,6 +329,8 @@ public class Player extends Actor {
 				bounds.x = 5*16;
 				facingLeft = false;
 				visible = true;
+				renderToggler = false;
+				
 			}
 			GameClient.sendDamage(this, null, (short) damage, false);
 
@@ -469,7 +471,6 @@ public class Player extends Actor {
 		if (networkSkillID > -1){
 			startSkill(networkSkillID);
 			networkSkillID = -1;
-			System.out.println("client starting skill");
 		}
 
 		// update our player-specific particle effects
