@@ -43,7 +43,6 @@ public class ServerListener extends Listener {
 	}
 
 	public static void update() {
-
 		// update monsters
 		if (sPlayers != null) {
 
@@ -106,6 +105,7 @@ public class ServerListener extends Listener {
 	}
 
 	public void received(Connection c, Object o) {
+
 		if (o instanceof Packet0LoginRequest){
 			Packet1LoginAnswer loginAnswer = new Packet1LoginAnswer();
 			loginAnswer.accepted = true;
@@ -115,6 +115,7 @@ public class ServerListener extends Listener {
 			// create a server copy of the player that connected
 			Player p = new Player("Name", Player.GENDER_MALE, Player.SKIN_PALE, 1, -20, -20, 14, 22, f);
 			p.uid = loginAnswer.uid;
+			p.name =((Packet0LoginRequest) o).name;
 			p.skin = ((Packet0LoginRequest) o).skin;
 			p.hair = ((Packet0LoginRequest) o).hair;
 			p.gender = ((Packet0LoginRequest) o).gender;
@@ -141,7 +142,7 @@ public class ServerListener extends Listener {
 			for (int i = 0; i < sPlayers.size; i++){
 				if (sPlayers.get(i).uid == index){
 					sPlayers.get(i).bounds =  ((Packet3SendPosition) o).bounds;
-					
+
 					// update FACING flag
 					if (((Packet3SendPosition) o).MOVE_LEFT){
 						sPlayers.get(i).facingLeft = true;
@@ -152,9 +153,10 @@ public class ServerListener extends Listener {
 					sPlayers.get(i).networkCommand[Actor.MOVE_RIGHT] =  ((Packet3SendPosition) o).MOVE_RIGHT;
 					sPlayers.get(i).networkCommand[Actor.MOVE_JUMP] =  ((Packet3SendPosition) o).MOVE_JUMP;
 					sPlayers.get(i).networkCommand[Actor.MOVE_ATTACK] =  ((Packet3SendPosition) o).MOVE_ATTACK;
+					sPlayers.get(i).networkFacingLeft =  ((Packet3SendPosition) o).facingLeft;
 
 					sPlayers.get(i).networkSkillID =  ((Packet3SendPosition) o).skillID;
-					
+
 					if(sPlayers.get(i).weapon.id != ((Packet3SendPosition) o).wep){
 						sPlayers.get(i).weapon = new Item(((Packet3SendPosition) o).wep);
 					}
@@ -209,6 +211,7 @@ public class ServerListener extends Listener {
 					position.MOVE_JUMP = sPlayers.get(i).networkCommand[Player.MOVE_JUMP];
 					position.MOVE_ATTACK = sPlayers.get(i).networkCommand[Player.MOVE_ATTACK];
 					position.skillID = sPlayers.get(i).networkSkillID;
+					position.facingLeft = sPlayers.get(i).networkFacingLeft;
 
 					// TODO: take all this junk out of this packet and put them in one that sends out infrequently (eg on a gear change)
 					position.wep = (byte) sPlayers.get(i).weapon.id;
@@ -218,7 +221,7 @@ public class ServerListener extends Listener {
 					position.currentMap = sPlayers.get(i).currentMap;
 					position.HP = (short) sPlayers.get(i).HP;
 					position.maxHP = (short) sPlayers.get(i).maxHP;
-					
+
 					position.connected = sPlayers.get(i).connected;
 
 					c.sendTCP(position);
@@ -241,18 +244,7 @@ public class ServerListener extends Listener {
 						monPosition.HP = (short) curMonSpawner.monsterList[i].HP;
 						c.sendTCP(monPosition);
 						curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
-						
-						// send a refresh notice if a monster was just spawned
-						/*
-						if (!curMonSpawner.monsterList[i].refreshedHP){
-							Packet8SendEnemySpawnNotification ref = new Packet8SendEnemySpawnNotification();
-							ref.enemyID = (byte) i;
-							ref.HP = (byte) curMonSpawner.monsterList[i].HP;
-							c.sendTCP(ref);
-							curMonSpawner.monsterList[i].refreshedHP = true;
-							Log.info("server is sending client an enemy hp refresh notice");
-						}
-						*/
+
 					}
 				}
 			}
@@ -274,7 +266,7 @@ public class ServerListener extends Listener {
 
 		// Server gets a request for all relevant positions. Send back to client!
 		if (o instanceof Packet7SendDamageNotification) {
-			
+
 			int sendersUid;
 			if (((Packet7SendDamageNotification) o).hittingEnemy){
 				sendersUid = ((Packet7SendDamageNotification) o).attackerID;
@@ -291,8 +283,11 @@ public class ServerListener extends Listener {
 					// reduce the server-side HP value
 					if (!((Packet7SendDamageNotification) o).hittingEnemy){
 						sPlayers.get(i).HP -= ((Packet7SendDamageNotification) o).damage;
+						if (sPlayers.get(i).HP <= 0){
+							sPlayers.get(i).HP = sPlayers.get(i).maxHP;
+						}
 						sPlayers.get(i).damageQueue.add((Packet7SendDamageNotification) o);
-						
+
 					} else {				
 						facingLeft = sPlayers.get(i).facingLeft;
 					}
@@ -307,10 +302,32 @@ public class ServerListener extends Listener {
 				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].HP -=  ((Packet7SendDamageNotification) o).damage;
 				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].knockback(facingLeft, 2);
 			} 
-			
+
 			//TODO: if the enemy has <= 0 HP, hand out some loot
 		}
+
+		// server receives a request for full player details. send it back.
+		if (o instanceof Packet9RequestPlayerData) {
+			int index = ((Packet9RequestPlayerData) o).uidRequested;
+			for (int i = 0; i < sPlayers.size; i++){
+				if (sPlayers.get(i).uid == index){
+					
+					// send back to the player details to client
+					Packet10SendPlayerData pack = new Packet10SendPlayerData();
+					pack.uid = (byte) index;
+					pack.name = sPlayers.get(i).name;
+					pack.hair = sPlayers.get(i).hair;
+					System.out.println("sending hair to client: " + pack.hair); 
+					pack.skin = sPlayers.get(i).skin;
+					c.sendTCP(pack);
+					
+				}
+			}
+		}
+
 	}
+
+
 
 	private byte getNextInt() {
 		return nextID++;

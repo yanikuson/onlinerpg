@@ -16,6 +16,7 @@ public class Packet {
 		public int armor;
 		public int helm;
 		public int acc;
+		public String name;
 	}
 
 	public static class Packet1LoginAnswer 
@@ -37,6 +38,7 @@ public class Packet {
 		public boolean MOVE_RIGHT;
 		public boolean MOVE_JUMP;
 		public boolean MOVE_ATTACK;
+		public boolean facingLeft;
 		
 		public byte skillID;
 		
@@ -99,6 +101,22 @@ public class Packet {
 	{
 		public byte enemyID;
 		public int HP;
+	}
+	
+	// Client sends out to server a request to get full player info (name etc)
+	public static class Packet9RequestPlayerData
+	{
+		public byte requesterUid;
+		public byte uidRequested;
+	}
+	
+	// Server sends to client to update full player info (name etc)
+	public static class Packet10SendPlayerData
+	{
+		public byte uid;
+		public String name;
+		public int skin;
+		public int hair;
 	}
 	
 }

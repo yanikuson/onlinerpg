@@ -35,7 +35,7 @@ public class Transition {
 
 	public static void fadeOut(float time){
 
-		if (!fadeOut) {
+		
 			if (!initialized) init();
 			fadeIn = false;
 			finished = false;
@@ -44,13 +44,13 @@ public class Transition {
 			duration = time;
 
 			fadeOut = true;
-		}
+		
 
 	}
 
 	public static void fadeIn(float time){
 
-		if (!fadeIn){
+		
 			if (!initialized) init();
 			fadeOut = false;
 
@@ -59,7 +59,7 @@ public class Transition {
 			curFade = time;
 			duration = time;
 			fadeIn = true;
-		}
+		
 	}
 
 	public static void update(Music bgm){

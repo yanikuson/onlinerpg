@@ -3,7 +3,7 @@ package net.alcuria.online.client;
 public class Config {
 
 	// Server settings
-	public static boolean PvpEnabled = false;
+	public static boolean PvpEnabled = true;
 	
 	// graphics settings
 	public static int WIDTH = 416;

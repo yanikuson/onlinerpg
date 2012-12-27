@@ -52,10 +52,10 @@ public class Player extends Actor {
 	public byte skin;
 	public byte hair;
 
-	VisualEquip visualHair;
-	VisualEquip visualHelm;
-	VisualEquip visualWeapon;
-	VisualEquip visualArmor;
+	public VisualEquip visualHair;
+	public VisualEquip visualHelm;
+	public VisualEquip visualWeapon;
+	public VisualEquip visualArmor;
 
 	public float epCounter = 0;
 	public float epDelay = 4;
@@ -66,6 +66,7 @@ public class Player extends Actor {
 	public boolean connected = false;
 	public byte networkSkillID = -1;
 	public Array<Packet7SendDamageNotification> damageQueue;
+	public boolean networkFacingLeft;
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
@@ -104,7 +105,7 @@ public class Player extends Actor {
 
 		skills = new SkillManager(f.assets, this);
 
-		visualHair = new VisualEquip("sprites/equips/hair/1.png", f.assets);
+		visualHair = new VisualEquip(("sprites/equips/hair/" + hair+1 + ".png"), f.assets);
 		visualWeapon = new VisualEquip(weapon.visualName, f.assets);
 		visualHelm = new VisualEquip(helmet.visualName, f.assets);
 		visualArmor = new VisualEquip(armor.visualName, f.assets);
@@ -319,6 +320,7 @@ public class Player extends Actor {
 			yVel = 2;
 
 			HP -= damage;
+			
 			if (HP <= 0){
 
 				// TODO: game over handler?
@@ -332,6 +334,7 @@ public class Player extends Actor {
 				renderToggler = false;
 				
 			}
+			
 			GameClient.sendDamage(this, null, (short) damage, false);
 
 		} 
@@ -392,13 +395,11 @@ public class Player extends Actor {
 	// resets all the equips (when a player changes gear)
 	public void resetVisualEquips(){
 
-
 		visualHair = new VisualEquip("sprites/equips/hair/" + (hair+1) + ".png", f.assets);
 
 		visualWeapon.changeTexture(weapon.visualName);
 		visualArmor.changeTexture(armor.visualName);
-
-
+		visualHelm.changeTexture(helmet.visualName);
 
 	}
 
@@ -431,6 +432,7 @@ public class Player extends Actor {
 		if (onGround && Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 30){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
+			flash(1, 1, 1, 0, 1);
 		} 
 
 		moveCommand[MOVE_LEFT] = networkCommand[MOVE_LEFT];
@@ -446,6 +448,10 @@ public class Player extends Actor {
 		if (bounds.x - desiredBounds.x > 10){
 			moveCommand[MOVE_RIGHT] = false;
 			moveCommand[MOVE_LEFT] = true;
+		}
+		
+		if (!moveCommand[MOVE_LEFT] && !moveCommand[MOVE_RIGHT]){
+			facingLeft = networkFacingLeft;
 		}
 		
 		// check if the player is trying to attack

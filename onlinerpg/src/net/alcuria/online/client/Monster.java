@@ -147,9 +147,11 @@ public class Monster extends Actor {
 
 
 		// set network player's moving and facing flag
-		if (onGround && (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 40)){
+		if (onGround && (Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 50)){
+			flash(1, 1, 1, 0, 1);
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
+			
 		} 
 		
 				
@@ -293,7 +295,7 @@ public class Monster extends Actor {
 			} 	
 
 			// do all animations
-			flash(1, 0, 0, 1, 5);
+			
 			battleEffect.start(bounds.x + (bounds.width - battleEffect.width)/2, bounds.y - bounds.height, !facingLeft);
 
 			damageList.start(damage, bounds.x, bounds.y, facingLeft, Damage.TYPE_DAMAGE);
@@ -321,7 +323,11 @@ public class Monster extends Actor {
 				if (dropRoll < 0.01f){
 					drops.add(this, rareDrop);
 				}
+				bounds.x = -30;
+				bounds.y = -30;
 
+			} else {
+				flash(1, 0, 0, 1, 5);
 			}
 
 

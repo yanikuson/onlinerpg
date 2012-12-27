@@ -15,7 +15,7 @@ public class Projectile extends Actor {
 	public Projectile(String filename, int x, int y, int width, int height,	Field f) {
 		super(filename, x, y, width, height, f);
 
-		projectileTexture = new TextureRegion(new Texture(Gdx.files.internal(filename)));
+		//projectileTexture = new TextureRegion(new Texture(Gdx.files.internal(filename)));
 	}
 
 	public void update(Map map){

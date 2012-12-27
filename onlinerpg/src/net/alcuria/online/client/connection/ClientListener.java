@@ -1,7 +1,9 @@
 package net.alcuria.online.client.connection;
+import net.alcuria.online.client.Animator;
 import net.alcuria.online.client.Item;
 import net.alcuria.online.client.Monster;
 import net.alcuria.online.client.Player;
+import net.alcuria.online.client.VisualEquip;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
 
@@ -42,6 +44,7 @@ public class ClientListener extends Listener {
 		req.hair = f.player.hair;
 		req.skin = f.player.skin;
 		req.gender = f.player.gender;
+		req.name = f.player.name;
 
 		client.sendTCP(req);
 	}
@@ -87,7 +90,7 @@ public class ClientListener extends Listener {
 					f.players.get(i).networkCommand[Player.MOVE_JUMP] = ((Packet3SendPosition) o).MOVE_JUMP;
 					f.players.get(i).networkCommand[Player.MOVE_ATTACK] = ((Packet3SendPosition) o).MOVE_ATTACK;
 					f.players.get(i).networkSkillID = ((Packet3SendPosition) o).skillID;
-
+					f.players.get(i).networkFacingLeft = ((Packet3SendPosition) o).facingLeft;
 
 					f.players.get(i).hair = ((Packet3SendPosition) o).hair;
 					f.players.get(i).skin = ((Packet3SendPosition) o).skin;
@@ -124,6 +127,12 @@ public class ClientListener extends Listener {
 				p.resetVisualEquips();
 				p.networkingPlayer = true;
 				f.players.add(p);
+				
+				// send a packet out to the server to get the player info
+				Packet9RequestPlayerData packet = new Packet9RequestPlayerData();
+				packet.requesterUid = f.player.uid;
+				packet.uidRequested = index;
+				client.sendTCP(packet);
 
 			}
 
@@ -176,6 +185,27 @@ public class ClientListener extends Listener {
 		if (o instanceof Packet8SendEnemySpawnNotification){
 			f.map.spawner.monsterList[((Packet8SendEnemySpawnNotification) o).enemyID].HP = ((Packet8SendEnemySpawnNotification) o).HP;
 		}
+		
+		
+		// if client receives a full player update, find the player and update it!
+		if (o instanceof Packet10SendPlayerData){
+			index = ((Packet10SendPlayerData) o).uid;
+			for (int i = 0; i < f.players.size; i++){
+				if (f.players.get(i).uid == index){
+					f.players.get(i).name = ((Packet10SendPlayerData) o).name;
+					f.players.get(i).hair = (byte) ((Packet10SendPlayerData) o).hair;
+					f.players.get(i).skin = (byte) ((Packet10SendPlayerData) o).skin;
+					
+					// create our graphical player
+					f.players.get(i).animation = new Animator(("sprites/equips/skin/" + (f.players.get(i).skin+1) + ".png"), 14, 22, f.assets);
+					
+					f.players.get(i).resetVisualEquips();
+					
+					System.out.println("new client full update: " + f.players.get(i).name + " | " + (f.players.get(i).hair + 1));
+				}
+			}
+		}
+		
 
 
 	}

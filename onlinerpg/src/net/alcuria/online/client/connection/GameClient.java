@@ -49,6 +49,8 @@ public class GameClient {
 		kryo.register(Packet6SendMonsterPosition.class);
 		kryo.register(Packet7SendDamageNotification.class);
 		kryo.register(Packet8SendEnemySpawnNotification.class);
+		kryo.register(Packet9RequestPlayerData.class);
+		kryo.register(Packet10SendPlayerData.class);
 	}
 
 	public static void sendMapChange(Field f){
@@ -70,6 +72,8 @@ public class GameClient {
 		pos.MOVE_RIGHT = f.player.networkCommand[Player.MOVE_RIGHT];
 		pos.MOVE_JUMP = f.player.networkCommand[Player.MOVE_JUMP];
 		pos.MOVE_ATTACK = f.player.networkCommand[Player.MOVE_ATTACK];
+		pos.facingLeft = f.player.facingLeft;
+		
 		if (f.player.networkCommand[Player.MOVE_JUMP]) {
 			f.player.networkCommand[Player.MOVE_JUMP] = false; // STOP jumping if we are going to send the packet!!
 		}
