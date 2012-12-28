@@ -29,6 +29,16 @@ public class StatusEffects {
 	public Sound heal;
 
 	public Actor actor;
+	
+	public short hpOffset = 0;
+	public short atkOffset = 0;
+	public short defOffset = 0;
+	public short matkOffset = 0;
+	public short mdefOffset = 0;
+	public short speedOffset = 0;
+	public short jumpOffset = 0;
+	public short kbOffset = 0;
+	
 
 	public StatusEffects(Actor actor, Field f) {
 
@@ -124,7 +134,7 @@ public class StatusEffects {
 			break;
 
 		case SPEED:
-			actor.walkSpeed -= severity[effectType];
+			speedOffset -= severity[effectType];
 
 		}
 
@@ -132,7 +142,6 @@ public class StatusEffects {
 
 	// called ONCE to add an effect (at the start)
 	public void add(int effect, int severity, int duration){
-
 
 		switch (effect) {
 		case POISON:
@@ -149,10 +158,7 @@ public class StatusEffects {
 			heal.play(Config.sfxVol);
 			healSparkle.start(actor.bounds.x, actor.bounds.y, false);
 			actor.flash(1, 1, 0, 1, 1);
-			actor.HP += this.severity[effect];
-			if (actor.HP > actor.maxHP) {
-				actor.HP = actor.maxHP;
-			}
+			actor.HP = Math.min(this.severity[effect] + actor.HP, actor.maxHP);
 			f.damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
 			this.timer[effect] = 0;
 			break;
@@ -165,11 +171,13 @@ public class StatusEffects {
 				// else apply walking speed increase
 				this.timer[effect] = duration;
 				this.severity[effect] = severity;
-				actor.walkSpeed += this.severity[effect];
+				this.speedOffset += this.severity[effect];
 
 			}
 			break;
 		}
+		
+		// TODO: send out a packet so other clients are aware? [uid/monindex, isMonster, effect, severity, duration]
 	}
 
 	// removes all effects from the actor

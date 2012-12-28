@@ -219,7 +219,7 @@ public class Actor {
 				} else {
 					xVel -= AIR_ACCEL * Gdx.graphics.getDeltaTime();
 				}
-				xVel = Math.max(xVel, 0-walkSpeed/50);
+				xVel = Math.max(xVel, (0 - walkSpeed - effects.speedOffset)/50);
 			} else if (animation.stabPose){
 				if (facingLeft){
 					xVel = -1 * STAB_SPEED;
@@ -254,7 +254,7 @@ public class Actor {
 					xVel += AIR_ACCEL * Gdx.graphics.getDeltaTime();
 
 				}
-				xVel = Math.min(xVel, walkSpeed/50);
+				xVel = Math.min(xVel, (walkSpeed + effects.speedOffset)/50);
 			} else if (animation.stabPose){
 				if (facingLeft){
 					xVel = -1 * STAB_SPEED;
