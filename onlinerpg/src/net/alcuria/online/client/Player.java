@@ -396,7 +396,7 @@ public class Player extends Actor {
 	public void resetVisualEquips(){
 
 		visualHair = new VisualEquip("sprites/equips/hair/" + (hair+1) + ".png", f.assets);
-
+		System.out.println("new hair for " + name + ": " + (hair+1));
 		visualWeapon.changeTexture(weapon.visualName);
 		visualArmor.changeTexture(armor.visualName);
 		visualHelm.changeTexture(helmet.visualName);

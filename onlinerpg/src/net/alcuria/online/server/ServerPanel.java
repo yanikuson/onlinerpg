@@ -18,6 +18,7 @@ public class ServerPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	public static Logger logger = Logger.getLogger("onlinerpg");
+	public static JFrame frame;
 	
 	public ServerPanel(){
 		setPreferredSize(new Dimension(600, 400));
@@ -27,7 +28,8 @@ public class ServerPanel extends JPanel {
 		add(getLog(), "Center");
 	}
 	
-	public void create() {
+	public static void create() {
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e){
@@ -35,7 +37,7 @@ public class ServerPanel extends JPanel {
 		}
 		
 		ServerPanel sp = new ServerPanel();
-		JFrame frame = new JFrame("Heroes of Umbra Server");
+		frame = new JFrame("Heroes of Umbra Server");
 		frame.add(sp);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -72,7 +74,7 @@ public class ServerPanel extends JPanel {
 	}
 
 	public static void update() {
-		
+	
 		
 	}
 	

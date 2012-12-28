@@ -104,7 +104,8 @@ public class ClientListener extends Listener {
 						f.players.get(i).armor = new Item(((Packet3SendPosition) o).armor);
 						f.players.get(i).helmet = new Item(((Packet3SendPosition) o).helm);
 
-						f.players.get(i).resetVisualEquips();
+						// TODO: this is conflicting with the full packet update (packet10) migrate all this shit to packet 10
+						//f.players.get(i).resetVisualEquips();
 						Log.info("updating equips.");
 					}
 
@@ -198,8 +199,7 @@ public class ClientListener extends Listener {
 					
 					// create our graphical player
 					f.players.get(i).animation = new Animator(("sprites/equips/skin/" + (f.players.get(i).skin+1) + ".png"), 14, 22, f.assets);
-					
-					f.players.get(i).resetVisualEquips();
+					f.players.get(i).visualHair = new VisualEquip("sprites/equips/hair/" + (((Packet10SendPlayerData) o).hair+1) + ".png", f.assets);
 					
 					System.out.println("new client full update: " + f.players.get(i).name + " | " + (f.players.get(i).hair + 1));
 				}
