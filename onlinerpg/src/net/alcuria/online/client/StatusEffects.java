@@ -13,6 +13,7 @@ public class StatusEffects {
 	public static final int HEAL = 3;
 	public static final int SPEED = 4;
 	public static final int FREEZE = 5;
+	public static final int RAGE = 6;
 
 	public static final int MAX_EFFECTS = 10;
 	public static final int MAX_DURATION = 5;
@@ -39,6 +40,7 @@ public class StatusEffects {
 	public short jumpOffset = 0;
 	public short kbOffset = 0;
 	
+	public boolean rageFlip = false;
 
 	public StatusEffects(Actor actor, Field f) {
 
@@ -58,6 +60,7 @@ public class StatusEffects {
 		frequency[HEAL] = 0.2f;			// heal is instant!
 		frequency[SPEED] = 1.0f;
 		frequency[FREEZE] = 0.0f;
+		frequency[RAGE] = 0.25f;
 
 		healSparkle = new Particle("sprites/sparkle.png", 0, 0, 25, 25, 5, 5, false, f.assets);
 		heal = f.assets.get("sounds/heal.wav", Sound.class);
@@ -119,6 +122,13 @@ public class StatusEffects {
 			actor.flash(0.5f, 1, 1, 1, 1f);
 			break;
 
+		case RAGE:
+			rageFlip = !rageFlip;
+			if (rageFlip){
+				actor.flash(1f, 0.5f, 0.5f, 1f, 1f);
+			} else {
+				actor.flash(1f, 1f, 0.5f, 1f, 1f);
+			}
 		}
 
 	}
@@ -135,6 +145,10 @@ public class StatusEffects {
 
 		case SPEED:
 			speedOffset -= severity[effectType];
+			
+		case RAGE:
+			defOffset += severity[effectType];
+			atkOffset -= severity[effectType];
 
 		}
 
@@ -175,6 +189,19 @@ public class StatusEffects {
 
 			}
 			break;
+			
+		case RAGE:
+			
+			if (timer[RAGE] > 0) {
+				timer[RAGE] = duration;
+			} else {
+				this.timer[effect] = duration;
+				this.severity[effect] += severity;
+				this.atkOffset += this.severity[effect];
+				this.defOffset -= this.severity[effect];
+
+			}
+			
 		}
 		
 		// TODO: send out a packet so other clients are aware? [uid/monindex, isMonster, effect, severity, duration]

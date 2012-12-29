@@ -305,6 +305,9 @@ public class Menu {
 					case Item.ID_SPEED_PILL:
 						p.effects.add(StatusEffects.SPEED, 20, 60);
 						break;
+					case Item.ID_RAGE_POTION:
+						p.effects.add(StatusEffects.RAGE, 20, 60);
+						break;
 					}
 
 					// remove from inventory and close the menu

@@ -10,6 +10,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -165,8 +166,6 @@ public class Loading implements Screen
 		
 		assets.load("sprites/equips/empty.png", Texture.class);
 
-
-
 		
 		// BACKGROUNDS
 		assets.load("backgrounds/sky.png", Texture.class);
@@ -182,6 +181,11 @@ public class Loading implements Screen
 		assets.load("ui/hud-player.png", Texture.class);
 		assets.load("ui/msg-bg.png", Texture.class);
 		assets.load("ui/msg-border.png", Texture.class);
+		assets.load("ui/fade.png", Texture.class);
+		// TODO: since fade is properly loaded, use the assets.get for the TransitionManager class thingy
+		
+		// FONT
+		assets.load("fonts/ui.fnt", BitmapFont.class);
 	}
 
 	@Override

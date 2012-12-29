@@ -6,12 +6,21 @@ import net.alcuria.online.common.Packet.Packet7SendDamageNotification;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 public class Player extends Actor {
 
+	
+	// for the nameplate
+	byte plateWidth = 0;
+	byte plateHeight = 9;
+	TextureRegion plateBG;
+	
 	public Rectangle desiredBounds;
 	public boolean jumpSignal = false;
 
@@ -71,6 +80,9 @@ public class Player extends Actor {
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
 
+		// for the nameplate
+		this.plateBG = new TextureRegion(f.assets.get("ui/fade.png", Texture.class), 0, 0, 1, 1);
+		
 		this.damageQueue = new Array<Packet7SendDamageNotification>();
 		this.desiredBounds = bounds;
 
@@ -235,9 +247,19 @@ public class Player extends Actor {
 		swing.start(bounds.x, bounds.y, facingLeft);
 	}
 
-	public void render(SpriteBatch batch){
+	public void render(SpriteBatch batch, BitmapFont nameplate){
 
 		if (visible){
+			
+			// render the nameplate
+			plateWidth = (byte) nameplate.getBounds(name).width;
+			batch.flush();
+			batch.setColor(1, 1, 1, 0.5f);
+			batch.draw(plateBG, bounds.x + bounds.width/2 - plateWidth/2 - 1, bounds.y - 10, plateWidth+2, plateHeight);
+			batch.flush();
+			batch.setColor(1, 1, 1, 1);
+			nameplate.draw(batch, name, bounds.x + bounds.width/2 - plateWidth/2, bounds.y);
+			
 			if (renderToggler){
 				batch.flush();
 				batch.setColor(1, 1, 1, 0.5f);
