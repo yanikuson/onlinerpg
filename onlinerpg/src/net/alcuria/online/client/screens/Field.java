@@ -27,6 +27,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -50,6 +51,7 @@ public class Field implements Screen {
 	public Message msgBox;
 	public Map map;
 
+	public BitmapFont nameplate;
 	public ShopMenu shop;
 	public CameraManager cameraManager;
 	public HUD hud;
@@ -97,7 +99,7 @@ public class Field implements Screen {
 					players.get(i).render(batch);
 				}
 			}
-			player.render(batch);
+			player.render(batch, nameplate);
 			map.render(batch, false, cameraManager);
 
 			freezes.render(batch);
@@ -228,6 +230,7 @@ public class Field implements Screen {
 		player.resetVisualEquips();
 		player.networkingPlayer = false;
 		player.playJump = true;
+		nameplate = assets.get("fonts/ui.fnt", BitmapFont.class);
 		
 		cameraManager = new CameraManager();		
 

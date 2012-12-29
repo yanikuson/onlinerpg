@@ -317,7 +317,7 @@ public class ServerListener extends Listener {
 					pack.uid = (byte) index;
 					pack.name = sPlayers.get(i).name;
 					pack.hair = sPlayers.get(i).hair;
-					System.out.println("sending hair to client: " + pack.hair); 
+					System.out.println("sending " + pack.name + "'s hair to client: " + (pack.hair+1)); 
 					pack.skin = sPlayers.get(i).skin;
 					c.sendTCP(pack);
 					

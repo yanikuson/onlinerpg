@@ -219,7 +219,7 @@ public class Actor {
 				} else {
 					xVel -= AIR_ACCEL * Gdx.graphics.getDeltaTime();
 				}
-				xVel = Math.max(xVel, 0-walkSpeed/50);
+				xVel = Math.max(xVel, (0 - walkSpeed - effects.speedOffset)/50);
 			} else if (animation.stabPose){
 				if (facingLeft){
 					xVel = -1 * STAB_SPEED;
@@ -254,7 +254,7 @@ public class Actor {
 					xVel += AIR_ACCEL * Gdx.graphics.getDeltaTime();
 
 				}
-				xVel = Math.min(xVel, walkSpeed/50);
+				xVel = Math.min(xVel, (walkSpeed + effects.speedOffset)/50);
 			} else if (animation.stabPose){
 				if (facingLeft){
 					xVel = -1 * STAB_SPEED;
@@ -536,10 +536,10 @@ public class Actor {
 
 	}
 	
-	// draw the hp bar below the char
+	// draw the hp bar above the char
 	public void drawHP(SpriteBatch batch){
-		batch.draw(hpBack, bounds.x, bounds.y - 5, bounds.width+2, 4);
-		batch.draw(hpFront, bounds.x + 1, bounds.y - 4, ((HP * (bounds.width)) / maxHP), 2);
+		batch.draw(hpBack, bounds.x, bounds.y - 3 + bounds.height + 15, bounds.width+2, 4);
+		batch.draw(hpFront, bounds.x + 1, bounds.y - 2 + bounds.height + 15, ((HP * (bounds.width)) / maxHP), 2);
 	}
 
 	// dispose of all assets related to the player object

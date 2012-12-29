@@ -16,6 +16,7 @@ public class Item {
 	public static final int ID_BLANK = 0;
 	public static final int ID_POTION = 1; 
 	public static final int ID_SPEED_PILL = 10;
+	public static final int ID_RAGE_POTION = 11;
 	public static final int ID_WOOD_SWORD = 20;
 	public static final int ID_STARLESS_UMBRA = 39;
 	public static final int ID_LEATHER_VEST = 40;
@@ -61,6 +62,14 @@ public class Item {
 			this.type = TYPE_CONSUMABLE;
 			this.name = "Speed Pill";
 			this.description = "Walk speed increased for one minute";
+			this.cost = 50;
+			break;
+			
+		case ID_RAGE_POTION:
+			this.icon = 1;
+			this.type = TYPE_CONSUMABLE;
+			this.name = "Rage Potion";
+			this.description = "Raises atk/Lowers def for one minute.";
 			this.cost = 50;
 			break;
 			
