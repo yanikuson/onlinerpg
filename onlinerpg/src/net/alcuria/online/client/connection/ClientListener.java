@@ -92,22 +92,11 @@ public class ClientListener extends Listener {
 					f.players.get(i).networkSkillID = ((Packet3SendPosition) o).skillID;
 					f.players.get(i).networkFacingLeft = ((Packet3SendPosition) o).facingLeft;
 
-					f.players.get(i).hair = ((Packet3SendPosition) o).hair;
-					f.players.get(i).skin = ((Packet3SendPosition) o).skin;
-					f.players.get(i).gender = ((Packet3SendPosition) o).gender;
+					//f.players.get(i).hair = ((Packet3SendPosition) o).hair;
+					//f.players.get(i).skin = ((Packet3SendPosition) o).skin;
+					//f.players.get(i).gender = ((Packet3SendPosition) o).gender;
 
-					// check to see if this player object will need a visual equip refresh
-					if(f.players.get(i).weapon.id != ((Packet3SendPosition) o).wep || f.players.get(i).armor.id != ((Packet3SendPosition) o).armor || f.players.get(i).helmet.id != ((Packet3SendPosition) o).helm){
 
-						// assign latest weps/armors to client player element
-						f.players.get(i).weapon = new Item(((Packet3SendPosition) o).wep);
-						f.players.get(i).armor = new Item(((Packet3SendPosition) o).armor);
-						f.players.get(i).helmet = new Item(((Packet3SendPosition) o).helm);
-
-						// TODO: this is conflicting with the full packet update (packet10) migrate all this shit to packet 10
-						//f.players.get(i).resetVisualEquips();
-						Log.info("updating equips.");
-					}
 
 					f.players.get(i).currentMap = ((Packet3SendPosition) o).currentMap;
 					f.players.get(i).connected = ((Packet3SendPosition) o).connected;
@@ -123,16 +112,17 @@ public class ClientListener extends Listener {
 			// if we iterate thru the whole list and dont update a player element, we can safely add it now
 			if (!updated){
 				Log.info("[CLIENT] creating new local player element");
-				Player p = new Player("New", ((Packet3SendPosition) o).gender, ((Packet3SendPosition) o).skin, ((Packet3SendPosition) o).hair, -20, -20, 14, 22, f);
+				Player p = new Player("New", Player.GENDER_MALE, Player.SKIN_PALE, 1, -20, -20, 14, 22, f);
 				p.uid = index;
-				p.resetVisualEquips();
+				//p.resetVisualEquips();
 				p.networkingPlayer = true;
 				f.players.add(p);
-				
+
 				// send a packet out to the server to get the player info
 				Packet9RequestPlayerData packet = new Packet9RequestPlayerData();
 				packet.requesterUid = f.player.uid;
 				packet.uidRequested = index;
+				packet.currentMap = f.player.currentMap;
 				client.sendTCP(packet);
 
 			}
@@ -186,26 +176,50 @@ public class ClientListener extends Listener {
 		if (o instanceof Packet8SendEnemySpawnNotification){
 			f.map.spawner.monsterList[((Packet8SendEnemySpawnNotification) o).enemyID].HP = ((Packet8SendEnemySpawnNotification) o).HP;
 		}
-		
-		
+
 		// if client receives a full player update, find the player and update it!
 		if (o instanceof Packet10SendPlayerData){
+			
 			index = ((Packet10SendPlayerData) o).uid;
+
 			for (int i = 0; i < f.players.size; i++){
+
+				
 				if (f.players.get(i).uid == index){
+
 					f.players.get(i).name = ((Packet10SendPlayerData) o).name;
-					f.players.get(i).hair = (byte) ((Packet10SendPlayerData) o).hair;
-					f.players.get(i).skin = (byte) ((Packet10SendPlayerData) o).skin;
+
+					// check to see if this player object has a new skin/gender
+					// if so we will update the player animation object
 					
-					// create our graphical player
-					f.players.get(i).animation = new Animator(("sprites/equips/skin/" + (f.players.get(i).skin+1) + ".png"), 14, 22, f.assets);
-					f.players.get(i).visualHair = new VisualEquip("sprites/equips/hair/" + (((Packet10SendPlayerData) o).hair+1) + ".png", f.assets);
-					
-					System.out.println("new client full update: " + f.players.get(i).name + " | " + (f.players.get(i).hair + 1));
+					// NOTE: i commented this out because currently in-game there
+					// is no way for a player to change skin/gender once he's connected
+					// so this only really needs to happen once...
+					if (!f.players.get(i).animation.netInitialized /*|| f.players.get(i).skin != ((Packet10SendPlayerData) o).skin || f.players.get(i).gender != ((Packet10SendPlayerData) o).gender*/) {
+						f.players.get(i).skin = (byte) ((Packet10SendPlayerData) o).skin;
+						f.players.get(i).gender = (byte) ((Packet10SendPlayerData) o).gender;
+						
+						f.players.get(i).animation = new Animator(("sprites/equips/skin/" + (f.players.get(i).skin+1) + ".png"), 14, 22, f.assets);
+						f.players.get(i).animation.netInitialized = true;
+						f.players.get(i).animation.assignPlayer(f.players.get(i));
+					}
+
+					// check to see if this player object will need a visual equip refresh
+					if(f.players.get(i).hair != ((Packet10SendPlayerData) o).hair || f.players.get(i).weapon.id != ((Packet10SendPlayerData) o).wep || f.players.get(i).armor.id != ((Packet10SendPlayerData) o).armor || f.players.get(i).helmet.id != ((Packet10SendPlayerData) o).helm){
+
+						// assign latest weps/armors to client player element
+						f.players.get(i).weapon = new Item(((Packet10SendPlayerData) o).wep);
+						f.players.get(i).armor = new Item(((Packet10SendPlayerData) o).armor);
+						f.players.get(i).helmet = new Item(((Packet10SendPlayerData) o).helm);
+						f.players.get(i).hair = (byte) ((Packet10SendPlayerData) o).hair;
+
+						f.players.get(i).resetVisualEquips();
+						Log.info("updating equips.");
+					}
 				}
 			}
 		}
-		
+
 
 
 	}

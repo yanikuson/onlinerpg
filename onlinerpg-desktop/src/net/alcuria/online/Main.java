@@ -33,8 +33,9 @@ public class Main {
 			
 		}
 		
-		//cfg.width = Config.WIDTH*2;
-		//cfg.height = Config.HEIGHT*2;
+		// forced 1-to-1
+		cfg.width = Config.WIDTH;
+		cfg.height = Config.HEIGHT;
 		
 		new LwjglApplication(new OnlineRPG(), cfg);
 	}

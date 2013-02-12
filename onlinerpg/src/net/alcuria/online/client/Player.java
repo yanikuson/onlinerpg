@@ -416,9 +416,8 @@ public class Player extends Actor {
 
 	// resets all the equips (when a player changes gear)
 	public void resetVisualEquips(){
-
+		//visualHair.changeTexture(filename);
 		visualHair = new VisualEquip("sprites/equips/hair/" + (hair+1) + ".png", f.assets);
-		System.out.println("new hair for " + name + ": " + (hair+1));
 		visualWeapon.changeTexture(weapon.visualName);
 		visualArmor.changeTexture(armor.visualName);
 		visualHelm.changeTexture(helmet.visualName);

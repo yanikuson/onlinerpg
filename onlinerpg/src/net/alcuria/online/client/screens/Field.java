@@ -96,7 +96,7 @@ public class Field implements Screen {
 			// render all online players that are the also on the same map as the hero
 			for (int i = 0; i < players.size; i++){
 				if (player.currentMap != null && players.get(i).currentMap != null && player.currentMap.equals(players.get(i).currentMap)){
-					players.get(i).render(batch);
+					players.get(i).render(batch, nameplate);
 				}
 			}
 			player.render(batch, nameplate);
@@ -237,21 +237,21 @@ public class Field implements Screen {
 		batch = new SpriteBatch();
 
 		// create notification handler
-
 		damageList = new DamageList();
 
-
 		inputs = new InputHandler(assets);
-
 
 		// create our item manager
 		drops = new DropManager(this);
 
+		// messagebox
 		msgBox = new Message(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets);
 		menu = new Menu(new Texture(Gdx.files.internal("ui/msg-bg.png")), new Texture(Gdx.files.internal("ui/msg-border.png")), assets, player, inventory, drops);
 		menu.saveSlot = slot;
 		map = new Map(player.currentMap, assets, damageList, this);
 
+		// little hacky check if we should start the intro
+		// TODO: NPCCommands have some way to "auto-start" when you are on their map
 		if (!GlobalFlags.flags[GlobalFlags.INTRO]){
 			player.bounds.x = 9 * Config.TILE_WIDTH;
 			player.bounds.y = 3 * Config.TILE_WIDTH;
@@ -267,7 +267,7 @@ public class Field implements Screen {
 		shop = new ShopMenu(this, new ItemManager());
 		shop.active = false;
 
-		player.resetVisualEquips();
+		//player.resetVisualEquips();
 
 		players = new Array<Player>();
 

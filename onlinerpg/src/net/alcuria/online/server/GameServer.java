@@ -46,6 +46,7 @@ public class GameServer {
 	}
 
 
+	// register all packets: required by the kryonet library 
 	private static void registerPackets(){
 		Kryo kryo = server.getKryo();
 		kryo.register(Rectangle.class);

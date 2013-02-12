@@ -42,14 +42,6 @@ public class Packet {
 		
 		public byte skillID;
 		
-		public byte skin;
-		public byte hair;
-		public byte gender;
-		
-		public byte wep;
-		public byte armor;
-		public byte helm;
-		
 		public short HP;
 		public short maxHP;
 		public String currentMap;
@@ -108,6 +100,7 @@ public class Packet {
 	{
 		public byte requesterUid;
 		public byte uidRequested;
+		public String currentMap;
 	}
 	
 	// Server sends to client to update full player info (name etc)
@@ -115,8 +108,14 @@ public class Packet {
 	{
 		public byte uid;
 		public String name;
-		public int skin;
-		public int hair;
+		
+		public byte skin;
+		public byte hair;
+		public byte gender;
+		
+		public byte wep;
+		public byte armor;
+		public byte helm;
 	}
 	
 }

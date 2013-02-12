@@ -157,6 +157,7 @@ public class ServerListener extends Listener {
 
 					sPlayers.get(i).networkSkillID =  ((Packet3SendPosition) o).skillID;
 
+					/*
 					if(sPlayers.get(i).weapon.id != ((Packet3SendPosition) o).wep){
 						sPlayers.get(i).weapon = new Item(((Packet3SendPosition) o).wep);
 					}
@@ -165,7 +166,7 @@ public class ServerListener extends Listener {
 					}
 					if(sPlayers.get(i).helmet.id != ((Packet3SendPosition) o).helm){
 						sPlayers.get(i).helmet = new Item(((Packet3SendPosition) o).helm);
-					}
+					}*/
 
 					sPlayers.get(i).currentMap =  ((Packet3SendPosition) o).currentMap;
 					sPlayers.get(i).HP = ((Packet3SendPosition) o).HP;
@@ -214,10 +215,12 @@ public class ServerListener extends Listener {
 					position.facingLeft = sPlayers.get(i).networkFacingLeft;
 
 					// TODO: take all this junk out of this packet and put them in one that sends out infrequently (eg on a gear change)
+					/*
 					position.wep = (byte) sPlayers.get(i).weapon.id;
 					position.armor = (byte) sPlayers.get(i).armor.id;
 					position.helm = (byte) sPlayers.get(i).helmet.id;
-
+					 */
+					
 					position.currentMap = sPlayers.get(i).currentMap;
 					position.HP = (short) sPlayers.get(i).HP;
 					position.maxHP = (short) sPlayers.get(i).maxHP;
@@ -306,24 +309,71 @@ public class ServerListener extends Listener {
 			//TODO: if the enemy has <= 0 HP, hand out some loot
 		}
 
-		// server receives a request for full player details. send it back.
+		
+		//*****************************************************************************
+		
 		if (o instanceof Packet9RequestPlayerData) {
-			int index = ((Packet9RequestPlayerData) o).uidRequested;
+			int requestersUid = ((Packet9RequestPlayerData) o).requesterUid;
+			String requestersMap = ((Packet9RequestPlayerData) o).currentMap;
+			
+			// send off all players
 			for (int i = 0; i < sPlayers.size; i++){
-				if (sPlayers.get(i).uid == index){
-					
+				
+				final Player p = sPlayers.get(i);
+				// only send this position if the uid isnt the requested users uid & maps are same
+				if (requestersUid != p.uid && p.currentMap != null && p.currentMap.equals(requestersMap)){
 					// send back to the player details to client
 					Packet10SendPlayerData pack = new Packet10SendPlayerData();
-					pack.uid = (byte) index;
-					pack.name = sPlayers.get(i).name;
-					pack.hair = sPlayers.get(i).hair;
-					System.out.println("sending " + pack.name + "'s hair to client: " + (pack.hair+1)); 
-					pack.skin = sPlayers.get(i).skin;
+					pack.uid = (byte) p.uid;
+					
+					pack.name = p.name;
+					
+					pack.gender = p.gender;
+					pack.hair = p.hair;
+					pack.skin = p.skin;
+					
+					pack.armor = (byte) p.armor.id;
+					pack.helm = (byte) p.helmet.id;
+					pack.wep = (byte) p.weapon.id;
+					
 					c.sendTCP(pack);
 					
 				}
 			}
+
 		}
+		
+		// server receives the full/infreq updates from the client
+		if (o instanceof Packet10SendPlayerData) {
+			int index = ((Packet10SendPlayerData) o).uid;
+			
+			// find the server element to update
+			for (int i = 0; i < sPlayers.size; i++){
+				if (sPlayers.get(i).uid == index){
+					
+					// update local server copy
+					sPlayers.get(i).name =  ((Packet10SendPlayerData) o).name;
+
+					sPlayers.get(i).skin = (byte) ((Packet10SendPlayerData) o).skin;
+					sPlayers.get(i).gender = (byte) ((Packet10SendPlayerData) o).gender;					
+					sPlayers.get(i).hair = (byte) ((Packet10SendPlayerData) o).hair;					
+					
+					if(sPlayers.get(i).weapon.id != ((Packet10SendPlayerData) o).wep){
+						sPlayers.get(i).weapon = new Item(((Packet10SendPlayerData) o).wep);
+					}
+					if(sPlayers.get(i).armor.id != ((Packet10SendPlayerData) o).armor){
+						sPlayers.get(i).armor = new Item(((Packet10SendPlayerData) o).armor);
+					}
+					if(sPlayers.get(i).helmet.id != ((Packet10SendPlayerData) o).helm){
+						sPlayers.get(i).helmet = new Item(((Packet10SendPlayerData) o).helm);
+					}
+					break;
+
+				}
+			}
+		}
+
+		
 
 	}
 

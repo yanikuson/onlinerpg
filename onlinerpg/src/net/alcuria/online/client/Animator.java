@@ -49,6 +49,7 @@ public class Animator {
 	
 	Particle castParticle;
 	Player p;
+	public boolean netInitialized = false;
 
 	public Animator(String filename, int celWidth, int celHeight, AssetManager assets){
 

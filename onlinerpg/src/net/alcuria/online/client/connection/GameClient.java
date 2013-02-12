@@ -63,6 +63,24 @@ public class GameClient {
 		
 	}
 	
+	public static void sendFullUpdate(Field f){
+		
+		Packet10SendPlayerData full = new Packet10SendPlayerData();
+		
+		full.uid = f.player.uid;
+		full.name = f.player.name;
+		
+		full.armor = (byte) f.player.armor.id;
+		full.wep = (byte) f.player.weapon.id;
+		full.helm = (byte) f.player.helmet.id;
+		
+		full.skin = f.player.skin;
+		full.hair = f.player.hair;
+		full.gender = f.player.gender;
+		
+		client.sendTCP(full);
+	}
+	
 	public static void sendPositionUpdate(Field f){
 		
 		Packet3SendPosition pos = new Packet3SendPosition();
@@ -86,9 +104,9 @@ public class GameClient {
 		f.player.networkSkillID = -1;			// we set this to -1 so the skill id doesn't register twice. only need to send the first one.
 		
 		
-		pos.wep = (byte) f.player.weapon.id;
-		pos.armor = (byte) f.player.armor.id;
-		pos.helm = (byte) f.player.helmet.id;
+//		pos.wep = (byte) f.player.weapon.id;
+//		pos.armor = (byte) f.player.armor.id;
+//		pos.helm = (byte) f.player.helmet.id;
 		
 		pos.currentMap = f.player.currentMap;
 		pos.HP = (short) f.player.HP;
@@ -98,6 +116,7 @@ public class GameClient {
 	}
 	
 	public static void requestPositions(Field f) {
+		
 		Packet4RequestPositions req = new Packet4RequestPositions();
 		req.uid = f.player.uid;
 		req.currentMap = f.player.currentMap;
@@ -105,6 +124,14 @@ public class GameClient {
 		
 	}
 
+	public static void requestFullUpdate(Field f) {
+
+		Packet9RequestPlayerData fullReq = new Packet9RequestPlayerData();
+		fullReq.requesterUid = f.player.uid;
+		fullReq.currentMap = f.player.currentMap;
+		client.sendTCP(fullReq);
+	}
+	
 	public static void sendDamage(Player p, Monster m, short damage, boolean hittingEnemy) {
 		Packet7SendDamageNotification dmg = new Packet7SendDamageNotification();
 		
@@ -123,5 +150,7 @@ public class GameClient {
 		client.sendTCP(dmg);
 		
 	}
+
+
 
 }
