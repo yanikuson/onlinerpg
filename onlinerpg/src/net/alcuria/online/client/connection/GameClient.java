@@ -16,6 +16,7 @@ public class GameClient {
 	
 	public static Client client;
 	public static Field f;
+	public static byte jumpNoticesSent = -1; 	// going to try sending the jump notice three times
 	
 	public static void start(){
 		
@@ -88,7 +89,18 @@ public class GameClient {
 		pos.bounds = f.player.bounds;
 		pos.MOVE_LEFT = f.player.networkCommand[Player.MOVE_LEFT];
 		pos.MOVE_RIGHT = f.player.networkCommand[Player.MOVE_RIGHT];
-		pos.MOVE_JUMP = f.player.networkCommand[Player.MOVE_JUMP];
+		
+		// we want to check if we are sending a jump packet. if so, we send it 3 times
+		if (f.player.networkCommand[Player.MOVE_JUMP]){
+			jumpNoticesSent = 0; 
+		}
+		if (jumpNoticesSent >= 0 && jumpNoticesSent < 3){
+			pos.MOVE_JUMP = true;
+			jumpNoticesSent++;
+		} else {
+			pos.MOVE_JUMP = false;
+			jumpNoticesSent = -1;
+		}
 		pos.MOVE_ATTACK = f.player.networkCommand[Player.MOVE_ATTACK];
 		pos.facingLeft = f.player.facingLeft;
 		
@@ -103,11 +115,7 @@ public class GameClient {
 		pos.skillID = f.player.networkSkillID;
 		f.player.networkSkillID = -1;			// we set this to -1 so the skill id doesn't register twice. only need to send the first one.
 		
-		
-//		pos.wep = (byte) f.player.weapon.id;
-//		pos.armor = (byte) f.player.armor.id;
-//		pos.helm = (byte) f.player.helmet.id;
-		
+		// TODO: don't need to send the map every time. try only on map change
 		pos.currentMap = f.player.currentMap;
 		pos.HP = (short) f.player.HP;
 		pos.maxHP = (short) f.player.maxHP;
@@ -115,6 +123,9 @@ public class GameClient {
 		client.sendTCP(pos);
 	}
 	
+	// client sends server a request for a critical player update
+	//TODO: because the server already knows what map the player is on
+	// 		I think sending currentMap is redundant
 	public static void requestPositions(Field f) {
 		
 		Packet4RequestPositions req = new Packet4RequestPositions();
@@ -124,6 +135,9 @@ public class GameClient {
 		
 	}
 
+	// client sends server a request for a full player update
+	//TODO: because the server already knows what map the player is on
+	// 		I think sending currentMap is redundant
 	public static void requestFullUpdate(Field f) {
 
 		Packet9RequestPlayerData fullReq = new Packet9RequestPlayerData();

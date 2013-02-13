@@ -450,17 +450,24 @@ public class Player extends Actor {
 
 
 		// set network player's moving and facing flag
-		if (onGround && Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 30){
+		if (onGround && Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 50){
 			bounds.x = desiredBounds.x;
 			bounds.y = desiredBounds.y;
 			flash(1, 1, 1, 0, 1);
 		} 
 
+		// update movement flags
 		moveCommand[MOVE_LEFT] = networkCommand[MOVE_LEFT];
 		moveCommand[MOVE_RIGHT] = networkCommand[MOVE_RIGHT];
 		moveCommand[MOVE_JUMP] = networkCommand[MOVE_JUMP];
 		networkCommand[MOVE_JUMP] = false;
 
+		// check if the client should "force" a jump due to not receiving a jump update
+		if (!moveCommand[MOVE_JUMP] && onGround && desiredBounds.y > bounds.y + 15){
+			System.out.println("Forcing a suggested jump");
+			moveCommand[MOVE_JUMP] = true;
+		}
+		
 		// do manual movement
 		if (desiredBounds.x - bounds.x > 10){
 			moveCommand[MOVE_RIGHT] = true;

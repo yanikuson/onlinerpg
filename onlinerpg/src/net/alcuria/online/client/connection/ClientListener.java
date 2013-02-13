@@ -3,7 +3,6 @@ import net.alcuria.online.client.Animator;
 import net.alcuria.online.client.Item;
 import net.alcuria.online.client.Monster;
 import net.alcuria.online.client.Player;
-import net.alcuria.online.client.VisualEquip;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
 
@@ -91,12 +90,6 @@ public class ClientListener extends Listener {
 					f.players.get(i).networkCommand[Player.MOVE_ATTACK] = ((Packet3SendPosition) o).MOVE_ATTACK;
 					f.players.get(i).networkSkillID = ((Packet3SendPosition) o).skillID;
 					f.players.get(i).networkFacingLeft = ((Packet3SendPosition) o).facingLeft;
-
-					//f.players.get(i).hair = ((Packet3SendPosition) o).hair;
-					//f.players.get(i).skin = ((Packet3SendPosition) o).skin;
-					//f.players.get(i).gender = ((Packet3SendPosition) o).gender;
-
-
 
 					f.players.get(i).currentMap = ((Packet3SendPosition) o).currentMap;
 					f.players.get(i).connected = ((Packet3SendPosition) o).connected;
