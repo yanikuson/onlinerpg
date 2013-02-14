@@ -247,6 +247,7 @@ public class Player extends Actor {
 		swing.start(bounds.x, bounds.y, facingLeft);
 	}
 
+	// render the player, plus equipments, nameplates, and any skills
 	public void render(SpriteBatch batch, BitmapFont nameplate){
 
 		if (visible){
@@ -326,6 +327,7 @@ public class Player extends Actor {
 
 	}
 
+	// damage the player for [damage] amount
 	public void damage(float enemyX, int damage, DamageList damageList){
 
 		// if it has been at least invincibilityPeriod seconds, damage hero
@@ -363,6 +365,7 @@ public class Player extends Actor {
 
 	}
 
+	// add expVal to this player
 	public void giveEXP(int expVal) {
 		do {
 			if (Config.notifExp) NotificationList.add("Earned " + expVal + " EXP.");
@@ -393,8 +396,9 @@ public class Player extends Actor {
 
 	}
 
+	// adds a particular stat point (if possible) at the current selection.
+	// returns true on success / false on failure (eg not enough stat pts)
 	public boolean allocateStatPoint(int selection){
-
 		if (statPts > 0){
 			if (selection == 0){
 				power++;					
@@ -447,7 +451,6 @@ public class Player extends Actor {
 
 	// the update method for OTHER players on the client
 	public void networkUpdate() {
-
 
 		// set network player's moving and facing flag
 		if (onGround && Math.abs(desiredBounds.x - bounds.x) + Math.abs(desiredBounds.y - bounds.y) > 50){
