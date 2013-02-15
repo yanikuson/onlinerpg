@@ -7,6 +7,7 @@ import net.alcuria.online.client.Actor;
 import net.alcuria.online.client.Item;
 import net.alcuria.online.client.Monster;
 import net.alcuria.online.client.MonsterSpawner;
+import net.alcuria.online.client.Platform;
 import net.alcuria.online.client.Player;
 import net.alcuria.online.client.screens.Field;
 import net.alcuria.online.common.Packet.*;
@@ -51,6 +52,7 @@ public class ServerListener extends Listener {
 				if (Gdx.files.internal("maps/" + sPlayers.get(i).currentMap + ".spawn").exists()){
 					if (sMonsters.containsKey(sPlayers.get(i).currentMap)){
 						sMonsters.get(sPlayers.get(i).currentMap).updated = false;
+						sMaps.get(sPlayers.get(i).currentMap).updatedPlatforms = false;
 					} else {
 						// add a new elem to sMonsters hash
 						Log.info("[SERVER] adding new spawner/map elem");
@@ -83,11 +85,14 @@ public class ServerListener extends Listener {
 
 			}
 
-			// now update
+			// now update (monsters + platforms)
 			for (int i = 0; i < sPlayers.size; i++ ){	
 				if (sMonsters.containsKey(sPlayers.get(i).currentMap)){
 					if (!sMonsters.get(sPlayers.get(i).currentMap).updated){
 						sMonsters.get(sPlayers.get(i).currentMap).serverUpdate(sPlayers.get(i).currentMap, sMaps.get(sPlayers.get(i).currentMap));
+					}
+					if (!sMaps.get(sPlayers.get(i).currentMap).updatedPlatforms){
+						sMaps.get(sPlayers.get(i).currentMap).updatePlatforms();
 					}
 				}
 			}
@@ -340,7 +345,29 @@ public class ServerListener extends Listener {
 					
 				}
 			}
+			
+			// send off the infrequent platform updates
+			// TODO: assumption is platforms exist on monsters with maps. fix this.
+			if (sMonsters.containsKey(requestersMap)){
 
+				final Platform[] curPlatforms = sMaps.get(requestersMap).platforms;
+				
+				for (int i = 0; i < curPlatforms.length; i++){
+					if (curMonSpawner.monsterList[i] != null && curMonSpawner.monsterList[i].visible && curMonSpawner.monsterList[i].HP > 0 && curMonSpawner.monsterList[i].bounds.overlaps(curPlayerRange)){
+						Packet6SendMonsterPosition monPosition = new Packet6SendMonsterPosition();
+						monPosition.id = (byte) i;
+						monPosition.bounds = curMonSpawner.monsterList[i].bounds;
+						monPosition.MOVE_LEFT = curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_LEFT];
+						monPosition.MOVE_RIGHT = curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_RIGHT];
+						monPosition.MOVE_JUMP =  curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP];
+						monPosition.MOVE_ATTACK =  curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_ATTACK];
+						monPosition.HP = (short) curMonSpawner.monsterList[i].HP;
+						c.sendTCP(monPosition);
+						curMonSpawner.monsterList[i].networkCommand[Monster.MOVE_JUMP] = false;
+
+					}
+				}
+			}
 		}
 		
 		// server receives the full/infreq updates from the client

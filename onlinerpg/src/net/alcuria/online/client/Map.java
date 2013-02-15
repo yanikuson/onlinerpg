@@ -39,6 +39,8 @@ public class Map {
 
 	static int NUM_NPCS = 0;
 
+	public boolean updatedPlatforms = false;
+
 	final int[] heightmapSlopeP30A	= { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7};
 	final int[] heightmapSlopeP30B	= { 8, 8, 9, 9,10,10,11,11,12,12,13,13,14,14,15,15};
 	final int[] heightmapSlopeN30A	= {15,15,14,14,13,13,12,12,11,11,10,10, 9, 9, 8, 8};
@@ -452,19 +454,24 @@ public class Map {
 			teleports.update(f.player, this, f.inputs);
 
 			if (spawner != null && containsEnemies) spawner.clientUpdate(this);
-			
+
 			fg.update(Gdx.graphics.getDeltaTime());
 			collisions.update(this, damageList, f.explosions, f.inventory);
 
-			// update platforms
-			if (platforms != null) {
-				for (int i = 0; i < platforms.length; i++){
-					if (platforms[i] != null){
-						platforms[i].update(f);
-					}
+			updatePlatforms();
+		} 
+
+	}
+
+	public void updatePlatforms() {
+		// update platforms
+		if (platforms != null) {
+			for (int i = 0; i < platforms.length; i++){
+				if (platforms[i] != null){
+					platforms[i].update(f);
 				}
 			}
-		} 
+		}
 
 	}
 

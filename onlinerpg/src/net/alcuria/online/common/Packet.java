@@ -118,4 +118,23 @@ public class Packet {
 		public byte helm;
 	}
 	
+	// sends state of all platforms
+	public static class Packet11SendPlatformState
+	{
+		byte id;
+		
+		// pos
+		float x;
+		float y;
+		
+		// vel
+		float maxX;
+		float maxY;
+		
+		// acc
+		float aX;
+		float aY;
+		
+	}
+	
 }
