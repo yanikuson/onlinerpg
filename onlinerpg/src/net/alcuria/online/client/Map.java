@@ -97,17 +97,21 @@ public class Map {
 	// server's map create constructor
 	public Map(String mapfile){
 
+		serverMode = true;
 		FileHandle handle = Gdx.files.internal("maps/" + mapfile + ".cmf");
 		readMapFile(handle);
-		serverMode = true;
+		createPlatforms(mapfile, handle);
+		
 	}
 
+	// client's map create constructor
 	public Map(String mapfile, AssetManager assets, DamageList damageList, Field f){
+		
+		serverMode = false;
 		this.f = f;
 		this.damageList = damageList;
 		this.assets = assets;
 		create(mapfile);
-		serverMode = false;
 	}
 
 	public void render(SpriteBatch batch, boolean below, CameraManager camera) {
@@ -350,6 +354,13 @@ public class Map {
 
 		}
 
+		createPlatforms(mapfile, handle);
+
+
+
+	}
+
+	private void createPlatforms(String mapfile, FileHandle handle) {
 		// create the PLATFORMS
 		if (platforms != null){
 			for (int i = 0; i < platforms.length; i++){
@@ -367,12 +378,14 @@ public class Map {
 			// init each element
 			platforms = new Platform[Config.MAX_PLATFORMS];
 			for (int i = 0; i < contentsSplit.length; i++){
-				platforms[i] = new Platform(f, contentsSplit[i]);
+				if (serverMode){
+					platforms[i] = new Platform(contentsSplit[i]);
+				} else {
+					platforms[i] = new Platform(f, contentsSplit[i]);
+				}
 			}
 
 		}
-
-
 
 	}
 
@@ -457,9 +470,8 @@ public class Map {
 
 			fg.update(Gdx.graphics.getDeltaTime());
 			collisions.update(this, damageList, f.explosions, f.inventory);
-
-			updatePlatforms();
 		} 
+		updatePlatforms();
 
 	}
 

@@ -121,19 +121,20 @@ public class Packet {
 	// sends state of all platforms
 	public static class Packet11SendPlatformState
 	{
-		byte id;
+		public byte id;
+		public float counter;
 		
 		// pos
-		float x;
-		float y;
+		public float x;
+		public float y;
 		
 		// vel
-		float maxX;
-		float maxY;
+		public float maxX;
+		public float maxY;
 		
 		// acc
-		float aX;
-		float aY;
+		public float aX;
+		public float aY;
 		
 	}
 	

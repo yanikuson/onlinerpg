@@ -23,14 +23,8 @@ public class Platform {
 
 	public boolean updateCtr;
 
-	public Platform(Field f, String line){
-
-		texture = f.assets.get("sprites/platform.png", Texture.class);
-		region = new TextureRegion(texture, 0, 0, 52, 5);
-		bounds = new Rectangle(0, 0, 52, 5);
-
+	public Platform(String line){
 		counter = 0;
-		
 		// File format: <time>, <x tile>, <y tile>, <max x vel>, <max y vel>, <acc x>, <acc y>
 		String split[] = line.split(",");
 		
@@ -49,6 +43,16 @@ public class Platform {
 		aX = Float.parseFloat(split[5]);
 		aY = Float.parseFloat(split[6]);
 
+		bounds = new Rectangle(0, 0, 52, 5);
+		
+	}
+	
+	public Platform(Field f, String line){
+		this(line);
+		
+		texture = f.assets.get("sprites/platform.png", Texture.class);
+		region = new TextureRegion(texture, 0, 0, 52, 5);
+		
 	}
 
 	public void update(Field f){

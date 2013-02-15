@@ -61,6 +61,7 @@ public class GameServer {
 		kryo.register(Packet8SendEnemySpawnNotification.class);
 		kryo.register(Packet9RequestPlayerData.class);
 		kryo.register(Packet10SendPlayerData.class);
+		kryo.register(Packet11SendPlatformState.class);
 	}
 
 	public static void main(String[] args){
