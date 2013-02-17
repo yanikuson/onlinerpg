@@ -21,6 +21,9 @@ public class Player extends Actor {
 	byte plateHeight = 9;
 	TextureRegion plateBG;
 	
+	TextureRegion avatarSkin;
+	TextureRegion avatarHair;
+	
 	public Rectangle desiredBounds;
 	public boolean jumpSignal = false;
 

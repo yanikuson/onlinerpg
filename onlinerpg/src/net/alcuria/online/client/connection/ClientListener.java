@@ -21,8 +21,6 @@ public class ClientListener extends Listener {
 	public Field f;
 	private Client client;
 
-
-
 	public void init(Client client, Field f) {
 		this.client = client;
 		this.f = f;
@@ -172,26 +170,26 @@ public class ClientListener extends Listener {
 
 		// if client receives a full player update, find the player and update it!
 		if (o instanceof Packet10SendPlayerData){
-			
+
 			index = ((Packet10SendPlayerData) o).uid;
 
 			for (int i = 0; i < f.players.size; i++){
 
-				
+
 				if (f.players.get(i).uid == index){
 
 					f.players.get(i).name = ((Packet10SendPlayerData) o).name;
 
 					// check to see if this player object has a new skin/gender
 					// if so we will update the player animation object
-					
+
 					// NOTE: i commented this out because currently in-game there
 					// is no way for a player to change skin/gender once he's connected
 					// so this only really needs to happen once...
 					if (!f.players.get(i).animation.netInitialized /*|| f.players.get(i).skin != ((Packet10SendPlayerData) o).skin || f.players.get(i).gender != ((Packet10SendPlayerData) o).gender*/) {
 						f.players.get(i).skin = (byte) ((Packet10SendPlayerData) o).skin;
 						f.players.get(i).gender = (byte) ((Packet10SendPlayerData) o).gender;
-						
+
 						f.players.get(i).animation = new Animator(("sprites/equips/skin/" + (f.players.get(i).skin+1) + ".png"), 14, 22, f.assets);
 						f.players.get(i).animation.netInitialized = true;
 						f.players.get(i).animation.assignPlayer(f.players.get(i));
@@ -213,6 +211,23 @@ public class ClientListener extends Listener {
 			}
 		}
 
+		if (o instanceof Packet11SendPlatformState){
+
+			
+			final int id = ((Packet11SendPlatformState) o).id;
+			if (Math.abs(f.map.platforms[id].x - ((Packet11SendPlatformState) o).x) > 10
+					|| Math.abs(f.map.platforms[id].y - ((Packet11SendPlatformState) o).y) > 10
+					|| Math.abs(f.map.platforms[id].dX - ((Packet11SendPlatformState) o).xVel) > 10
+					|| Math.abs(f.map.platforms[id].dY - ((Packet11SendPlatformState) o).yVel) > 10){
+				f.map.platforms[id].x = ((Packet11SendPlatformState) o).x;
+				f.map.platforms[id].y = ((Packet11SendPlatformState) o).y;
+				f.map.platforms[id].dX = ((Packet11SendPlatformState) o).xVel;
+				f.map.platforms[id].dY = ((Packet11SendPlatformState) o).yVel;
+				f.map.platforms[id].counter = ((Packet11SendPlatformState) o).counter;
+				System.out.println("client updated platform " + id);
+			}
+						
+		}
 
 
 	}

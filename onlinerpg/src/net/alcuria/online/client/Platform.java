@@ -16,32 +16,24 @@ public class Platform {
 	public Texture texture;
 	public TextureRegion region;
 
-	public float aX;
-	public float aY;
-	public float maxX;
-	public float maxY;
-
 	public boolean updateCtr;
 
 	public Platform(String line){
 		counter = 0;
-		// File format: <time>, <x tile>, <y tile>, <max x vel>, <max y vel>, <acc x>, <acc y>
+
+		// NEW: <time>, <x tile>, <y tile>, <xVel>, <yVel>
 		String split[] = line.split(",");
 		
 		// time
 		duration = Float.parseFloat(split[0]);
 		
 		// pos
-		x = Float.parseFloat(split[1])*16;
-		y = Float.parseFloat(split[2])*16;
+		x = Integer.parseInt(split[1])*16;
+		y = Integer.parseInt(split[2])*16;
 		
 		// vel
-		maxX = Float.parseFloat(split[3]);
-		maxY = Float.parseFloat(split[4]);
-		
-		// acc
-		aX = Float.parseFloat(split[5]);
-		aY = Float.parseFloat(split[6]);
+		dX = Float.parseFloat(split[3]);
+		dY = Float.parseFloat(split[4]);
 
 		bounds = new Rectangle(0, 0, 52, 5);
 		
@@ -57,42 +49,18 @@ public class Platform {
 
 	public void update(Field f){
 
-		// smoothing acceleration apply
-		dX += aX;
-		dY += aY;
-		updateCtr = false;
-
-		if (dX >= maxX){
-			dX = maxX;
-			updateCtr = true;
-		}
-		if (dX <= 0 - maxX){
-			dX = 0 - maxX;
-			updateCtr = true;			
-		}
-
-		if (dY >= maxY){
-			dY = maxY;
-			updateCtr = true;				
-		}
-		if (dY <= 0 - maxY){
-			dY = 0 - maxY;
-			updateCtr = true;			
-		}
-
-		if (updateCtr){
-			counter += Gdx.graphics.getDeltaTime();
-		}
+		counter += Gdx.graphics.getDeltaTime();
 
 		// step platform
 		x = x + dX;
 		y = y + dY;
 
 		// check if we should reverse the platform's direction
+		
 		if (counter > duration){
 			counter = 0;
-			aX *= -1;
-			aY *= -1;
+			dX *= -1;
+			dY *= -1;
 		}
 
 		// update AABB's position

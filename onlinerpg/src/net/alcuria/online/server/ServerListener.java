@@ -343,13 +343,11 @@ public class ServerListener extends Listener {
 						
 						plat.x = curPlatforms[i].x;
 						plat.y = curPlatforms[i].y;
-						plat.aX = curPlatforms[i].aX;
-						plat.aY = curPlatforms[i].aY;
-						plat.maxX = curPlatforms[i].maxX;
-						plat.maxY = curPlatforms[i].maxY;
+						plat.xVel = curPlatforms[i].dX;
+						plat.yVel = curPlatforms[i].dY;
 						
-						c.sendTCP(plat);
-						System.out.println("server sent out platform state " + i);
+						//TODO: fix platforms
+						// c.sendTCP(plat);
 						
 					}
 				}

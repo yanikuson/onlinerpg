@@ -129,8 +129,8 @@ public class Packet {
 		public float y;
 		
 		// vel
-		public float maxX;
-		public float maxY;
+		public float xVel;
+		public float yVel;
 		
 		// acc
 		public float aX;

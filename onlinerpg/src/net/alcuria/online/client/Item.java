@@ -79,6 +79,7 @@ public class Item {
 			this.name = "Wooden Sword";
 			this.description = "ATK+10";
 			this.atk = 10;
+			this.jump = 200;
 			this.visualName = "sprites/equips/weapons/1.png";
 			this.cost = 100;
 			break;
