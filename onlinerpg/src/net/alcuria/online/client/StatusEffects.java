@@ -14,6 +14,7 @@ public class StatusEffects {
 	public static final int SPEED = 4;
 	public static final int FREEZE = 5;
 	public static final int RAGE = 6;
+	public static final int TELE = 7;
 
 	public static final int MAX_EFFECTS = 10;
 	public static final int MAX_DURATION = 5;
@@ -129,6 +130,19 @@ public class StatusEffects {
 			} else {
 				actor.flash(1f, 1f, 0.5f, 1f, 1f);
 			}
+			break;
+			
+		case TELE:
+			System.out.println("tele tick");
+			TeleportNode node = new TeleportNode(TeleportNode.EDGE_NORTH, "beacharena", (int) (7 + Math.random()*25), 20);
+			node.changeMap(f.map, f.player);
+			node = null;
+			Transition.fadeIn(0.35f);
+			remove(TELE);
+			timer[TELE] = 0;
+			subTimer[TELE] = 0;
+			severity[TELE] = 0;
+			break;
 		}
 
 	}
@@ -176,7 +190,6 @@ public class StatusEffects {
 			f.damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
 			this.timer[effect] = 0;
 			break;
-
 		case SPEED:
 			// if speed is already applied we reset the duration
 			if (timer[SPEED] > 0) {
@@ -201,7 +214,12 @@ public class StatusEffects {
 				this.defOffset -= this.severity[effect];
 
 			}
+			break;
 			
+		case TELE:
+			this.frequency[effect] = 0.5f;
+			this.timer[effect] = 100;
+			Transition.fadeOut(0.35f);
 		}
 		
 		// TODO: send out a packet so other clients are aware? [uid/monindex, isMonster, effect, severity, duration]

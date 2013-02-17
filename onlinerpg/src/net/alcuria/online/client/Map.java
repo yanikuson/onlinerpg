@@ -355,6 +355,13 @@ public class Map {
 		}
 
 		createPlatforms(mapfile, handle);
+		
+		// determine if PVP mode should be enabled
+		if (mapfile.equals("beacharena")){
+			Config.PvpEnabled = true;
+		} else {
+			Config.PvpEnabled = false;
+		}
 
 
 
@@ -470,6 +477,7 @@ public class Map {
 
 			fg.update(Gdx.graphics.getDeltaTime());
 			collisions.update(this, damageList, f.explosions, f.inventory);
+			
 		} 
 		updatePlatforms();
 

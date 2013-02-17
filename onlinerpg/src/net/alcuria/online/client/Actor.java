@@ -400,6 +400,7 @@ public class Actor {
 				criticalHealthTimer = 0;
 			}
 		}
+		
 		// this is temporary -- it resets the player if they fall off! :)
 		if (bounds.y < -500){
 			bounds.y = 5*16;

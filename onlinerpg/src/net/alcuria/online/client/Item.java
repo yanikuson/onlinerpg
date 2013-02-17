@@ -24,6 +24,7 @@ public class Item {
 	public static final int ID_WOOD_HELM = 60;
 	public static final int ID_WIZARD_HAT = 61;
 	public static final int ID_LEATHER_BOOTS = 80;
+	public static final int ID_ARENA_PASS = 100;
 	
 	public static final int TYPE_CONSUMABLE = 1;
 	public static final int TYPE_WEAPON = 2;
@@ -79,7 +80,6 @@ public class Item {
 			this.name = "Wooden Sword";
 			this.description = "ATK+10";
 			this.atk = 10;
-			this.jump = 200;
 			this.visualName = "sprites/equips/weapons/1.png";
 			this.cost = 100;
 			break;
@@ -137,6 +137,14 @@ public class Item {
 			this.description = "JUMP+5";
 			this.jump = 5;
 			this.speed = 0;
+			break;
+			
+		case ID_ARENA_PASS:
+			this.icon = 1;
+			this.type = TYPE_CONSUMABLE;
+			this.name = "Arena Pass";
+			this.description = "Teleport to the PVP arena";
+			this.cost = 10;
 			break;
 			
 		default:

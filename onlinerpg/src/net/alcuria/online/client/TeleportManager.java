@@ -30,6 +30,9 @@ public class TeleportManager {
 					} else if (line[0].equals("W")) {
 						locations[i] = new TeleportNode(TeleportNode.EDGE_WEST, line[1], Integer.parseInt(line[2]), Integer.parseInt(line[3]));
 
+					} else if (line[0].equals("S")) {
+						locations[i] = new TeleportNode(TeleportNode.EDGE_SOUTH, line[1], Integer.parseInt(line[2]), Integer.parseInt(line[3]));
+
 					}
 					// TODO: do other cardinal directions + manual teleport
 

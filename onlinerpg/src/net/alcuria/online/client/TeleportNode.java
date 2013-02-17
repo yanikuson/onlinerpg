@@ -40,6 +40,17 @@ public class TeleportNode {
 			break;
 
 		case EDGE_SOUTH:
+			if (p.bounds.y < -10){
+				if (!startedFade){
+					startedFade = true;
+					Transition.fadeOut(0.35f);					
+				}
+				if (Transition.finished) { 
+					changeMap(m, p);
+					Transition.fadeIn(0.35f);
+					startedFade = false;
+				}	
+			}
 			break;
 
 		case EDGE_WEST:

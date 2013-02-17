@@ -298,6 +298,7 @@ public class Menu {
 				if (inventory.getItem(selection[1]).type == Item.TYPE_CONSUMABLE){
 
 					// do the effect
+					// TODO: put this in Item.java maybe?
 					switch (inventory.getItem(selection[1]).id) {
 					case Item.ID_POTION:
 						p.effects.add(StatusEffects.HEAL, 50, 1);
@@ -307,6 +308,9 @@ public class Menu {
 						break;
 					case Item.ID_RAGE_POTION:
 						p.effects.add(StatusEffects.RAGE, 20, 60);
+						break;
+					case Item.ID_ARENA_PASS:
+						p.effects.add(StatusEffects.TELE, 50, 1);
 						break;
 					}
 
