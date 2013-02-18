@@ -1,7 +1,6 @@
 package net.alcuria.online.client;
 
 import net.alcuria.online.client.screens.Field;
-import net.alcuria.online.server.ServerThread;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -37,7 +36,8 @@ public class Platform {
 		origY = y;
 		
 		// angle (degrees -> radians) & speed
-		angle = (float) (Float.parseFloat(split[3]) / 0.0174532925); 
+		angle = (float) (Float.parseFloat(split[3]) *
+				0.0174532925); 
 		speed = Float.parseFloat(split[4]);
 
 		bounds = new Rectangle(0, 0, 52, 5);

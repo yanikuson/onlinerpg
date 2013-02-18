@@ -3,7 +3,6 @@ package net.alcuria.online.client;
 import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
