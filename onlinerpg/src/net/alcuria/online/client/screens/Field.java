@@ -91,17 +91,30 @@ public class Field implements Screen {
 
 			map.renderBG(batch, cameraManager);
 
+			// render lower layer
 			map.render(batch, true, cameraManager);
 			
 			// render all online players that are the also on the same map as the hero
 			for (int i = 0; i < players.size; i++){
 				if (player.currentMap != null && players.get(i).currentMap != null && player.currentMap.equals(players.get(i).currentMap)){
-					players.get(i).render(batch, nameplate);
+					players.get(i).render(batch);
 				}
 			}
-			player.render(batch, nameplate);
+			player.render(batch);
+			
+			// render upper layer
 			map.render(batch, false, cameraManager);
 
+			// render nameplates/hp
+			for (int i = 0; i < players.size; i++){
+				if (player.currentMap != null && players.get(i).currentMap != null && player.currentMap.equals(players.get(i).currentMap)){
+					players.get(i).renderNameAndHP(batch, nameplate);
+				}
+			}
+			player.renderNameAndHP(batch, nameplate);
+			// render all monsters nameplates
+			if (map.spawner != null) map.spawner.renderHPBars(batch);
+			
 			freezes.render(batch);
 			burns.render(batch);
 			slices.render(batch);

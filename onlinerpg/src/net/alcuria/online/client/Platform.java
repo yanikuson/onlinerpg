@@ -1,6 +1,7 @@
 package net.alcuria.online.client;
 
 import net.alcuria.online.client.screens.Field;
+import net.alcuria.online.server.ServerThread;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,20 +10,21 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Platform {
 
+	public boolean serverMode = true;
 	public float radius, x, y, speed, counter;
 	public float origX, origY;
-	public short angle;
+	public float angle;
 	public Rectangle bounds;
 	public Texture texture;
 	public TextureRegion region;
 	
-	float dX, dY;
+	public float dX, dY;
 	
 	public boolean updateCtr;
 
 	public Platform(String line){
 
-		// NEW: <tilespan>, <x tile>, <y tile>, <angle>, <speed coefficient>
+		// NEW: <radius>, <x tile>, <y tile>, <angle>, <speed coefficient>
 		String split[] = line.split(",");
 		
 		// time
@@ -34,8 +36,8 @@ public class Platform {
 		origX = x;
 		origY = y;
 		
-		// angle & speed
-		angle = Short.parseShort(split[3]);
+		// angle (degrees -> radians) & speed
+		angle = (float) (Float.parseFloat(split[3]) / 0.0174532925); 
 		speed = Float.parseFloat(split[4]);
 
 		bounds = new Rectangle(0, 0, 52, 5);
@@ -49,22 +51,36 @@ public class Platform {
 		
 		texture = f.assets.get("sprites/platform.png", Texture.class);
 		region = new TextureRegion(texture, 0, 0, 52, 5);
-		
+		serverMode = false;
 	}
 
 	public void update(Field f){
 
-		counter += Gdx.graphics.getDeltaTime();
-
+		if (serverMode){
+			counter += 0.016666;
+		} else {
+			counter += Gdx.graphics.getDeltaTime();
+		}
 		// step platform
 		dX = x;
 		dY = y;
-		x = (float) (Math.sin(counter) * Math.cos(angle)*radius);
-		y = (float) (Math.sin(counter) * Math.sin(angle)*radius);
+		
+		x = origX + (float) (Math.sin(counter*speed) * Math.cos(angle)*radius);
+		y = origY + (float) (Math.sin(counter*speed) * Math.sin(angle)*radius);
 
+		// get deltaX/Y
+		dX = x - dX;
+		dY = y - dY;
+		
 		// update AABB's position
 		bounds.x = x;
 		bounds.y = y;
+		
+//		if (serverMode){
+//			System.out.println("Server: " + counter);
+//		} else {
+//			System.out.println("Client: " + counter);
+//		}
 
 	}
 

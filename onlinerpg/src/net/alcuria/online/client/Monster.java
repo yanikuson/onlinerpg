@@ -131,10 +131,6 @@ public class Monster extends Actor {
 	public void render(SpriteBatch batch){
 		super.render(batch);
 
-		if (showHP){
-			drawHP(batch);
-		}
-
 	}
 
 	// client commands the local monster copies
@@ -354,6 +350,13 @@ public class Monster extends Actor {
 		visible = true;
 		refreshedHP = false;
 		flash(1, 0, 1, 0, 3);
+
+	}
+
+	public void renderHPBar(SpriteBatch batch) {
+		if (showHP){
+			drawHP(batch);
+		}
 
 	}
 

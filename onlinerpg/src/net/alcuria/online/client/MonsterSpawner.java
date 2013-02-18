@@ -194,6 +194,15 @@ public class MonsterSpawner {
 		
 	}
 
+	public void renderHPBars(SpriteBatch batch) {
+		for (int i = 0; i < MonsterSpawner.MAX_MONSTERS; i++) {
+			if (monsterList[i] != null && monsterList[i].visible && monsterList[i].HP > 0 && (Math.abs(monsterList[i].desiredBounds.x - monsterList[i].bounds.x) + Math.abs(monsterList[i].desiredBounds.y - monsterList[i].bounds.y) < 50)) {
+				monsterList[i].renderHPBar(batch);
+			}
+		}
+		
+	}
+
 
 
 

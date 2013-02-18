@@ -250,19 +250,29 @@ public class Player extends Actor {
 		swing.start(bounds.x, bounds.y, facingLeft);
 	}
 
-	// render the player, plus equipments, nameplates, and any skills
-	public void render(SpriteBatch batch, BitmapFont nameplate){
+	
+	// render HP and nameplate
+	public void renderNameAndHP(SpriteBatch batch, BitmapFont nameplate) {
+		
+		// render the nameplate
+		plateWidth = (byte) nameplate.getBounds(name).width;
+		batch.flush();
+		batch.setColor(1, 1, 1, 0.5f);
+		batch.draw(plateBG, bounds.x + bounds.width/2 - plateWidth/2 - 2, bounds.y - 10, plateWidth+2, plateHeight);
+		batch.flush();
+		batch.setColor(1, 1, 1, 1);
+		nameplate.draw(batch, name, bounds.x + bounds.width/2 - plateWidth/2, bounds.y);
+		
+		if (showHP){
+			drawHP(batch);
+		}
+		
+	}
+	
+	// render the player, plus equipments, and any skills
+	public void render(SpriteBatch batch){
 
 		if (visible){
-			
-			// render the nameplate
-			plateWidth = (byte) nameplate.getBounds(name).width;
-			batch.flush();
-			batch.setColor(1, 1, 1, 0.5f);
-			batch.draw(plateBG, bounds.x + bounds.width/2 - plateWidth/2 - 1, bounds.y - 10, plateWidth+2, plateHeight);
-			batch.flush();
-			batch.setColor(1, 1, 1, 1);
-			nameplate.draw(batch, name, bounds.x + bounds.width/2 - plateWidth/2, bounds.y);
 			
 			if (renderToggler){
 				batch.flush();
@@ -320,15 +330,13 @@ public class Player extends Actor {
 		skills.render(batch);
 		cast.render(batch);
 		effects.render(batch);
-		
-		if (showHP){
-			drawHP(batch);
-		}
-		
+				
 		levelup.render(batch);
 
 
 	}
+	
+
 
 	// damage the player for [damage] amount
 	public void damage(float enemyX, int damage, DamageList damageList){

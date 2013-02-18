@@ -7,6 +7,7 @@ public class ServerThread implements Runnable{
 
 	ServerPanel sp;
 
+
 	// the server thread has two jobs: 1, start up the server (in yet another thread) and 2. update the server when appropriate
 	public ServerThread(Field f){
 
@@ -26,8 +27,10 @@ public class ServerThread implements Runnable{
 		}
 
 		while (GameServer.running){
+
 			GameServer.update();
 			pause(16);
+
 		}
 
 	}

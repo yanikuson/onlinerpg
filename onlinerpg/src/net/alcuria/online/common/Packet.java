@@ -124,18 +124,6 @@ public class Packet {
 		public byte id;
 		public float counter;
 		
-		// pos
-		public float x;
-		public float y;
-		
-		// vel
-		public float xVel;
-		public float yVel;
-		
-		// acc
-		public float aX;
-		public float aY;
-		
 	}
 	
 }

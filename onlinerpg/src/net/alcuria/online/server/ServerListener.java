@@ -93,6 +93,7 @@ public class ServerListener extends Listener {
 					}
 					if (!sMaps.get(sPlayers.get(i).currentMap).updatedPlatforms){
 						sMaps.get(sPlayers.get(i).currentMap).updatePlatforms();
+						sMaps.get(sPlayers.get(i).currentMap).updatedPlatforms = true;
 					}
 				}
 			}
@@ -341,13 +342,8 @@ public class ServerListener extends Listener {
 						plat.id = (byte) i;
 						plat.counter = curPlatforms[i].counter;
 						
-						plat.x = curPlatforms[i].x;
-						plat.y = curPlatforms[i].y;
-						plat.xVel = curPlatforms[i].dX;
-						plat.yVel = curPlatforms[i].dY;
-						
 						//TODO: fix platforms
-						// c.sendTCP(plat);
+						c.sendTCP(plat);
 						
 					}
 				}

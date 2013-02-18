@@ -134,8 +134,10 @@ public class Map {
 				}
 			}
 
+			// render all monsters
 			if (spawner != null) spawner.render(batch);
 
+			// render all npcs
 			if (npcs != null){
 				for (int i = 0; i < npcs.length; i++){
 					if (npcs[i] != null) {
