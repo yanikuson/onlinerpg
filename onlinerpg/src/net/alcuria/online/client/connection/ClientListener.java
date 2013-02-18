@@ -124,19 +124,21 @@ public class ClientListener extends Listener {
 		// if client receives a enemy position update, we need to update that index of the monster array
 		if (o instanceof Packet6SendMonsterPosition){
 			if (f.map.spawner != null && f.map.spawner.monsterList != null){
-				index = ((Packet6SendMonsterPosition) o).id;
-				f.map.spawner.monsterList[index].desiredBounds = ((Packet6SendMonsterPosition) o).bounds; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_LEFT; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_RIGHT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_JUMP] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
-				f.map.spawner.monsterList[index].networkCommand[Monster.MOVE_ATTACK] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
-				if (f.map.spawner.monsterList[index].ignoreHPupdateTimer <= 0){
-					f.map.spawner.monsterList[index].HP = ((Packet6SendMonsterPosition) o).HP; 
-					f.map.spawner.monsterList[index].refreshedHP = true;
-				}
-				if (f.map.spawner.monsterList[index].HP > 0 && !f.map.spawner.monsterList[index].visible){
-					f.map.spawner.monsterList[index].visible = true;
-					f.map.spawner.monsterList[index].timeSinceSpawn = 10;
+				final Monster monster =  f.map.spawner.monsterList[((Packet6SendMonsterPosition) o).id];
+				if (monster != null) {
+					monster.desiredBounds = ((Packet6SendMonsterPosition) o).bounds; 
+					monster.networkCommand[Monster.MOVE_LEFT] = ((Packet6SendMonsterPosition) o).MOVE_LEFT; 
+					monster.networkCommand[Monster.MOVE_RIGHT] = ((Packet6SendMonsterPosition) o).MOVE_RIGHT; 
+					monster.networkCommand[Monster.MOVE_JUMP] = ((Packet6SendMonsterPosition) o).MOVE_JUMP; 
+					monster.networkCommand[Monster.MOVE_ATTACK] = ((Packet6SendMonsterPosition) o).MOVE_ATTACK; 
+					if (monster.ignoreHPupdateTimer <= 0){
+						monster.HP = ((Packet6SendMonsterPosition) o).HP; 
+						monster.refreshedHP = true;
+					}
+					if (monster.HP > 0 && !monster.visible){
+						monster.visible = true;
+						monster.timeSinceSpawn = 10;
+					}
 				}
 			}
 		}
@@ -213,7 +215,7 @@ public class ClientListener extends Listener {
 
 		if (o instanceof Packet11SendPlatformState){
 
-			
+
 			final int id = ((Packet11SendPlatformState) o).id;
 			if (Math.abs(f.map.platforms[id].x - ((Packet11SendPlatformState) o).x) > 10
 					|| Math.abs(f.map.platforms[id].y - ((Packet11SendPlatformState) o).y) > 10
@@ -226,7 +228,7 @@ public class ClientListener extends Listener {
 				f.map.platforms[id].counter = ((Packet11SendPlatformState) o).counter;
 				System.out.println("client updated platform " + id);
 			}
-						
+
 		}
 
 

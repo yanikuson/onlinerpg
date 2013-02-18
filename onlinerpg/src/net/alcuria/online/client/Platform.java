@@ -9,33 +9,38 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Platform {
 
-	public float duration;
-	public float counter;
-	public float dX, dY, x, y;
+	public float radius, x, y, speed, counter;
+	public float origX, origY;
+	public short angle;
 	public Rectangle bounds;
 	public Texture texture;
 	public TextureRegion region;
-
+	
+	float dX, dY;
+	
 	public boolean updateCtr;
 
 	public Platform(String line){
-		counter = 0;
 
-		// NEW: <time>, <x tile>, <y tile>, <xVel>, <yVel>
+		// NEW: <tilespan>, <x tile>, <y tile>, <angle>, <speed coefficient>
 		String split[] = line.split(",");
 		
 		// time
-		duration = Float.parseFloat(split[0]);
+		radius = Float.parseFloat(split[0])*Config.TILE_WIDTH;
 		
 		// pos
-		x = Integer.parseInt(split[1])*16;
-		y = Integer.parseInt(split[2])*16;
+		x = Float.parseFloat(split[1])*Config.TILE_WIDTH;
+		y = Float.parseFloat(split[2])*Config.TILE_WIDTH;
+		origX = x;
+		origY = y;
 		
-		// vel
-		dX = Float.parseFloat(split[3]);
-		dY = Float.parseFloat(split[4]);
+		// angle & speed
+		angle = Short.parseShort(split[3]);
+		speed = Float.parseFloat(split[4]);
 
 		bounds = new Rectangle(0, 0, 52, 5);
+		
+
 		
 	}
 	
@@ -52,16 +57,10 @@ public class Platform {
 		counter += Gdx.graphics.getDeltaTime();
 
 		// step platform
-		x = x + dX;
-		y = y + dY;
-
-		// check if we should reverse the platform's direction
-		
-		if (counter > duration){
-			counter = 0;
-			dX *= -1;
-			dY *= -1;
-		}
+		dX = x;
+		dY = y;
+		x = (float) (Math.sin(counter) * Math.cos(angle)*radius);
+		y = (float) (Math.sin(counter) * Math.sin(angle)*radius);
 
 		// update AABB's position
 		bounds.x = x;
