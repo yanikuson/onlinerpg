@@ -184,10 +184,6 @@ public class ClientListener extends Listener {
 
 					// check to see if this player object has a new skin/gender
 					// if so we will update the player animation object
-
-					// NOTE: i commented this out because currently in-game there
-					// is no way for a player to change skin/gender once he's connected
-					// so this only really needs to happen once...
 					if (!f.players.get(i).animation.netInitialized /*|| f.players.get(i).skin != ((Packet10SendPlayerData) o).skin || f.players.get(i).gender != ((Packet10SendPlayerData) o).gender*/) {
 						f.players.get(i).skin = (byte) ((Packet10SendPlayerData) o).skin;
 						f.players.get(i).gender = (byte) ((Packet10SendPlayerData) o).gender;

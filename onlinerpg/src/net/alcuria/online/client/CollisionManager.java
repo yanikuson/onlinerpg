@@ -129,8 +129,6 @@ public class CollisionManager {
 			}
 		}
 		
-
-		
 		// check for a collision with loot
 		if (player != null) {
 
