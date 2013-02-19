@@ -126,4 +126,16 @@ public class Packet {
 		
 	}
 	
+	// these are passed around to show on-screen damage and update enemy HP
+	public static class Packet12SendStatusEffect
+	{
+		public boolean targetingEnemy;
+		public byte originID;
+		public byte targetID;
+		public byte effect;
+		public byte duration;
+		public byte severity;
+		public String currentMap;
+	}
+	
 }

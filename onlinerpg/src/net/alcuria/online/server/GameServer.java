@@ -62,6 +62,7 @@ public class GameServer {
 		kryo.register(Packet9RequestPlayerData.class);
 		kryo.register(Packet10SendPlayerData.class);
 		kryo.register(Packet11SendPlatformState.class);
+		kryo.register(Packet12SendStatusEffect.class);
 	}
 
 	public static void main(String[] args){

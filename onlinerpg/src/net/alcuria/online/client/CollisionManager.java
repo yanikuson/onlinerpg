@@ -111,8 +111,8 @@ public class CollisionManager {
 							enemies[i].damage(player, Config.getDamageDone(player.matk + 10, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops, player.facingLeft, true);
 							break;
 						case SkillManager.FREEZE:
-							enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, freezes, drops, player.facingLeft, true);
 							enemies[i].effects.add(StatusEffects.FREEZE, 10, 5);
+							enemies[i].damage(player, Config.getDamageDone(player.matk, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, freezes, drops, player.facingLeft, true);
 							break;
 						case SkillManager.BOLT:
 							enemies[i].damage(player, Config.getDamageDone(player.matk + 25, player.wisdom, enemies[i].mdef, enemies[i].wisdom), damageList, explosions, burns, drops, player.facingLeft, true);

@@ -13,21 +13,21 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 
 public class GameClient {
-	
+
 	public static Client client;
 	public static Field f;
 	public static byte jumpNoticesSent = -1; 	// going to try sending the jump notice three times
-	
+
 	public static void start(){
-		
+
 		client = new Client();
 		register();
-	
+
 		// create a listener to accept incoming packets from the server
 		ClientListener cl = new ClientListener();
 		cl.init(client, f);
 		client.addListener(cl);
-		
+
 		client.start();
 		try {
 			client.connect(10000, Config.IP, 54555, 54555);			
@@ -36,9 +36,9 @@ public class GameClient {
 			client.stop();
 		}
 	}
-	
+
 	private static void register(){
-		
+
 		Kryo kryo = client.getKryo();
 		kryo.register(Rectangle.class);
 		kryo.register(Packet0LoginRequest.class);
@@ -53,45 +53,46 @@ public class GameClient {
 		kryo.register(Packet9RequestPlayerData.class);
 		kryo.register(Packet10SendPlayerData.class);
 		kryo.register(Packet11SendPlatformState.class);
+		kryo.register(Packet12SendStatusEffect.class);
 
 	}
 
 	public static void sendMapChange(Field f){
-		
+
 		Packet5SendMap map = new Packet5SendMap();
 		map.uid = f.player.uid;
 		map.currentMap = f.player.currentMap;
-		
+
 		client.sendTCP(map);
-		
+
 	}
-	
+
 	public static void sendFullUpdate(Field f){
-		
+
 		Packet10SendPlayerData full = new Packet10SendPlayerData();
-		
+
 		full.uid = f.player.uid;
 		full.name = f.player.name;
-		
+
 		full.armor = (byte) f.player.armor.id;
 		full.wep = (byte) f.player.weapon.id;
 		full.helm = (byte) f.player.helmet.id;
-		
+
 		full.skin = f.player.skin;
 		full.hair = f.player.hair;
 		full.gender = f.player.gender;
-		
+
 		client.sendTCP(full);
 	}
-	
+
 	public static void sendPositionUpdate(Field f){
-		
+
 		Packet3SendPosition pos = new Packet3SendPosition();
 		pos.uid = f.player.uid;
 		pos.bounds = f.player.bounds;
 		pos.MOVE_LEFT = f.player.networkCommand[Player.MOVE_LEFT];
 		pos.MOVE_RIGHT = f.player.networkCommand[Player.MOVE_RIGHT];
-		
+
 		// we want to check if we are sending a jump packet. if so, we send it 3 times
 		if (f.player.networkCommand[Player.MOVE_JUMP]){
 			jumpNoticesSent = 0; 
@@ -105,36 +106,36 @@ public class GameClient {
 		}
 		pos.MOVE_ATTACK = f.player.networkCommand[Player.MOVE_ATTACK];
 		pos.facingLeft = f.player.facingLeft;
-		
+
 		if (f.player.networkCommand[Player.MOVE_JUMP]) {
 			f.player.networkCommand[Player.MOVE_JUMP] = false; // STOP jumping if we are going to send the packet!!
 		}
 		if (f.player.networkCommand[Player.MOVE_ATTACK]) {
 			f.player.networkCommand[Player.MOVE_ATTACK] = false; // STOP jumping if we are going to send the packet!!
 		}
-		
+
 		// assign the skill id
 		pos.skillID = f.player.networkSkillID;
 		f.player.networkSkillID = -1;			// we set this to -1 so the skill id doesn't register twice. only need to send the first one.
-		
+
 		// TODO: don't need to send the map every time. try only on map change
 		pos.currentMap = f.player.currentMap;
 		pos.HP = (short) f.player.HP;
 		pos.maxHP = (short) f.player.maxHP;
-		
+
 		client.sendTCP(pos);
 	}
-	
+
 	// client sends server a request for a critical player update
 	//TODO: because the server already knows what map the player is on
 	// 		I think sending currentMap is redundant
 	public static void requestPositions(Field f) {
-		
+
 		Packet4RequestPositions req = new Packet4RequestPositions();
 		req.uid = f.player.uid;
 		req.currentMap = f.player.currentMap;
 		client.sendTCP(req);
-		
+
 	}
 
 	// client sends server a request for a full player update
@@ -147,10 +148,10 @@ public class GameClient {
 		fullReq.currentMap = f.player.currentMap;
 		client.sendTCP(fullReq);
 	}
-	
+
 	public static void sendDamage(Player p, Monster m, short damage, boolean hittingEnemy) {
 		Packet7SendDamageNotification dmg = new Packet7SendDamageNotification();
-		
+
 		if (hittingEnemy){
 			dmg.attackerID = p.uid;
 			if (m != null) dmg.defenderID = m.id;
@@ -164,7 +165,22 @@ public class GameClient {
 		dmg.currentMap = p.currentMap;
 		dmg.hittingEnemy = hittingEnemy;
 		client.sendTCP(dmg);
-		
+
+	}
+
+	public static void sendStatusEffect(short netID, boolean netIsMonster,int effect, int severity, int duration) {
+		Packet12SendStatusEffect status = new Packet12SendStatusEffect();
+
+		status.targetID = (byte) netID;
+		status.originID = (byte) f.player.uid;
+		status.targetingEnemy = netIsMonster;
+		status.effect = (byte) effect;
+		status.severity = (byte) severity;
+		status.duration = (byte) duration;
+		status.currentMap = f.player.currentMap;
+
+		client.sendTCP(status);
+
 	}
 
 

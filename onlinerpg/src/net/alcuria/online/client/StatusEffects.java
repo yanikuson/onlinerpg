@@ -1,5 +1,6 @@
 package net.alcuria.online.client;
 
+import net.alcuria.online.client.connection.GameClient;
 import net.alcuria.online.client.screens.Field;
 
 import com.badlogic.gdx.Gdx;
@@ -20,6 +21,10 @@ public class StatusEffects {
 	public static final int MAX_DURATION = 5;
 	public static final float EFFECT_FREQUENCY = 0.5f;
 
+	// whether or not this effect was added from the server
+	// if it is sent from the server, we dont want to do things like actually
+	// reduce HP because the origin client handles that
+	public boolean networkStatusEffect = false;
 
 	public float[] timer;
 	public float[] subTimer;
@@ -31,7 +36,7 @@ public class StatusEffects {
 	public Sound heal;
 
 	public Actor actor;
-	
+
 	public short hpOffset = 0;
 	public short atkOffset = 0;
 	public short defOffset = 0;
@@ -40,7 +45,13 @@ public class StatusEffects {
 	public short speedOffset = 0;
 	public short jumpOffset = 0;
 	public short kbOffset = 0;
-	
+
+	public short netID = 0;
+	public boolean netIsMonster = false;
+	// for casting
+	public Monster netMonster;
+	public Player netPlayer;
+
 	public boolean rageFlip = false;
 
 	public StatusEffects(Actor actor, Field f) {
@@ -65,7 +76,7 @@ public class StatusEffects {
 
 		healSparkle = new Particle("sprites/sparkle.png", 0, 0, 25, 25, 5, 5, false, f.assets);
 		heal = f.assets.get("sounds/heal.wav", Sound.class);
-		
+
 		this.f = f;
 
 	}
@@ -131,7 +142,7 @@ public class StatusEffects {
 				actor.flash(1f, 1f, 0.5f, 1f, 1f);
 			}
 			break;
-			
+
 		case TELE:
 			System.out.println("tele tick");
 			TeleportNode node = new TeleportNode(TeleportNode.EDGE_NORTH, "beacharena", (int) (7 + Math.random()*25), 20);
@@ -159,7 +170,7 @@ public class StatusEffects {
 
 		case SPEED:
 			speedOffset -= severity[effectType];
-			
+
 		case RAGE:
 			defOffset += severity[effectType];
 			atkOffset -= severity[effectType];
@@ -170,59 +181,72 @@ public class StatusEffects {
 
 	// called ONCE to add an effect (at the start)
 	public void add(int effect, int severity, int duration){
-
-		switch (effect) {
-		case POISON:
-			this.timer[effect] = duration;
-			this.severity[effect] = severity;
-			break;
-		case FREEZE:
-			this.timer[effect] = duration;
-			this.severity[effect] = severity;
-			break;
-		case HEAL:
-			this.timer[effect] = duration;
-			this.severity[effect] = severity;
-			heal.play(Config.sfxVol);
-			healSparkle.start(actor.bounds.x, actor.bounds.y, false);
-			actor.flash(1, 1, 0, 1, 1);
-			actor.HP = Math.min(this.severity[effect] + actor.HP, actor.maxHP);
-			f.damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
-			this.timer[effect] = 0;
-			break;
-		case SPEED:
-			// if speed is already applied we reset the duration
-			if (timer[SPEED] > 0) {
-				timer[SPEED] = duration;
-			} else {
-				// else apply walking speed increase
+		
+		// we only apply the stat effect if the player is visible (ie hasn't been recently damaged)
+		if (actor.hurtTimer >= actor.invincibilityPeriod){
+			switch (effect) {
+			case POISON:
 				this.timer[effect] = duration;
 				this.severity[effect] = severity;
-				this.speedOffset += this.severity[effect];
-
-			}
-			break;
-			
-		case RAGE:
-			
-			if (timer[RAGE] > 0) {
-				timer[RAGE] = duration;
-			} else {
+				break;
+			case FREEZE:
 				this.timer[effect] = duration;
-				this.severity[effect] += severity;
-				this.atkOffset += this.severity[effect];
-				this.defOffset -= this.severity[effect];
+				this.severity[effect] = severity;
+				break;
+			case HEAL:
+				this.timer[effect] = duration;
+				this.severity[effect] = severity;
+				heal.play(Config.sfxVol);
+				healSparkle.start(actor.bounds.x, actor.bounds.y, false);
+				actor.flash(1, 1, 0, 1, 1);
+				actor.HP = Math.min(this.severity[effect] + actor.HP, actor.maxHP);
+				f.damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
+				this.timer[effect] = 0;
+				break;
+			case SPEED:
+				// if speed is already applied we reset the duration
+				if (timer[SPEED] > 0) {
+					timer[SPEED] = duration;
+				} else {
+					// else apply walking speed increase
+					this.timer[effect] = duration;
+					this.severity[effect] = severity;
+					this.speedOffset += this.severity[effect];
 
+				}
+				break;
+
+			case RAGE:
+
+				if (timer[RAGE] > 0) {
+					timer[RAGE] = duration;
+				} else {
+					this.timer[effect] = duration;
+					this.severity[effect] += severity;
+					this.atkOffset += this.severity[effect];
+					this.defOffset -= this.severity[effect];
+
+				}
+				break;
+
+			case TELE:
+				this.frequency[effect] = 0.5f;
+				this.timer[effect] = 100;
+				Transition.fadeOut(0.35f);
 			}
-			break;
-			
-		case TELE:
-			this.frequency[effect] = 0.5f;
-			this.timer[effect] = 100;
-			Transition.fadeOut(0.35f);
+
+			// check actor's subclass and assign the correct ID/monval
+			if (actor instanceof Monster){
+				netMonster = (Monster)actor;
+				netID = netMonster.id;
+				netIsMonster = true;
+			} else if (actor instanceof Player){
+				netPlayer = (Player)actor;
+				netID = netPlayer.uid;
+				netIsMonster = false;
+			}
+			GameClient.sendStatusEffect(netID, netIsMonster, effect, severity, duration);
 		}
-		
-		// TODO: send out a packet so other clients are aware? [uid/monindex, isMonster, effect, severity, duration]
 	}
 
 	// removes all effects from the actor

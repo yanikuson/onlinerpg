@@ -210,12 +210,10 @@ public class ClientListener extends Listener {
 		}
 
 		if (o instanceof Packet11SendPlatformState){
-
-
+			
 			final int id = ((Packet11SendPlatformState) o).id;
-			if (Math.abs(f.map.platforms[id].counter - ((Packet11SendPlatformState) o).counter) > 0.2){
+			if (Math.abs(f.map.platforms[id].counter - ((Packet11SendPlatformState) o).counter) > 0.1){
 				f.map.platforms[id].counter = ((Packet11SendPlatformState) o).counter;
-				System.out.println("client updated platform " + id);
 			}
 
 		}

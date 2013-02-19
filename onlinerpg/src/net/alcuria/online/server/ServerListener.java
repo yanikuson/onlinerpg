@@ -208,7 +208,7 @@ public class ServerListener extends Listener {
 					position.MOVE_ATTACK = sPlayers.get(i).networkCommand[Player.MOVE_ATTACK];
 					position.skillID = sPlayers.get(i).networkSkillID;
 					position.facingLeft = sPlayers.get(i).networkFacingLeft;
-					
+
 					position.currentMap = sPlayers.get(i).currentMap;
 					position.HP = (short) sPlayers.get(i).HP;
 					position.maxHP = (short) sPlayers.get(i).maxHP;
@@ -297,74 +297,113 @@ public class ServerListener extends Listener {
 			//TODO: if the enemy has <= 0 HP, hand out some loot
 		}
 
-		
+
 		//*****************************************************************************
-		
+
 		if (o instanceof Packet9RequestPlayerData) {
 			int requestersUid = ((Packet9RequestPlayerData) o).requesterUid;
 			String requestersMap = ((Packet9RequestPlayerData) o).currentMap;
-			
+
 			// send off all players
 			for (int i = 0; i < sPlayers.size; i++){
-				
+
 				final Player p = sPlayers.get(i);
 				// only send this position if the uid isnt the requested users uid & maps are same
 				if (requestersUid != p.uid && p.currentMap != null && p.currentMap.equals(requestersMap)){
 					// send back to the player details to client
 					Packet10SendPlayerData pack = new Packet10SendPlayerData();
 					pack.uid = (byte) p.uid;
-					
+
 					pack.name = p.name;
-					
+
 					pack.gender = p.gender;
 					pack.hair = p.hair;
 					pack.skin = p.skin;
-					
+
 					pack.armor = (byte) p.armor.id;
 					pack.helm = (byte) p.helmet.id;
 					pack.wep = (byte) p.weapon.id;
-					
+
 					c.sendTCP(pack);
-					
+
 				}
 			}
-			
+
 			// send off the infrequent platform updates
 			// TODO: assumption is platforms exist on monsters with maps. fix this.
 			if (sMonsters.containsKey(requestersMap) && sMaps.get(requestersMap).platforms != null){
-				
+
 				final Platform[] curPlatforms = sMaps.get(requestersMap).platforms;
 				for (int i = 0; i < curPlatforms.length; i++){
 					if (curPlatforms[i] != null && curPlatforms[i].bounds.overlaps(curPlayerRange)){
-						
+
 						// create the platform packet to send off
 						Packet11SendPlatformState plat = new Packet11SendPlatformState();
 						plat.id = (byte) i;
 						plat.counter = curPlatforms[i].counter;
-						
+
 						//TODO: fix platforms
 						c.sendTCP(plat);
-						
+
 					}
 				}
 			}
 		}
-		
+
+		// Server gets a request for all relevant positions. Send back to client!
+		if (o instanceof Packet12SendStatusEffect) {
+
+			int sendersUid = ((Packet12SendStatusEffect) o).originID;
+			String sendersMap = ((Packet12SendStatusEffect) o).currentMap;
+			int targetUid = ((Packet12SendStatusEffect) o).targetID;
+			byte effect = ((Packet12SendStatusEffect) o).effect;
+			byte severity = ((Packet12SendStatusEffect) o).severity;
+			byte duration = ((Packet12SendStatusEffect) o).duration;
+			
+			// iterate through the sPlayers array and add to a queue of damages to display
+			for (int i = 0; i < sPlayers.size; i++){
+				
+				// only send this position if the uid isnt the requested users uid & maps are same
+				if (sPlayers.get(i).uid == sendersUid){
+					// update the server's copy and add it to the queue to send off to client
+					if (((Packet12SendStatusEffect) o).targetingEnemy){
+						// add the stat effect to the monster
+						sMonsters.get(sendersMap).monsterList[targetUid].effects.add(effect, severity, duration);
+					} else {
+						// add the stat effect to the player
+						sPlayers.get(targetUid).effects.add(effect, severity, duration);
+					}
+				} else if (sPlayers.get(i).currentMap.equals(sendersMap)){
+					// add to the status effect queue...
+					sPlayers.get(i).statusEffectQueue.add((Packet12SendStatusEffect) o);
+				}
+			}
+
+			// update the server's copy of the enemy's/player's HP
+			if (((Packet7SendDamageNotification) o).hittingEnemy){
+				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].HP -=  ((Packet7SendDamageNotification) o).damage;
+				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].knockback(facingLeft, 2);
+			} 
+
+		}
+
+
+
 		// server receives the full/infreq updates from the client
 		if (o instanceof Packet10SendPlayerData) {
 			int index = ((Packet10SendPlayerData) o).uid;
-			
+
 			// find the server element to update
 			for (int i = 0; i < sPlayers.size; i++){
 				if (sPlayers.get(i).uid == index){
-					
+
 					// update local server copy
 					sPlayers.get(i).name =  ((Packet10SendPlayerData) o).name;
 
 					sPlayers.get(i).skin = (byte) ((Packet10SendPlayerData) o).skin;
 					sPlayers.get(i).gender = (byte) ((Packet10SendPlayerData) o).gender;					
 					sPlayers.get(i).hair = (byte) ((Packet10SendPlayerData) o).hair;					
-					
+
 					if(sPlayers.get(i).weapon.id != ((Packet10SendPlayerData) o).wep){
 						sPlayers.get(i).weapon = new Item(((Packet10SendPlayerData) o).wep);
 					}
@@ -380,7 +419,7 @@ public class ServerListener extends Listener {
 			}
 		}
 
-		
+
 
 	}
 
