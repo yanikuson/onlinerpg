@@ -169,6 +169,7 @@ public class GameClient {
 	}
 
 	public static void sendStatusEffect(short netID, boolean netIsMonster,int effect, int severity, int duration) {
+		System.out.println("Client sending stat effect");
 		Packet12SendStatusEffect status = new Packet12SendStatusEffect();
 
 		status.targetID = (byte) netID;

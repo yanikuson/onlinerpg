@@ -143,6 +143,27 @@ public class ClientListener extends Listener {
 			}
 		}
 
+		// client receives a status effect from server
+		if (o instanceof Packet12SendStatusEffect){
+			if (((Packet12SendStatusEffect) o).targetingEnemy){
+				if (f.map.spawner != null && f.map.spawner.monsterList != null){	
+					f.map.spawner.monsterList[((Packet12SendStatusEffect) o).targetID].effects.applyEffect(((Packet12SendStatusEffect) o).effect, ((Packet12SendStatusEffect) o).severity, ((Packet12SendStatusEffect) o).duration); 
+				}
+			} else {
+				index = ((Packet12SendStatusEffect) o).targetID;
+				if(f.player.uid == index){
+					f.player.effects.applyEffect(((Packet12SendStatusEffect) o).effect, ((Packet12SendStatusEffect) o).severity, ((Packet12SendStatusEffect) o).duration);
+				} else {
+					for (int i = 0; i < f.players.size; i++){
+						if (f.players.get(i).uid == index){
+							f.players.get(i).effects.applyEffect(((Packet12SendStatusEffect) o).effect, ((Packet12SendStatusEffect) o).severity, ((Packet12SendStatusEffect) o).duration);
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		// if client receives a damage update packet, we need to damage the monster accordingly
 		if (o instanceof Packet7SendDamageNotification){
 			if (((Packet7SendDamageNotification) o).hittingEnemy){
@@ -210,7 +231,7 @@ public class ClientListener extends Listener {
 		}
 
 		if (o instanceof Packet11SendPlatformState){
-			
+
 			final int id = ((Packet11SendPlatformState) o).id;
 			if (Math.abs(f.map.platforms[id].counter - ((Packet11SendPlatformState) o).counter) > 0.1){
 				f.map.platforms[id].counter = ((Packet11SendPlatformState) o).counter;

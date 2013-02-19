@@ -2,6 +2,7 @@ package net.alcuria.online.client;
 
 import net.alcuria.online.client.connection.GameClient;
 import net.alcuria.online.client.screens.Field;
+import net.alcuria.online.common.Packet.Packet12SendStatusEffect;
 import net.alcuria.online.common.Packet.Packet7SendDamageNotification;
 
 import com.badlogic.gdx.Gdx;
@@ -78,7 +79,9 @@ public class Player extends Actor {
 	public boolean connected = false;
 	public byte networkSkillID = -1;
 	public Array<Packet7SendDamageNotification> damageQueue;
+	public Array<Packet12SendStatusEffect> statusEffectQueue;
 	public boolean networkFacingLeft;
+	
 
 	public Player(String name, int gender, int skin, int hair, int x, int y, int width, int height, Field f) {
 		super(("sprites/equips/skin/" + (skin+1) + ".png"), x, y, width, height, f);
@@ -87,6 +90,7 @@ public class Player extends Actor {
 		this.plateBG = new TextureRegion(f.assets.get("ui/fade.png", Texture.class), 0, 0, 1, 1);
 		
 		this.damageQueue = new Array<Packet7SendDamageNotification>();
+		this.statusEffectQueue = new Array<Packet12SendStatusEffect>();
 		this.desiredBounds = bounds;
 
 		this.maxHP = Config.getMaxHP(lvl, stamina);
@@ -132,7 +136,7 @@ public class Player extends Actor {
 	// the player's command must override the default command method, because it needs to poll the inputhandler to do proper (read: not random) input
 	public void command(InputHandler inputs){
 		
-		if (!animation.castPose && !animation.stabPose && !animation.swingPose && !animation.itemPose){
+		if (!animation.castPose && !animation.stabPose && !animation.swingPose && !animation.itemPose && effects.timer[StatusEffects.FREEZE] <= 0){
 			if (inputs.pressing[InputHandler.LEFT]){
 				moveCommand[MOVE_LEFT] = true;
 				networkCommand[MOVE_LEFT] = true;
@@ -167,7 +171,7 @@ public class Player extends Actor {
 		}
 
 		// check if the player is trying to attack
-		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod && !animation.castPose && !animation.itemPose){
+		if (inputs.typed[InputHandler.ATTACK] && swingTimer >= swingPeriod && !animation.castPose && !animation.itemPose && effects.timer[StatusEffects.FREEZE] <= 0){
 			moveCommand[MOVE_ATTACK] = true;
 			networkCommand[MOVE_ATTACK] = true;
 			inputs.typed[InputHandler.ATTACK] = false;
@@ -185,7 +189,7 @@ public class Player extends Actor {
 		updateSwing();
 
 		// check if the player pressed a skill button
-		if (!animation.itemPose && !animation.swingPose && !animation.stabPose && !animation.castPose && !skills.visible && EP > 0){
+		if (!animation.itemPose && !animation.swingPose && !animation.stabPose && !animation.castPose && !skills.visible && EP > 0 && effects.timer[StatusEffects.FREEZE] <= 0){
 			if (inputs.typed[InputHandler.SKILL_1]){
 				inputs.typed[InputHandler.SKILL_1] = false;
 				startSkill(0);
@@ -477,7 +481,7 @@ public class Player extends Actor {
 		networkCommand[MOVE_JUMP] = false;
 
 		// check if the client should "force" a jump due to not receiving a jump update
-		if (!moveCommand[MOVE_JUMP] && onGround && desiredBounds.y > bounds.y + 15){
+		if (!moveCommand[MOVE_JUMP] && onGround && desiredBounds.y > bounds.y + 25){
 			System.out.println("Forcing a suggested jump");
 			moveCommand[MOVE_JUMP] = true;
 		}

@@ -57,8 +57,8 @@ public class CollisionManager {
 						f.players.get(i).damage(f.player.bounds.x, Config.getDamageDone(player.matk + 10, player.wisdom, f.players.get(i).mdef, f.players.get(i).wisdom), f.damageList);
 						break;
 					case SkillManager.FREEZE:
-						f.players.get(i).damage(f.player.bounds.x, Config.getDamageDone(player.matk, player.wisdom, f.players.get(i).mdef, f.players.get(i).wisdom), f.damageList);
 						f.players.get(i).effects.add(StatusEffects.FREEZE, 10, 5);
+						f.players.get(i).damage(f.player.bounds.x, Config.getDamageDone(player.matk, player.wisdom, f.players.get(i).mdef, f.players.get(i).wisdom), f.damageList);
 						break;
 					case SkillManager.BOLT:
 						f.players.get(i).damage(f.player.bounds.x, Config.getDamageDone(player.matk+25, player.wisdom, f.players.get(i).mdef, f.players.get(i).wisdom), f.damageList);
@@ -67,6 +67,7 @@ public class CollisionManager {
 						f.players.get(i).effects.add(StatusEffects.POISON, player.wisdom/4 + 1, 10);
 						break;
 					}
+					f.players.get(i).hurtTimer = 0;
 
 				}
 			}
@@ -121,6 +122,7 @@ public class CollisionManager {
 							enemies[i].effects.add(StatusEffects.POISON, player.wisdom/4 + 1, 10);
 							break;
 						}
+						enemies[i].hurtTimer = 0;
 
 					}
 

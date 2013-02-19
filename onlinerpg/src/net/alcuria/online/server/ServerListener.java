@@ -91,7 +91,7 @@ public class ServerListener extends Listener {
 					if (!sMonsters.get(sPlayers.get(i).currentMap).updated){
 						sMonsters.get(sPlayers.get(i).currentMap).serverUpdate(sPlayers.get(i).currentMap, sMaps.get(sPlayers.get(i).currentMap));
 					}
-					if (!sMaps.get(sPlayers.get(i).currentMap).updatedPlatforms){
+					if (sMaps.get(sPlayers.get(i).currentMap) != null && !sMaps.get(sPlayers.get(i).currentMap).updatedPlatforms){
 						sMaps.get(sPlayers.get(i).currentMap).updatePlatforms();
 						sMaps.get(sPlayers.get(i).currentMap).updatedPlatforms = true;
 					}
@@ -193,6 +193,11 @@ public class ServerListener extends Listener {
 					// send off any possible damage queues for this player
 					while(sPlayers.get(i).damageQueue.size > 0){
 						c.sendTCP(sPlayers.get(i).damageQueue.pop());
+					}
+					
+					// send off any possible status effects
+					while(sPlayers.get(i).statusEffectQueue.size > 0){
+						c.sendTCP(sPlayers.get(i).statusEffectQueue.pop());
 					}
 
 				} else if (sPlayers.get(i).currentMap != null && sPlayers.get(i).currentMap.equals(requestersMap)){
@@ -331,7 +336,7 @@ public class ServerListener extends Listener {
 
 			// send off the infrequent platform updates
 			// TODO: assumption is platforms exist on monsters with maps. fix this.
-			if (sMonsters.containsKey(requestersMap) && sMaps.get(requestersMap).platforms != null){
+			if (sMonsters != null && sMonsters.containsKey(requestersMap) && sMaps.get(requestersMap) != null && sMaps.get(requestersMap).platforms != null){
 
 				final Platform[] curPlatforms = sMaps.get(requestersMap).platforms;
 				for (int i = 0; i < curPlatforms.length; i++){
@@ -368,22 +373,19 @@ public class ServerListener extends Listener {
 					// update the server's copy and add it to the queue to send off to client
 					if (((Packet12SendStatusEffect) o).targetingEnemy){
 						// add the stat effect to the monster
-						sMonsters.get(sendersMap).monsterList[targetUid].effects.add(effect, severity, duration);
+						sMonsters.get(sendersMap).monsterList[targetUid].effects.applyEffect(effect, severity, duration);
+						System.out.println("Server added effect to a server-side monster");
 					} else {
 						// add the stat effect to the player
-						sPlayers.get(targetUid).effects.add(effect, severity, duration);
+						sPlayers.get(targetUid).effects.applyEffect(effect, severity, duration);
+						System.out.println("Server added effect to server-side player: " + sPlayers.get(i).name);
 					}
 				} else if (sPlayers.get(i).currentMap.equals(sendersMap)){
 					// add to the status effect queue...
 					sPlayers.get(i).statusEffectQueue.add((Packet12SendStatusEffect) o);
+					System.out.println("Appending a stat effect to damage queue of " + sPlayers.get(i).name);
 				}
 			}
-
-			// update the server's copy of the enemy's/player's HP
-			if (((Packet7SendDamageNotification) o).hittingEnemy){
-				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].HP -=  ((Packet7SendDamageNotification) o).damage;
-				sMonsters.get(sendersMap).monsterList[((Packet7SendDamageNotification) o).defenderID].knockback(facingLeft, 2);
-			} 
 
 		}
 

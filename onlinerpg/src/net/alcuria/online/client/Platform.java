@@ -75,12 +75,6 @@ public class Platform {
 		// update AABB's position
 		bounds.x = x;
 		bounds.y = y;
-		
-//		if (serverMode){
-//			System.out.println("Server: " + counter);
-//		} else {
-//			System.out.println("Client: " + counter);
-//		}
 
 	}
 
