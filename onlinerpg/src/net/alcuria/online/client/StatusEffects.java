@@ -51,6 +51,7 @@ public class StatusEffects {
 	// for casting
 	public Monster netMonster;
 	public Player netPlayer;
+	public boolean sendEffect = false;
 
 	public boolean rageFlip = false;
 
@@ -188,8 +189,11 @@ public class StatusEffects {
 
 		// we only apply the stat effect if the player is visible (ie hasn't been recently damaged)
 		if (actor.hurtTimer >= actor.invincibilityPeriod){
+			sendEffect = false;
 			applyEffect(effect, severity, duration);
-			GameClient.sendStatusEffect(netID, netIsMonster, effect, severity, duration);
+			if (sendEffect){
+				GameClient.sendStatusEffect(netID, netIsMonster, effect, severity, duration);
+			}
 		}
 	}
 
@@ -197,26 +201,30 @@ public class StatusEffects {
 	public void applyEffect(int effect, int severity, int duration) {
 		switch (effect) {
 		case POISON:
+			sendEffect = true;
 			this.timer[effect] = duration;
 			this.severity[effect] = severity;
 			break;
 		case FREEZE:
+			sendEffect = true;
 			this.timer[effect] = duration;
 			this.severity[effect] = severity;
 			break;
 		case HEAL:
+			sendEffect = true;
+			heal.play(Config.sfxVol);
+			healSparkle.start(actor.bounds.x, actor.bounds.y, false);
+			actor.flash(1, 1, 0, 1, 1);
 			if (!networkStatusEffect){
 				this.timer[effect] = duration;
 				this.severity[effect] = severity;
-				heal.play(Config.sfxVol);
-				healSparkle.start(actor.bounds.x, actor.bounds.y, false);
-				actor.flash(1, 1, 0, 1, 1);
 				actor.HP = Math.min(this.severity[effect] + actor.HP, actor.maxHP);
 				f.damageList.start(this.severity[effect], actor.bounds.x, actor.bounds.y, actor.facingLeft, Damage.TYPE_HEAL);
 				this.timer[effect] = 0;
 			}
 			break;
 		case SPEED:
+			sendEffect = true;
 			// if speed is already applied we reset the duration
 			if (timer[SPEED] > 0) {
 				timer[SPEED] = duration;
@@ -230,7 +238,7 @@ public class StatusEffects {
 			break;
 
 		case RAGE:
-
+			sendEffect = true;
 			if (timer[RAGE] > 0) {
 				timer[RAGE] = duration;
 			} else {
@@ -243,6 +251,7 @@ public class StatusEffects {
 			break;
 
 		case TELE:
+			sendEffect = false;
 			this.frequency[effect] = 0.5f;
 			this.timer[effect] = 100;
 			Transition.fadeOut(0.35f);
